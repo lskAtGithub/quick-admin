@@ -1,66 +1,37 @@
+<!--
+  布局根容器：三区域结构
+    - #app-sidebar  ← 左侧菜单导航（收起/展开）
+    - #app-main     ← 右侧主区域（顶栏 + 页面内容）
+      - #app-header  顶栏（面包屑、语言、主题、用户菜单）
+      - #app-content 页面内容（RouterView + 页签）
+    - #app-global   ← 全局浮层层（Toast、Modal、新手引导）
+
+  A 轮裁切：水印、新手引导、AI 助手（后续轮次按 v-if 接入）。
+-->
 <template>
-  <div class="layout">
-    <aside class="layout-sider">侧栏占位</aside>
-    <div class="layout-main">
-      <header class="layout-header">
-        <span>顶栏占位</span>
-        <button class="theme-toggle" @click="toggleTheme">
-          主题：{{ theme }}
-        </button>
-      </header>
-      <section class="layout-content">
-        <RouterView />
-      </section>
+  <div class="app-layout">
+    <!-- 左侧菜单导航 -->
+    <aside id="app-sidebar" aria-label="主菜单导航">
+      <QaSidebarMenu />
+    </aside>
+
+    <!-- 右侧主区域 -->
+    <main id="app-main" aria-label="主要内容区域">
+      <div id="app-header">
+        <QaHeaderBar />
+      </div>
+      <div id="app-content">
+        <QaPageContent />
+      </div>
+    </main>
+
+    <!-- 全局浮层层（引导、通知等跨页面组件） -->
+    <div id="app-global">
+      <QaGlobalComponent />
     </div>
   </div>
 </template>
 
 <script setup>
-import { useTheme } from "@/hooks/core/useTheme";
-
-const { theme, toggleTheme } = useTheme();
+defineOptions({ name: "AppLayout" });
 </script>
-
-<style scoped>
-.layout {
-  display: flex;
-  height: 100vh;
-}
-.layout-sider {
-  width: 220px;
-  background: var(--app-sidebar-bg);
-  color: var(--app-sidebar-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.layout-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.layout-header {
-  height: 56px;
-  background: var(--app-header-bg);
-  border-bottom: 1px solid var(--app-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-}
-.theme-toggle {
-  cursor: pointer;
-  padding: 4px 12px;
-  border: 1px solid var(--app-border);
-  border-radius: 4px;
-  background: transparent;
-  color: var(--app-text);
-}
-.layout-content {
-  flex: 1;
-  padding: 16px;
-  overflow: auto;
-  background: var(--app-bg);
-}
-</style>
