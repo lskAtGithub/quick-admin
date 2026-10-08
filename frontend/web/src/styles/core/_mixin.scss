@@ -1,0 +1,59 @@
+@mixin ellipsis($rowCount: 1) {
+  @if $rowCount <= 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $rowCount;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@mixin userSelect($value: none) {
+  -moz-user-select: $value;
+  -ms-user-select: $value;
+  -webkit-user-select: $value;
+  user-select: $value;
+}
+
+@mixin absoluteCenter() {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+@mixin circle($size: 11px, $bg: #fff) {
+  width: $size;
+  height: $size;
+  line-height: $size;
+  text-align: center;
+  background: $bg;
+  border-radius: 50%;
+}
+
+@mixin placeholder($color: #bbb) {
+  &::placeholder {
+    color: $color;
+    opacity: 1;
+  }
+
+  &:-ms-input-placeholder {
+    color: $color;
+  }
+
+  &::-webkit-input-placeholder {
+    color: $color;
+  }
+
+  &:placeholder-shown {
+    text-overflow: ellipsis;
+  }
+}
+
+@mixin border($color: red) {
+  border: 1px solid $color;
+}

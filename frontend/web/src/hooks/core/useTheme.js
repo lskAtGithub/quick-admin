@@ -1,45 +1,27 @@
-import { ref, watch } from "vue";
-import { usePreferredDark } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { useSettingStore } from "@/store/modules/setting.store";
+import { SystemThemeEnum } from "@/enums/appEnum";
 
-export const THEME = {
-  LIGHT: "light",
-  DARK: "dark",
-  AUTO: "auto",
-};
+export const THEME = SystemThemeEnum;
 
-const THEME_KEY = "app-theme";
-
-const theme = ref(localStorage.getItem(THEME_KEY) || THEME.AUTO);
-const prefersDark = usePreferredDark();
-
-function applyTheme() {
-  const isDark =
-    theme.value === THEME.DARK || (theme.value === THEME.AUTO && prefersDark.value);
-  document.documentElement.classList.toggle("dark", isDark);
-}
-
-watch(theme, (val) => {
-  localStorage.setItem(THEME_KEY, val);
-  applyTheme();
-});
-
-watch(prefersDark, applyTheme);
+const ORDER = [THEME.LIGHT, THEME.DARK, THEME.AUTO];
 
 export function useTheme() {
-  const order = [THEME.LIGHT, THEME.DARK, THEME.AUTO];
+  const settingStore = useSettingStore();
+  const { theme } = storeToRefs(settingStore);
 
   function setTheme(val) {
-    theme.value = val;
+    settingStore.switchThemeStyles(val);
   }
 
   function toggleTheme() {
-    const next = (order.indexOf(theme.value) + 1) % order.length;
-    theme.value = order[next];
+    const next = (ORDER.indexOf(theme.value) + 1) % ORDER.length;
+    setTheme(ORDER[next]);
   }
 
   return { theme, setTheme, toggleTheme };
 }
 
 export function initTheme() {
-  applyTheme();
+  useSettingStore().initializeTheme();
 }

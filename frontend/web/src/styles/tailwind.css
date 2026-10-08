@@ -1,0 +1,277 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source "../../**/*.vue";
+@source "../../**/*.js";
+@source "../../**/*.jsx";
+@source "../../**/*.ts";
+@source "../../**/*.tsx";
+@source "../../**/*.html";
+@source "../../**/*.scss";
+@source "../../**/*.css";
+
+@theme {
+  --color-box: var(--default-box-color);
+  --color-theme: var(--theme-color);
+  --color-hover-color: var(--qa-hover-color);
+  --color-active-color: var(--qa-active-color);
+  --color-el-active-color: var(--qa-active-color);
+
+  --color-primary: var(--el-color-primary, var(--qa-primary));
+  --color-secondary: var(--qa-secondary);
+  --color-error: var(--qa-error);
+  --color-info: var(--qa-info);
+  --color-success: var(--qa-success);
+  --color-warning: var(--qa-warning);
+  --color-danger: var(--qa-danger);
+
+  --color-g-100: var(--qa-gray-100);
+  --color-g-200: var(--qa-gray-200);
+  --color-g-300: var(--qa-gray-300);
+  --color-g-400: var(--qa-gray-400);
+  --color-g-500: var(--qa-gray-500);
+  --color-g-600: var(--qa-gray-600);
+  --color-g-700: var(--qa-gray-700);
+  --color-g-800: var(--qa-gray-800);
+  --color-g-900: var(--qa-gray-900);
+
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 13px;
+  --font-size-lg: 15px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 22px;
+  --font-size-3xl: 28px;
+}
+
+@utility rounded-custom-xs {
+  border-radius: calc(var(--custom-radius) / 2);
+}
+
+@utility rounded-custom-sm {
+  border-radius: calc(var(--custom-radius) / 2 + 2px);
+}
+
+@layer utilities {
+  .flex-c {
+    @apply flex items-center;
+  }
+  .flex-b {
+    @apply flex justify-between;
+  }
+  .flex-cc {
+    @apply flex items-center justify-center;
+  }
+  .flex-cb {
+    @apply flex items-center justify-between;
+  }
+  .flex-cs {
+    @apply flex items-center justify-start;
+  }
+  .flex-ce {
+    @apply flex items-center justify-end;
+  }
+
+  .tad-200 {
+    @apply transition-all duration-200;
+  }
+  .tad-300 {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .border-full-d {
+    @apply border border-(--default-border);
+  }
+  .border-b-d {
+    @apply border-b border-(--default-border);
+  }
+  .border-t-d {
+    @apply border-t border-(--default-border);
+  }
+  .border-l-d {
+    @apply border-l border-(--default-border);
+  }
+  .border-r-d {
+    @apply border-r border-(--default-border);
+  }
+
+  .c-p {
+    @apply cursor-pointer;
+  }
+
+  .gap-xs {
+    gap: 4px;
+  }
+  .gap-sm {
+    gap: 8px;
+  }
+  .gap-md {
+    gap: 12px;
+  }
+  .gap-lg {
+    gap: 16px;
+  }
+  .gap-xl {
+    gap: 24px;
+  }
+
+  .text-secondary {
+    color: var(--qa-gray-500);
+  }
+  .text-muted {
+    color: var(--qa-gray-400);
+  }
+
+  .bg-subtle {
+    background-color: var(--qa-gray-100);
+  }
+  .bg-hover {
+    background-color: var(--qa-hover-color);
+  }
+
+  .scrollable-y {
+    overflow: auto hidden;
+    scrollbar-color: var(--qa-gray-300) transparent;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--qa-gray-300);
+      border-radius: 4px;
+    }
+  }
+}
+
+:root {
+  --qa-color: #fff;
+  --theme-color: var(--main-color);
+
+  --qa-primary: oklch(70% 0.23 260deg);
+  --qa-secondary: oklch(72% 0.19 231.6deg);
+  --qa-error: oklch(73% 0.15 25.3deg);
+  --qa-info: oklch(58% 0.03 254.1deg);
+  --qa-success: oklch(78% 0.17 166.1deg);
+  --qa-warning: oklch(78% 0.14 75.5deg);
+  --qa-danger: oklch(68% 0.22 25.3deg);
+
+  --qa-gray-100: #f9fafb;
+  --qa-gray-200: #f2f4f5;
+  --qa-gray-300: #e6eaeb;
+  --qa-gray-400: #dbdfe1;
+  --qa-gray-500: #949eb7;
+  --qa-gray-600: #7987a1;
+  --qa-gray-700: #4d5875;
+  --qa-gray-800: #383853;
+  --qa-gray-900: #323251;
+
+  --qa-card-border: rgb(0 0 0 / 8%);
+  --default-border: #e2e8ee;
+  --default-border-dashed: #dbdfe9;
+
+  --default-bg-color: #fafbfc;
+  --default-box-color: #fff;
+
+  --app-bg: var(--default-bg-color);
+
+  --qa-hover-color: #edeff0;
+  --qa-active-color: #f2f4f5;
+  --qa-el-active-color: #f2f4f5;
+
+  --qa-overlay-light: rgb(0 0 0 / 20%);
+  --qa-overlay-heavy: rgb(0 0 0 / 50%);
+
+  --qa-drawer-bg: rgb(255 255 255 / 50%);
+
+  --qa-tab-pin: #ca8a04;
+  --qa-tab-pin-hover: #a16207;
+  --qa-tab-pin-group-hover: #a16207;
+}
+
+.dark {
+  --qa-color: #000;
+
+  --qa-gray-100: #110f0f;
+  --qa-gray-200: #17171c;
+  --qa-gray-300: #393946;
+  --qa-gray-400: #505062;
+  --qa-gray-500: #73738c;
+  --qa-gray-600: #8f8fa3;
+  --qa-gray-700: #ababba;
+  --qa-gray-800: #c7c7d1;
+  --qa-gray-900: #e3e3e8;
+
+  --qa-card-border: rgb(255 255 255 / 8%);
+  --default-border: rgb(255 255 255 / 10%);
+  --default-border-dashed: #363843;
+
+  --default-bg-color: #070707;
+  --default-box-color: #161618;
+
+  --app-bg: var(--default-bg-color);
+
+  --qa-hover-color: #252530;
+  --qa-active-color: #202226;
+  --qa-el-active-color: #2e2e38;
+
+  --qa-overlay-light: rgb(23 23 26 / 60%);
+  --qa-overlay-heavy: rgb(0 0 0 / 50%);
+
+  --qa-drawer-bg: rgb(0 0 0 / 50%);
+
+  --qa-tab-pin: #fbbf24;
+  --qa-tab-pin-hover: #fcd34d;
+  --qa-tab-pin-group-hover: #fcd34d;
+
+  --qa-dark-border: rgb(255 255 255 / 12%);
+  --qa-dark-border-subtle: rgb(255 255 255 / 8%);
+  --qa-dark-border-lighter: rgb(255 255 255 / 14%);
+  --qa-dark-text: rgb(255 255 255 / 72%);
+
+  --qa-dark-hover: rgb(255 255 255 / 8%);
+  --qa-dark-active: rgb(255 255 255 / 12%);
+
+  --qa-input-bg: #333;
+  --qa-input-border: #4c4d50;
+  --qa-dialog-bg: #252526;
+
+  --qa-scrollbar-thumb: #777;
+  --qa-scrollbar-thumb-dark: #222;
+}
+
+@layer components {
+  .qa-card-header {
+    @apply flex justify-between pr-6 pb-1;
+
+    .title {
+      h4 {
+        @apply text-lg font-medium text-g-900;
+      }
+
+      p {
+        @apply mt-1 text-sm text-g-600;
+
+        span {
+          @apply ml-2 font-medium;
+        }
+      }
+    }
+  }
+}
