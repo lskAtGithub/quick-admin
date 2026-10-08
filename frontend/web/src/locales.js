@@ -1,9 +1,7 @@
 import { createI18n } from "vue-i18n";
+import { LanguageEnum } from "@/enums/appEnum";
 
-export const LanguageEnum = {
-  EN: "en",
-  ZH: "zh",
-};
+export { LanguageEnum };
 
 const messages = {
   zh: {
@@ -22,6 +20,161 @@ const messages = {
       requestFailed: "请求失败",
       requestConfigError: "请求配置错误",
     },
+    login: {
+      leftView: {
+        title: "一款兼具设计美学与高效开发的后台系统",
+        subTitle: "提供安全、高效、可扩展的管理解决方案，助力企业数字化转型与业务增长。",
+      },
+      title: "欢迎回来 👋",
+      subTitle: "请输入您的账户信息以开始管理您的项目",
+      versionLabel: "版本",
+      quickSelectAccount: "快速选择账号",
+      mobileLogin: "手机号登录",
+      mobileLoginSubTitle: "请输入您的手机号码以开始管理您的项目",
+      mobilePhonePlaceholder: "手机号码",
+      getSmsCode: "获取验证码",
+      smsCodeSentMock: "验证码已发送（演示环境）",
+      smsCodeRequired: "请输入 6 位短信验证码",
+      mobileLoginPending: "手机号登录接口暂未接入，仅供界面演示",
+      backToAccountLogin: "返回",
+      qrLogin: "扫码登录",
+      qrLoginTitle: "欢迎回来 📱",
+      qrLoginSubTitle: "请用手机扫描二维码登录",
+      qrLoginHint: "扫码后点击「确认」，即可完成登录",
+      oauthNoticeTitle: "通知",
+      oauthLoginSuccess: "第三方账号登录成功",
+      oauthLoginFailed: "第三方登录失败，请尝试账号密码登录",
+      comingSoon: "功能开发中，敬请期待",
+      accountLoginTab: "账号登录",
+      quickLoginTab: "快速登录",
+      roles: {
+        super: "超级管理员",
+        admin: "管理员",
+        user: "普通用户",
+      },
+      placeholder: {
+        username: "请输入账号",
+        password: "请输入密码",
+        email: "请输入邮箱",
+        slider: "请拖动滑块完成验证",
+      },
+      email: {
+        required: "请输入邮箱",
+        invalid: "邮箱格式不正确",
+      },
+      sliderText: "按住滑块拖动",
+      sliderSuccessText: "验证成功",
+      rememberPwd: "记住密码",
+      forgetPwd: "忘记密码",
+      btnText: "登录",
+      backLoginBtnText: "去登录",
+      noAccount: "还没有账号？",
+      register: "注册",
+      success: {
+        title: "登录成功",
+        message: "欢迎回来",
+      },
+      themeToggle: "主题切换",
+      languageToggle: "语言切换",
+      dark: "暗黑",
+      light: "明亮",
+      auto: "自动",
+      newPassword: "请输入新密码",
+      captchaCode: "请输入验证码",
+      captchaClickHint: "点击刷新验证码",
+      capsLock: "大写锁定已打开",
+      message: {
+        username: {
+          required: "请输入账号",
+        },
+        password: {
+          required: "请输入密码",
+          currentRequired: "请输入当前密码",
+          min: "密码不能少于6位",
+          confirm: "请再次确认密码",
+          inconformity: "两次密码输入不一致",
+        },
+        captchaCode: {
+          required: "请输入验证码",
+        },
+        mobile: {
+          required: "请输入手机号",
+          invalid: "手机号格式不正确",
+          exist: "手机号已存在",
+        },
+        email: {
+          required: "请输入邮箱",
+          invalid: "邮箱格式不正确",
+          exist: "邮箱已存在",
+        },
+        name: {
+          required: "请输入名称",
+          invalid: "名称格式不正确",
+          min: "名称不能少于2位",
+        },
+        agree: {
+          required: "请先勾选同意用户协议",
+        },
+      },
+      oauthTooltip: {
+        wechat: "微信",
+        qq: "QQ",
+        github: "GitHub",
+        gitee: "Gitee",
+      },
+      otherLoginMethods: "其他登录方式",
+      resetPassword: "重置密码",
+      thinkOfPasswd: "想起密码？",
+      agree: "我已同意并阅读",
+      userAgreement: "用户协议",
+      haveAccount: "已有账号？",
+      noAccountText: "您没有账号？",
+      quickFill: "快速填写",
+      quickLoginTip: "点击用户头像快速登录",
+      selectUser: "请选择用户",
+      reg: "注 册",
+      panelAlign: {
+        label: "分栏布局",
+        left: "居左",
+        center: "居中",
+        right: "居右",
+      },
+    },
+    loginForm: {
+      remember: "记住我",
+    },
+    forgetPassword: {
+      title: "忘记密码？",
+      subTitle: "请输入账号并设置新密码",
+      placeholder: "请输入您的电子邮件",
+      submitBtnText: "提交",
+      backBtnText: "返回",
+    },
+    register: {
+      title: "创建账号",
+      subTitle: "欢迎加入我们，请填写以下信息完成注册",
+      placeholder: {
+        username: "请输入账号",
+        password: "请输入密码",
+        confirmPassword: "请再次输入密码",
+        name: "请输入昵称",
+      },
+      rule: {
+        confirmPasswordRequired: "请再次输入密码",
+        passwordMismatch: "两次输入密码不一致!",
+        usernameLength: "长度在 3 到 20 个字符",
+        passwordLength: "密码长度不能小于6位",
+        agreementRequired: "请同意隐私协议",
+      },
+      agreeText: "我同意",
+      privacyPolicy: "《隐私政策》",
+      submitBtnText: "注册",
+      hasAccount: "已有账号？",
+      toLogin: "去登录",
+    },
+    common: {
+      confirm: "确定",
+    },
   },
   en: {
     httpMsg: {
@@ -39,6 +192,163 @@ const messages = {
       requestFailed: "Request failed",
       requestConfigError: "Request configuration error",
     },
+    login: {
+      leftView: {
+        title: "A backend system of beauty and efficiency",
+        subTitle:
+          "Provide secure, efficient, and scalable management solutions to help enterprises digitalize and grow their businesses.",
+      },
+      title: "Welcome back 👋",
+      subTitle: "Enter your account details to start managing your project",
+      versionLabel: "Version",
+      quickSelectAccount: "Quick select account",
+      mobileLogin: "Mobile login",
+      mobileLoginSubTitle: "Enter your mobile number to start managing your projects",
+      mobilePhonePlaceholder: "Mobile number",
+      getSmsCode: "Get code",
+      smsCodeSentMock: "Verification code sent (demo only)",
+      smsCodeRequired: "Enter the 6-digit SMS code",
+      mobileLoginPending: "Mobile login API is not connected yet — UI preview only",
+      backToAccountLogin: "Back",
+      qrLogin: "QR code login",
+      qrLoginTitle: "Welcome back 📱",
+      qrLoginSubTitle: "Scan the QR code with your phone to sign in",
+      qrLoginHint: "After scanning, tap Confirm on your phone to finish signing in",
+      oauthNoticeTitle: "Notice",
+      oauthLoginSuccess: "Signed in with your social account",
+      oauthLoginFailed: "Social sign-in failed. Try username and password.",
+      comingSoon: "Coming soon",
+      accountLoginTab: "Account",
+      quickLoginTab: "Quick login",
+      roles: {
+        super: "Super Admin",
+        admin: "Admin",
+        user: "User",
+      },
+      placeholder: {
+        username: "Please enter account",
+        password: "Please enter password",
+        email: "Please enter email",
+        slider: "Please slide to verify",
+      },
+      email: {
+        required: "Please enter email",
+        invalid: "Invalid email format",
+      },
+      sliderText: "Please slide to verify",
+      sliderSuccessText: "Verification successful",
+      rememberPwd: "Remember password",
+      forgetPwd: "Forgot password",
+      btnText: "Login",
+      backLoginBtnText: "Back to Login",
+      noAccount: "No account yet?",
+      register: "Register",
+      success: {
+        title: "Login successful",
+        message: "Welcome back",
+      },
+      themeToggle: "Theme Switch",
+      languageToggle: "Language Switch",
+      dark: "Dark",
+      light: "Light",
+      auto: "Auto",
+      newPassword: "Please enter new Password",
+      captchaCode: "Please enter Verify Code",
+      captchaClickHint: "Click to refresh captcha",
+      capsLock: "Caps Lock is On",
+      message: {
+        username: {
+          required: "Please enter Username",
+        },
+        password: {
+          required: "Please enter Password",
+          currentRequired: "Please enter your current password",
+          min: "The password cannot be less than 6 characters",
+          confirm: "Please confirm the password again",
+          inconformity: "The two password entries are inconsistent",
+        },
+        captchaCode: {
+          required: "Please enter Verify Code",
+        },
+        mobile: {
+          required: "Please enter mobile number",
+          invalid: "Invalid mobile number format",
+          exist: "Mobile number already exists",
+        },
+        email: {
+          required: "Please enter email",
+          invalid: "Invalid email format",
+          exist: "Email already exists",
+        },
+        name: {
+          required: "Please enter account",
+          invalid: "Invalid account format",
+          min: "Account cannot be less than 2 characters",
+        },
+        agree: {
+          required: "Please agree to the User Agreement",
+        },
+      },
+      oauthTooltip: {
+        wechat: "WeChat",
+        qq: "QQ",
+        github: "GitHub",
+        gitee: "Gitee",
+      },
+      otherLoginMethods: "Other",
+      resetPassword: "Reset password",
+      thinkOfPasswd: "Remember your password?",
+      agree: "I have read and agree to the",
+      userAgreement: "User Agreement",
+      haveAccount: "Already have an account?",
+      noAccountText: "Don't have an account?",
+      quickFill: "Quick fill",
+      quickLoginTip: "Click user avatar to login quickly",
+      selectUser: "Select a user",
+      reg: "Register",
+      panelAlign: {
+        label: "Column layout",
+        left: "Wide illustration",
+        center: "Balanced",
+        right: "Wide form",
+      },
+    },
+    loginForm: {
+      remember: "Remember me",
+    },
+    forgetPassword: {
+      title: "Forgot password?",
+      subTitle: "Enter your username and set a new password",
+      placeholder: "Please enter your email",
+      submitBtnText: "Submit",
+      backBtnText: "Back",
+    },
+    register: {
+      title: "Create account",
+      subTitle:
+        "Welcome to join us, please fill in the following information to complete the registration",
+      placeholder: {
+        username: "Please enter account",
+        password: "Please enter password",
+        confirmPassword: "Please enter password again",
+        name: "Please enter nickname",
+      },
+      rule: {
+        confirmPasswordRequired: "Please enter your password again",
+        passwordMismatch: "The two passwords are inconsistent!",
+        usernameLength: "Length is 3 to 20 characters",
+        passwordLength: "Password length cannot be less than 6 digits",
+        agreementRequired: "Please agree to privacy policy",
+      },
+      agreeText: "I agree",
+      privacyPolicy: "Privacy policy",
+      submitBtnText: "Register",
+      hasAccount: "Already have an account?",
+      toLogin: "To login",
+    },
+    common: {
+      confirm: "Confirm",
+    },
   },
 };
 
@@ -51,6 +361,11 @@ const i18n = createI18n({
 });
 
 export const $t = (key) => i18n.global.t(key);
+
+export const languageOptions = [
+  { value: LanguageEnum.ZH, label: "简体中文" },
+  { value: LanguageEnum.EN, label: "English" },
+];
 
 export function initI18n(app) {
   app.use(i18n);
