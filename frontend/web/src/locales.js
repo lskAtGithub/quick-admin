@@ -174,6 +174,19 @@ const messages = {
     },
     common: {
       confirm: "确定",
+      cancel: "取消",
+      tips: "提示",
+      logoutTips: "确定注销并退出系统吗？",
+    },
+    topBar: {
+      user: {
+        userCenter: "个人中心",
+        logout: "退出登录",
+      },
+    },
+    worktab: {
+      refreshCacheDone: "已刷新并重新加载页面",
+      refreshCacheFail: "刷新缓存失败",
     },
   },
   en: {
@@ -348,6 +361,19 @@ const messages = {
     },
     common: {
       confirm: "Confirm",
+      cancel: "Cancel",
+      tips: "Notice",
+      logoutTips: "Are you sure you want to log out?",
+    },
+    topBar: {
+      user: {
+        userCenter: "Profile",
+        logout: "Log out",
+      },
+    },
+    worktab: {
+      refreshCacheDone: "Page refreshed and reloaded",
+      refreshCacheFail: "Failed to refresh cache",
     },
   },
 };
