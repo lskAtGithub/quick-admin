@@ -9,3 +9,6 @@ export function initStore(app) {
 }
 
 export { useUserStore } from "./modules/user.store";
+export { useSettingStore } from "./modules/setting.store";
+export { useConfigStore } from "./modules/config.store";
+export { useAppStore } from "./modules/app.store";
