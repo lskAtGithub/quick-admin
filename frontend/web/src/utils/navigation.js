@@ -1,7 +1,9 @@
 import { router } from "@/router";
 import i18n, { $t } from "@/locales";
 import AppConfig from "@/config";
-import { useConfigStore } from "@/store";
+import { useConfigStore, useWorktabStore, useSettingStore } from "@/store";
+import { IframeRouteManager } from "@/constants/router";
+import { useCommon } from "@/hooks/core/useCommon";
 
 export const formatMenuTitle = (title) => {
   if (!title) return "";
@@ -65,4 +67,44 @@ export const handleMenuJump = (item, jumpToFirst = false) => {
   if (!firstChild) return router.push(item.path);
   if (firstChild.meta?.link) return openExternalLink(firstChild.meta.link);
   return router.push(firstChild.path);
+};
+
+export const setWorktab = (to) => {
+  const worktabStore = useWorktabStore();
+  const { meta, path, name, params, query } = to;
+  if (meta.isHideTab) return;
+
+  const routeNameStr = name != null ? String(name) : "";
+
+  if (isIframe(path)) {
+    const iframeRoute = IframeRouteManager.getInstance().findByPath(path);
+    if (!iframeRoute?.meta) return;
+    worktabStore.openTab({
+      title: iframeRoute.meta.title,
+      icon: meta.icon,
+      path,
+      name: routeNameStr,
+      keepAlive: meta.keepAlive !== false,
+      params,
+      query,
+    });
+    return;
+  }
+
+  const tabPayload = {
+    title: meta.title || "",
+    icon: meta.icon,
+    path,
+    name: routeNameStr,
+    keepAlive: meta.keepAlive !== false,
+    params,
+    query,
+    fixedTab: meta.fixedTab,
+  };
+
+  if (useSettingStore().showWorkTab || path === useCommon().homePath.value) {
+    worktabStore.openTab(tabPayload);
+  } else {
+    worktabStore.syncCurrentFromRoute(tabPayload);
+  }
 };
