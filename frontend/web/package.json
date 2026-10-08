@@ -16,6 +16,7 @@
     "dayjs": "^1.11.23",
     "dompurify": "^3.4.16",
     "element-plus": "^2.14.7",
+    "mitt": "^3.0.1",
     "nprogress": "^0.2.0",
     "ohash": "^2.0.12",
     "pinia": "^4.0.3",
