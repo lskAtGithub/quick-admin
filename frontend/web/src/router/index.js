@@ -14,4 +14,4 @@ export function initRouter(app) {
   app.use(router);
 }
 
-export const HOME_PAGE_PATH = "/home";
+export { HOME_PAGE_PATH } from "@/constants/router";

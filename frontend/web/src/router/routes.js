@@ -1,3 +1,5 @@
+export { HOME_PAGE_PATH } from "@/constants/router";
+
 export const staticRoutes = [
   {
     path: "/login",
