@@ -1,0 +1,39 @@
+:root {
+  --app-bg: #f5f7fa;
+  --app-box-bg: #ffffff;
+  --app-text: #303133;
+  --app-text-secondary: #909399;
+  --app-border: #e4e7ed;
+  --app-sidebar-bg: #001529;
+  --app-sidebar-text: #ffffff;
+  --app-header-bg: #ffffff;
+  --fa-primary: #4080ff;
+}
+
+html.dark {
+  --app-bg: #14161c;
+  --app-box-bg: #1a1c22;
+  --app-text: #e5eaf0;
+  --app-text-secondary: #9aa4b2;
+  --app-border: #2b2e38;
+  --app-sidebar-bg: #0b0e14;
+  --app-header-bg: #1a1c22;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
+}
