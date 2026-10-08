@@ -1,5 +1,10 @@
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import { useSettingStore } from "@/store/modules/setting.store";
 import { SystemThemeEnum } from "@/enums/appEnum";
+
+NProgress.configure({ showSpinner: false });
+export { NProgress };
 
 const { LIGHT, DARK } = SystemThemeEnum;
 
