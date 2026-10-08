@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import defaultLogoUrl from "@fa_imgs/logo.svg";
+import defaultLogoUrl from "@qa_imgs/logo.svg";
 
 defineOptions({ name: "QaLogo" });
 

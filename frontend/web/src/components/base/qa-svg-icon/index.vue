@@ -1,5 +1,5 @@
 <template>
-  <Icon v-if="icon" :icon="icon" v-bind="bindAttrs" class="fa-svg-icon inline" />
+  <Icon v-if="icon" :icon="icon" v-bind="bindAttrs" class="qa-svg-icon inline" />
 </template>
 
 <script setup>
