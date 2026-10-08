@@ -3,6 +3,7 @@ import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import "@/styles/tailwind.css";
 import "@/styles/index.css";
+import "@/styles/layouts/_layout.scss";
 import "@/styles/animations/_theme-animation.scss";
 import "@/styles/pages/_login.scss";
 import App from "./App.vue";
