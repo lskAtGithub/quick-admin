@@ -1,0 +1,3 @@
+DATETIME_DISPLAY_FMT = "%Y-%m-%d %H:%M:%S"
+DATE_DISPLAY_FMT = "%Y-%m-%d"
+TIME_DISPLAY_FMT = "%H:%M:%S"

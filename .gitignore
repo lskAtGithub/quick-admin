@@ -1,0 +1,16 @@
+/FastApiAdmin
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+
+# Logs
+logs/
+*.log
+
+# Env
+**/env/.env.*
+!**/env/.env.example
