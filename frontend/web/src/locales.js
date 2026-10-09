@@ -177,6 +177,7 @@ const messages = {
       cancel: "取消",
       tips: "提示",
       logoutTips: "确定注销并退出系统吗？",
+      back: "返回",
     },
     menus: {
       home: { title: "首页" },
@@ -216,8 +217,27 @@ const messages = {
       settings: "系统设置",
       user: {
         userCenter: "个人中心",
+        github: "GitHub",
+        gitee: "Gitee",
+        lockScreen: "锁屏",
         logout: "退出登录",
       },
+    },
+    navbar: {
+      lock: "锁定",
+    },
+    lock: {
+      lockScreen: "锁屏",
+      unlock: "点击解锁",
+      placeholder: "请输入锁屏密码",
+      required: "请输入锁屏密码",
+      message: "锁屏密码错误，请重试",
+      backToLogin: "返回登录",
+      entrySystem: "进入系统",
+    },
+    lockScreen: {
+      lockPassword: "锁屏密码",
+      pwdError: "锁屏密码错误",
     },
     worktab: {
       refreshCacheDone: "已刷新并重新加载页面",
@@ -399,6 +419,7 @@ const messages = {
       cancel: "Cancel",
       tips: "Notice",
       logoutTips: "Are you sure you want to log out?",
+      back: "Back",
     },
     menus: {
       home: { title: "Home" },
@@ -438,8 +459,27 @@ const messages = {
       settings: "System settings",
       user: {
         userCenter: "Profile",
+        github: "GitHub",
+        gitee: "Gitee",
+        lockScreen: "Lock screen",
         logout: "Log out",
       },
+    },
+    navbar: {
+      lock: "Lock",
+    },
+    lock: {
+      lockScreen: "Lock screen",
+      unlock: "Click to unlock",
+      placeholder: "Enter lock screen password",
+      required: "Please enter lock screen password",
+      message: "Incorrect lock screen password",
+      backToLogin: "Back to login",
+      entrySystem: "Enter system",
+    },
+    lockScreen: {
+      lockPassword: "Lock password",
+      pwdError: "Incorrect lock screen password",
     },
     worktab: {
       refreshCacheDone: "Page refreshed and reloaded",

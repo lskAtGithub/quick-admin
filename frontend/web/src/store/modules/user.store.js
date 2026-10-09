@@ -18,6 +18,8 @@ export const useUserStore = defineStore(
     const hasGetRoute = ref(false);
     const rememberMe = ref(Auth.getRememberMe());
     const language = ref("zh");
+    const isLock = ref(false);
+    const lockPassword = ref("");
 
     const basicInfo = computed(() => info.value);
 
@@ -27,6 +29,14 @@ export const useUserStore = defineStore(
 
     function setLoginStatus(status) {
       isLogin.value = status;
+    }
+
+    function setLockStatus(status) {
+      isLock.value = status;
+    }
+
+    function setLockPassword(password) {
+      lockPassword.value = password;
     }
 
     function setLanguage(lang) {
@@ -131,6 +141,8 @@ export const useUserStore = defineStore(
       accessToken.value = "";
       refreshToken.value = "";
       prems.value = [];
+      isLock.value = false;
+      lockPassword.value = "";
     }
 
     function clearUserInfo() {
@@ -160,9 +172,13 @@ export const useUserStore = defineStore(
       hasGetRoute,
       rememberMe,
       language,
+      isLock,
+      lockPassword,
       basicInfo,
       setUserInfo,
       setLoginStatus,
+      setLockStatus,
+      setLockPassword,
       setLanguage,
       setToken,
       setPermissions,

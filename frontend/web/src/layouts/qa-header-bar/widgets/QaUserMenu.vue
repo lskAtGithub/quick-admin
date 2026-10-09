@@ -26,7 +26,7 @@
           <img
             v-else
             class="size-full rounded-full block"
-            src="@imgs/user/avatar.webp"
+            src="@/assets/images/user/avatar.webp"
             alt="avatar"
           />
           <!-- 顶栏头像右下角在线状态 -->
@@ -45,7 +45,7 @@
             <img
               v-else
               class="w-10 h-10 mr-3 ml-0 overflow-hidden rounded-full float-left"
-              src="@imgs/user/avatar.webp"
+              src="@/assets/images/user/avatar.webp"
               alt=""
             />
             <div class="w-[calc(100%-60px)] h-full">
@@ -62,6 +62,27 @@
             >
               <QaSvgIcon icon="ri:user-3-line" class="mr-2 text-base" />
               <span class="text-sm">{{ $t("topBar.user.userCenter") }}</span>
+            </li>
+            <li
+              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
+              @click="toGithub()"
+            >
+              <QaSvgIcon icon="ri:github-line" class="mr-2 text-base" />
+              <span class="text-sm">{{ $t("topBar.user.github") }}</span>
+            </li>
+            <li
+              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
+              @click="toGitee()"
+            >
+              <QaSvgIcon icon="ri:git-branch-line" class="mr-2 text-base" />
+              <span class="text-sm">{{ $t("topBar.user.gitee") }}</span>
+            </li>
+            <li
+              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
+              @click="lockScreen()"
+            >
+              <QaSvgIcon icon="ri:lock-line" class="mr-2 text-base" />
+              <span class="text-sm">{{ $t("topBar.user.lockScreen") }}</span>
             </li>
             <div class="w-full h-px my-2 bg-g-300/80"></div>
             <li
@@ -82,6 +103,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/store";
+import { WEB_LINKS, mittBus } from "@/utils";
 
 defineOptions({ name: "QaUserMenu" });
 
@@ -105,6 +127,18 @@ const displayEmail = computed(() => userInfo.value?.email || "");
 
 function goPage(path) {
   router.push(path);
+}
+
+function toGithub() {
+  window.open(WEB_LINKS.GITHUB);
+}
+
+function toGitee() {
+  window.open(WEB_LINKS.GITEE);
+}
+
+function lockScreen() {
+  mittBus.emit("openLockScreen");
 }
 
 function handleLogout() {
