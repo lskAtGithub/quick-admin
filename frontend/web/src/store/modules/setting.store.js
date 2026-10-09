@@ -19,7 +19,9 @@ import {
   applyTheme,
   toggleDarkMode,
   toggleSidebarColor,
+  NProgress,
 } from "@/utils/ui";
+import { createSettingsResetPatch, getSettingsFilter } from "@/utils/settings";
 import { formatToDate } from "@/utils/date";
 import { StorageConfig } from "@/utils/storage";
 
@@ -112,6 +114,11 @@ export const useSettingStore = defineStore(
     const isShowFireworks = computed(() => festivalDate.value !== formatToDate(new Date()));
 
     const settingsMap = {
+      menuType, menuOpenWidth, menuOpen, dualMenuShowText, menuThemeType, systemThemeColor,
+      showMenuButton, showFastEnter, showRefreshButton, showCrumbs, showWorkTab, showLanguage,
+      showNprogress, showSettingGuide, showFestivalText, watermarkVisible, autoClose, uniqueOpened,
+      colorWeak, boxBorderMode, pageTransition, tabStyle, customRadius, containerWidth,
+      language, pageSwitchingAnimation,
       showTagsView,
       showAppLogo,
       showWatermark,
@@ -158,9 +165,17 @@ export const useSettingStore = defineStore(
       { immediate: true },
     );
 
-    watch(grayMode, (v) => {
-      document.documentElement.style.filter = v ? "grayscale(100%)" : "";
+    watch([grayMode, colorWeak], ([gray, weak]) => {
+      document.documentElement.style.filter = getSettingsFilter(gray, weak);
     }, { immediate: true });
+
+    watch(boxBorderMode, (border) => {
+      document.documentElement.setAttribute("data-box-mode", border ? "border-mode" : "shadow-mode");
+    }, { immediate: true });
+
+    watch(showNprogress, (visible) => {
+      if (!visible) NProgress.done();
+    });
 
     watch(customRadius, (v) => {
       document.documentElement.style.setProperty("--custom-radius", `${v}rem`);
@@ -270,23 +285,10 @@ export const useSettingStore = defineStore(
     const updatePageSwitchingAnimation = (v) => { pageSwitchingAnimation.value = v; };
 
     function resetSettings() {
-      showTagsView.value = defaultSettings.showTagsView;
-      showAppLogo.value = defaultSettings.showAppLogo;
-      showWatermark.value = defaultSettings.showWatermark;
-      showSettings.value = defaultSettings.showSettings;
-      showGuide.value = defaultSettings.showGuide;
-      showMenuSearch.value = defaultSettings.showMenuSearch;
-      showFullscreen.value = defaultSettings.showFullscreen;
-      showSizeSelect.value = defaultSettings.showSizeSelect;
-      showLangSelect.value = defaultSettings.showLangSelect;
-      showNotification.value = defaultSettings.showNotification;
-      sidebarColorScheme.value = defaultSettings.sidebarColorScheme;
-      layout.value = defaultSettings.layout;
-      themeColor.value = defaultSettings.themeColor;
-      theme.value = defaultSettings.theme;
-      grayMode.value = defaultSettings.grayMode;
-      userEnableAi.value = defaultSettings.aiEnabled;
-      pageSwitchingAnimation.value = defaultSettings.pageSwitchingAnimation;
+      const patch = createSettingsResetPatch(defaultSettings);
+      Object.entries(patch).forEach(([key, value]) => {
+        if (settingsMap[key]) settingsMap[key].value = value;
+      });
     }
 
     return {
@@ -407,7 +409,8 @@ export const useSettingStore = defineStore(
         "showFullscreen", "showSizeSelect", "showLangSelect", "showAppLogo",
         "showWatermark", "watermarkVisible", "pageTransition", "tabStyle",
         "boxBorderMode", "containerWidth", "customRadius", "grayMode",
-        "userEnableAi", "pageSwitchingAnimation",
+        "userEnableAi", "pageSwitchingAnimation", "showSettings", "showRefreshButton",
+        "showNprogress", "uniqueOpened", "colorWeak", "dualMenuShowText",
       ],
     },
   },
