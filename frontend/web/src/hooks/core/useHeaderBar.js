@@ -76,7 +76,7 @@ export function useHeaderBar() {
     () => isFeatureEnabled("sizeSelect") && showSizeSelect.value,
   );
 
-  const shouldShowSettings = computed(() => isFeatureEnabled("settings"));
+  const shouldShowSettings = computed(() => isFeatureEnabled("settings") && settingStore.showSettings);
 
   const shouldShowThemeToggle = computed(() => isFeatureEnabled("themeToggle"));
 

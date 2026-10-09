@@ -92,6 +92,15 @@
           :icon="isDark ? 'ri:sun-fill' : 'ri:moon-line'"
         />
 
+        <QaIconButton
+          v-if="shouldShowSettings"
+          icon="ri:settings-3-line"
+          class="settings-btn"
+          :title="t('topBar.settings')"
+          :aria-label="t('topBar.settings')"
+          @click="settingStore.showSettingsPanel()"
+        />
+
         <!-- 用户头像、菜单 -->
         <QaUserMenu />
       </div>
@@ -135,7 +144,7 @@ const headerSystemName = computed(() => {
   return AppConfig.systemInfo.name;
 });
 
-// 顶部栏功能配置（A 轮裁切：横向/混合菜单、快速入口、搜索、通知、设置、尺寸、页签）
+// 顶部栏功能配置
 const {
   shouldShowMenuButton,
   shouldShowRefreshButton,
@@ -143,6 +152,7 @@ const {
   shouldShowFullscreen,
   shouldShowLanguage,
   shouldShowThemeToggle,
+  shouldShowSettings,
 } = useHeaderBar();
 
 const { menuOpen, menuType, isDark, tabStyle, showAppLogo } = storeToRefs(settingStore);

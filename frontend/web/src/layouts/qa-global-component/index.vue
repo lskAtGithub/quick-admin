@@ -1,13 +1,14 @@
-<!--
-  全局浮层层组件（占位精简）
-  A 轮仅保留出口，后续轮次接入跨页面全局组件（Toast、Modal、新手引导等）。
--->
 <template>
   <div class="qa-global-component">
+    <component v-for="config in enabledComponents" :key="config.key" :is="config.component" />
     <slot></slot>
   </div>
 </template>
 
 <script setup>
+import { computed } from "vue";
+import { getEnabledGlobalComponents } from "@/config/modules/component";
+
 defineOptions({ name: "QaGlobalComponent" });
+const enabledComponents = computed(() => getEnabledGlobalComponents());
 </script>
