@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4">
-    <QaCardBanner title="用户管理">
+  <div class="flex h-full flex-col p-4">
+    <QaCardBanner title="用户管理" class="flex flex-1 flex-col overflow-hidden">
       <template #header>
         <div class="flex items-center justify-between">
           <span class="text-lg font-bold">用户列表</span>
@@ -11,7 +11,7 @@
         </div>
       </template>
 
-      <div class="mb-4 flex items-center gap-3">
+      <div class="mb-4 flex flex-wrap items-center gap-3">
         <ElInput v-model="searchKeyword" placeholder="搜索用户名" clearable style="width: 200px" />
         <ElSelect v-model="searchStatus" placeholder="状态" clearable style="width: 120px">
           <ElOption label="启用" value="1" />
@@ -21,27 +21,29 @@
         <ElButton @click="handleReset">重置</ElButton>
       </div>
 
-      <ElTable :data="tableData" border stripe>
-        <ElTableColumn prop="id" label="ID" width="80" />
-        <ElTableColumn prop="username" label="用户名" width="120" />
-        <ElTableColumn prop="nickname" label="昵称" width="120" />
-        <ElTableColumn prop="deptName" label="部门" width="150" />
-        <ElTableColumn prop="roleName" label="角色" width="150" />
-        <ElTableColumn prop="phone" label="手机号" width="130" />
-        <ElTableColumn prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <ElTag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ row.status === 1 ? "启用" : "禁用" }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作" fixed="right" width="200">
-          <template #default="{ row }">
-            <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-            <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
-          </template>
-        </ElTableColumn>
-      </ElTable>
+      <div class="flex-1 overflow-auto">
+        <ElTable :data="tableData" border stripe class="w-full">
+          <ElTableColumn prop="id" label="ID" width="80" />
+          <ElTableColumn prop="username" label="用户名" width="120" />
+          <ElTableColumn prop="nickname" label="昵称" width="120" />
+          <ElTableColumn prop="deptName" label="部门" width="150" />
+          <ElTableColumn prop="roleName" label="角色" width="150" />
+          <ElTableColumn prop="phone" label="手机号" width="130" />
+          <ElTableColumn prop="status" label="状态" width="100">
+            <template #default="{ row }">
+              <ElTag :type="row.status === 1 ? 'success' : 'danger'">
+                {{ row.status === 1 ? "启用" : "禁用" }}
+              </ElTag>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="操作" fixed="right" width="200">
+            <template #default="{ row }">
+              <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
+              <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+            </template>
+          </ElTableColumn>
+        </ElTable>
+      </div>
 
       <div class="mt-4 flex justify-end">
         <!-- eslint-disable-next-line vue/no-v-model-argument -->
