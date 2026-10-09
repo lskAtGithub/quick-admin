@@ -2,17 +2,18 @@
 <template>
   <div id="app-scroll-main" class="layout-content" :style="containerStyle">
     <RouterView v-if="isRefresh" v-slot="{ Component, route: curRoute }" :style="contentStyle">
-      <Transition :name="actualTransition" mode="out-in">
-        <div v-if="Component" class="route-view-shell flex min-h-0 min-w-0 w-full flex-1 flex-col">
+      <div class="route-view-shell flex min-h-0 min-w-0 w-full flex-1 flex-col">
+        <Transition :name="actualTransition" mode="out-in">
           <KeepAlive :include="keepAliveInclude" :exclude="keepAliveExclude">
             <component
+              v-if="Component"
               class="qa-page-view min-h-0 min-w-0 w-full flex-1"
               :is="Component"
               :key="routeViewCacheKey(curRoute)"
             />
           </KeepAlive>
-        </div>
-      </Transition>
+        </Transition>
+      </div>
     </RouterView>
 
     <!-- 返回顶部：宽屏滚动容器是 #app-content；窄屏改为文档滚动，target 置空 -->
