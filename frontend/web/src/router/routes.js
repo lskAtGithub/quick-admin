@@ -52,6 +52,24 @@ export const staticRoutes = [
         component: () => import("@views/fastlink/current/profile.vue"),
         meta: { title: "个人中心", icon: "ri:user-line", keepAlive: true, isHide: true },
       },
+      {
+        path: "system/user",
+        name: "SystemUser",
+        component: () => import("@views/module_system/user/index.vue"),
+        meta: { title: "用户管理", icon: "ri:user-line", keepAlive: true },
+      },
+      {
+        path: "system/role",
+        name: "SystemRole",
+        component: () => import("@views/module_system/role/index.vue"),
+        meta: { title: "角色管理", icon: "ri:team-line", keepAlive: true },
+      },
+      {
+        path: "system/menu",
+        name: "SystemMenu",
+        component: () => import("@views/module_system/menu/index.vue"),
+        meta: { title: "菜单管理", icon: "ri:menu-line", keepAlive: true },
+      },
     ],
   },
   {
