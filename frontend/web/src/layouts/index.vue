@@ -20,6 +20,7 @@
       <div id="app-header">
         <QaHeaderBar />
       </div>
+      <QaWorkTab />
       <div id="app-content">
         <QaPageContent />
       </div>

@@ -47,7 +47,7 @@ const defaults = {
 };
 
 const pendingKeys = [
-  "showWorkTab", "tabStyle", "showFastEnter", "showMenuSearch", "showSizeSelect",
+  "showFastEnter", "showMenuSearch", "showSizeSelect",
   "showNotification", "watermarkVisible", "showGuide", "userEnableAi",
 ];
 
@@ -59,7 +59,7 @@ test("首轮已接入的基础设置均可用，未知字段不可用", () => {
   for (const key of [
     "showMenuButton", "showRefreshButton", "showCrumbs", "showLanguage", "showFullscreen",
     "showAppLogo", "showNprogress", "uniqueOpened", "menuOpenWidth", "colorWeak",
-    "grayMode", "pageTransition", "customRadius",
+    "grayMode", "pageTransition", "customRadius", "showWorkTab", "tabStyle",
   ]) assert.equal(settings.isSettingAvailable?.(key), true, key);
   assert.equal(settings.isSettingAvailable?.("unknown"), false);
 });
