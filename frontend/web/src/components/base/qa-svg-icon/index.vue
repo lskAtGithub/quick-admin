@@ -16,8 +16,5 @@ defineProps({
 
 const attrs = useAttrs();
 
-const bindAttrs = computed(() => ({
-  class: attrs.class || "",
-  style: attrs.style || "",
-}));
+const bindAttrs = computed(() => attrs);
 </script>
