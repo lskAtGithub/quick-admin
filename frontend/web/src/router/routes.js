@@ -46,6 +46,12 @@ export const staticRoutes = [
         component: () => import("@views/home/index.vue"),
         meta: { title: "menus.home.title", icon: "ri:home-smile-2-line", keepAlive: true, fixedTab: true },
       },
+      {
+        path: "profile",
+        name: "FastlinkProfile",
+        component: () => import("@views/fastlink/current/profile.vue"),
+        meta: { title: "个人中心", icon: "ri:user-line", keepAlive: true, isHide: true },
+      },
     ],
   },
   {
