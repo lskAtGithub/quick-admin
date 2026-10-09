@@ -218,7 +218,6 @@ const messages = {
       user: {
         userCenter: "个人中心",
         github: "GitHub",
-        gitee: "Gitee",
         lockScreen: "锁屏",
         logout: "退出登录",
       },
@@ -460,7 +459,6 @@ const messages = {
       user: {
         userCenter: "Profile",
         github: "GitHub",
-        gitee: "Gitee",
         lockScreen: "Lock screen",
         logout: "Log out",
       },

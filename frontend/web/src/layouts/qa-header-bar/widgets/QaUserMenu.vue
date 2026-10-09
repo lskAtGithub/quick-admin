@@ -14,21 +14,9 @@
       popper-style="padding: 5px 16px;"
     >
       <template #reference>
-        <div
-          class="qa-user-menu__avatar-ref mr-5 max-sm:mr-4 cursor-pointer flex size-8.5 max-sm:w-6.5 max-sm:h-6.5 shrink-0 items-center justify-center"
-        >
-          <img
-            v-if="userAvatar"
-            class="size-full rounded-full object-cover block"
-            :src="userAvatar"
-            alt="avatar"
-          />
-          <img
-            v-else
-            class="size-full rounded-full block"
-            src="@/assets/images/user/avatar.webp"
-            alt="avatar"
-          />
+        <div class="qa-user-menu__avatar-ref mr-5 max-sm:mr-4 cursor-pointer flex size-8.5 max-sm:w-6.5 max-sm:h-6.5 shrink-0 items-center justify-center">
+          <img v-if="userAvatar" class="size-full rounded-full object-cover block" :src="userAvatar" alt="avatar" />
+          <img v-else class="size-full rounded-full block" src="@/assets/images/user/avatar.webp" alt="avatar" />
           <!-- 顶栏头像右下角在线状态 -->
           <span class="qa-user-menu__online-dot" aria-hidden="true" />
         </div>
@@ -36,18 +24,8 @@
       <template #default>
         <div class="pt-3">
           <div class="flex items-center pb-1 px-0">
-            <img
-              v-if="userAvatar"
-              class="w-10 h-10 mr-3 ml-0 overflow-hidden rounded-full float-left object-cover"
-              :src="userAvatar"
-              alt=""
-            />
-            <img
-              v-else
-              class="w-10 h-10 mr-3 ml-0 overflow-hidden rounded-full float-left"
-              src="@/assets/images/user/avatar.webp"
-              alt=""
-            />
+            <img v-if="userAvatar" class="w-10 h-10 mr-3 ml-0 overflow-hidden rounded-full float-left object-cover" :src="userAvatar" alt="" />
+            <img v-else class="w-10 h-10 mr-3 ml-0 overflow-hidden rounded-full float-left" src="@/assets/images/user/avatar.webp" alt="" />
             <div class="w-[calc(100%-60px)] h-full">
               <span class="block text-sm font-medium text-g-800 truncate">
                 {{ displayName }}
@@ -56,40 +34,24 @@
             </div>
           </div>
           <ul class="py-4 mt-3 border-t border-g-300/80">
-            <li
-              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
-              @click="goPage('/profile')"
-            >
+            <li class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10" @click="goPage('/profile')">
               <QaSvgIcon icon="ri:user-3-line" class="mr-2 text-base" />
-              <span class="text-sm">{{ $t("topBar.user.userCenter") }}</span>
+              <span class="text-sm">{{ $t('topBar.user.userCenter') }}</span>
             </li>
-            <li
-              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
-              @click="toGithub()"
-            >
+            <li class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10" @click="toGithub()">
               <QaSvgIcon icon="ri:github-line" class="mr-2 text-base" />
-              <span class="text-sm">{{ $t("topBar.user.github") }}</span>
+              <span class="text-sm">{{ $t('topBar.user.github') }}</span>
             </li>
-            <li
-              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
-              @click="toGitee()"
-            >
-              <QaSvgIcon icon="ri:git-branch-line" class="mr-2 text-base" />
-              <span class="text-sm">{{ $t("topBar.user.gitee") }}</span>
-            </li>
-            <li
-              class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10"
-              @click="lockScreen()"
-            >
+            <li class="flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--el-color-primary)/10" @click="lockScreen()">
               <QaSvgIcon icon="ri:lock-line" class="mr-2 text-base" />
-              <span class="text-sm">{{ $t("topBar.user.lockScreen") }}</span>
+              <span class="text-sm">{{ $t('topBar.user.lockScreen') }}</span>
             </li>
             <div class="w-full h-px my-2 bg-g-300/80"></div>
             <li
               class="flex p-2 select-none rounded-md cursor-pointer last:mb-0 justify-center mt-5 mb-0 py-1.5 text-xs border border-g-400 hover:text-(--el-color-danger) hover:border-(--el-color-danger-light-3)"
               @click="handleLogout"
             >
-              {{ $t("topBar.user.logout") }}
+              {{ $t('topBar.user.logout') }}
             </li>
           </ul>
         </div>
@@ -99,13 +61,13 @@
 </template>
 
 <script setup>
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { ElMessageBox } from "element-plus";
-import { useUserStore } from "@/store";
-import { WEB_LINKS, mittBus } from "@/utils";
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { ElMessageBox } from 'element-plus';
+import { useUserStore } from '@/store';
+import { WEB_LINKS, mittBus } from '@/utils';
 
-defineOptions({ name: "QaUserMenu" });
+defineOptions({ name: 'QaUserMenu' });
 
 const router = useRouter();
 const { t } = useI18n();
@@ -116,14 +78,12 @@ const userMenuPopover = ref();
 
 const userAvatar = computed(() => {
   const a = userInfo.value?.avatar?.trim();
-  return a || "";
+  return a || '';
 });
 
-const displayName = computed(
-  () => userInfo.value?.name || userInfo.value?.username || "—",
-);
+const displayName = computed(() => userInfo.value?.name || userInfo.value?.username || '—');
 
-const displayEmail = computed(() => userInfo.value?.email || "");
+const displayEmail = computed(() => userInfo.value?.email || '');
 
 function goPage(path) {
   router.push(path);
@@ -138,17 +98,17 @@ function toGitee() {
 }
 
 function lockScreen() {
-  mittBus.emit("openLockScreen");
+  mittBus.emit('openLockScreen');
 }
 
 function handleLogout() {
   closeUserMenu();
   setTimeout(async () => {
     try {
-      await ElMessageBox.confirm(t("common.logoutTips"), t("common.tips"), {
-        confirmButtonText: t("common.confirm"),
-        cancelButtonText: t("common.cancel"),
-        customClass: "login-out-dialog",
+      await ElMessageBox.confirm(t('common.logoutTips'), t('common.tips'), {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        customClass: 'login-out-dialog'
       });
       await userStore.logout();
     } catch {
