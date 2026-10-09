@@ -3,7 +3,7 @@ import { MenuTypeEnum } from "../enums/appEnum.js";
 export const AVAILABLE_MENU_TYPES = Object.freeze([MenuTypeEnum.LEFT]);
 
 export const PENDING_SETTING_KEYS = Object.freeze([
-  "showWorkTab", "tabStyle", "showFastEnter", "showMenuSearch", "showSizeSelect",
+  "showFastEnter", "showMenuSearch", "showSizeSelect",
   "showNotification", "watermarkVisible", "showGuide", "userEnableAi",
 ]);
 
