@@ -7,6 +7,9 @@ import { useCommon } from "@/hooks/core/useCommon";
 
 export const formatMenuTitle = (title) => {
   if (!title) return "";
+  // 始终读取一次 locale，确保模板渲染时建立对语言切换的响应式依赖
+  const _locale = i18n.global.locale.value;
+  void _locale;
   if (title.startsWith("menus.")) {
     if (i18n.global.te(title)) return $t(title);
     return title.split(".").pop() || title;

@@ -5,6 +5,7 @@ export const HOME_PAGE_PATH = "/home";
 export const ROOT_LAYOUT_ROUTE_NAME = "RootLayout";
 export const HOME_ROUTE_NAME = "Home";
 export const ROUTE_COMPONENT_LAYOUT = "/index/index";
+export const ROUTE_PATH_LOGIN = "/login";
 export const ROUTE_PATH_LOGIN_ALT = "/auth/login";
 
 export const HOME_MENU_META = {

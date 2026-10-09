@@ -4,16 +4,17 @@
  * - beforeEach：登录校验、动态路由加载、权限检查、404 回落
  * - afterEach：标签栏同步、页面标题、滚动复位、NProgress 关闭
  */
-import { ref } from "vue";
-import { useUserStore, useMenuStore, useWorktabStore } from "@/store";
-import { IframeRouteManager, ROUTE_PATH_LOGIN_ALT, HOME_PAGE_PATH } from "@/constants/router";
-import { setPageTitle, setWorktab } from "@/utils/navigation";
-import { MenuProcessor } from "./menu-processor";
-import { NProgress } from "@/utils/ui";
-import { Auth } from "@/utils/auth";
-import { isHttpError, ApiStatus } from "@/utils/request";
-import { refreshState } from "./refresh";
-import { getMainScrollEl } from "@/hooks/core/useCommon";
+import { ref } from 'vue';
+import { useUserStore, useMenuStore, useWorktabStore, useSettingStore } from '@/store';
+import { IframeRouteManager, ROUTE_PATH_LOGIN_ALT, HOME_PAGE_PATH, ROUTE_PATH_LOGIN } from '@/constants/router';
+import { STATIC_MENU_LIST } from '@/constants/menu';
+import { setPageTitle, setWorktab } from '@/utils/navigation';
+import { MenuProcessor } from './menu-processor';
+import { NProgress } from '@/utils/ui';
+import { Auth } from '@/utils/auth';
+import { isHttpError, ApiStatus } from '@/utils/request';
+import { refreshState } from './refresh';
+import { getMainScrollEl } from '@/hooks/core/useCommon';
 
 const globalLoading = ref(false);
 
@@ -28,7 +29,7 @@ function isAnonymousPublicPath(to) {
 }
 
 function isLoginRoute(to) {
-  return to.path === "/login" || to.path === ROUTE_PATH_LOGIN_ALT;
+  return to.path === ROUTE_PATH_LOGIN || to.path === ROUTE_PATH_LOGIN_ALT;
 }
 
 // ──────── 前置守卫 ────────
@@ -36,35 +37,41 @@ function isLoginRoute(to) {
 function setupBeforeEachGuard(routerInstance) {
   routerInstance.beforeEach(async (to) => {
     if (globalLoading.value) globalLoading.value = false;
-    NProgress.start();
+    if (useSettingStore().showNprogress) NProgress.start();
 
-    if (checkStorageHealth()) {
-      await handleStorageFailure();
-      return "/login";
+    // 免鉴权开发态：若菜单尚未被后端列表覆盖，则填充默认静态菜单，保证侧边栏有“首页”。
+    if (useMenuStore().menuList.length === 0) {
+      useMenuStore().setMenuList(STATIC_MENU_LIST);
     }
 
-    if (!(await handleLoginStatus(to))) {
-      return isLoginRoute(to) ? true : "/login";
-    }
+    // 暂时跳过鉴权：未登录也直接放行到目标路由（默认回落到 /home）
+    // if (checkStorageHealth()) {
+    //   await handleStorageFailure();
+    //   return ROUTE_PATH_LOGIN;
+    // }
 
-    if (refreshState.routeInitFailed && !isAnonymousPublicPath(to)) {
-      return "/500";
-    }
+    // if (!(await handleLoginStatus(to))) {
+    //   return isLoginRoute(to) ? true : ROUTE_PATH_LOGIN;
+    // }
 
-    if (!refreshState.dynamicRoutesRegistered && !isAnonymousPublicPath(to)) {
-      if (refreshState.pendingLoading) {
-        return { path: HOME_PAGE_PATH, replace: true };
-      }
-      const redirect = await handleDynamicRoutes(to);
-      if (redirect) return redirect;
-      refreshState.dynamicRoutesRegistered = true;
+    // if (refreshState.routeInitFailed && !isAnonymousPublicPath(to)) {
+    //   return '/500';
+    // }
 
-      if (to.matched.some((r) => r.name === "CatchAll404")) {
-        return { path: to.path, replace: true };
-      }
-    }
+    // if (!refreshState.dynamicRoutesRegistered && !isAnonymousPublicPath(to)) {
+    //   if (refreshState.pendingLoading) {
+    //     return { path: HOME_PAGE_PATH, replace: true };
+    //   }
+    //   const redirect = await handleDynamicRoutes(to);
+    //   if (redirect) return redirect;
+    //   refreshState.dynamicRoutesRegistered = true;
 
-    if (to.path === "/") {
+    //   if (to.matched.some((r) => r.name === 'CatchAll404')) {
+    //     return { path: to.path, replace: true };
+    //   }
+    // }
+
+    if (to.path === '/') {
       return { path: HOME_PAGE_PATH, replace: true };
     }
   });
@@ -105,7 +112,7 @@ async function handleDynamicRoutes(to) {
 
     useMenuStore().setMenuList(menuList);
 
-    const { RouteRegistry } = await import("./route-loader");
+    const { RouteRegistry } = await import('./route-loader');
     const routeRegistry = new RouteRegistry(router);
     routeRegistry.register(menuList);
 
@@ -115,11 +122,7 @@ async function handleDynamicRoutes(to) {
 
     IframeRouteManager.getInstance().save();
 
-    const { path: safePath, hasPermission } = RoutePermissionValidator.validatePath(
-      to.path,
-      menuList,
-      HOME_PAGE_PATH
-    );
+    const { path: safePath, hasPermission } = RoutePermissionValidator.validatePath(to.path, menuList, HOME_PAGE_PATH);
 
     if (!hasPermission) {
       console.warn(`[路由守卫] 无权限访问: ${to.path}，重定向至首页`);
@@ -131,16 +134,13 @@ async function handleDynamicRoutes(to) {
 
     return undefined;
   } catch (error) {
-    console.error("[路由守卫] 路由初始化失败:", error);
-    if (
-      isHttpError(error) &&
-      (error.code === ApiStatus.unauthorized || error.code === ApiStatus.forbidden)
-    ) {
+    console.error('[路由守卫] 路由初始化失败:', error);
+    if (isHttpError(error) && [ApiStatus.unauthorized, ApiStatus.forbidden].includes(error.code)) {
       refreshState.dynamicRoutesRegistered = false;
-      return "/login";
+      return ROUTE_PATH_LOGIN;
     }
     refreshState.routeInitFailed = true;
-    return "/500";
+    return '/500';
   } finally {
     refreshState.pendingLoading = false;
   }
@@ -150,14 +150,14 @@ function repairDynamicRoutesIfMenuEmpty() {
   const menuStore = useMenuStore();
   const removeRouteFns = menuStore.removeRouteFns;
   if (menuStore.menuList.length === 0 && removeRouteFns.length > 0) {
-    console.warn("[路由守卫] 检测到菜单为空但路由已注册，尝试恢复状态");
+    console.warn('[路由守卫] 检测到菜单为空但路由已注册，尝试恢复状态');
   }
 }
 
 function checkStorageHealth() {
   try {
-    const testKey = "__storage_test__";
-    localStorage.setItem(testKey, "1");
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, '1');
     localStorage.removeItem(testKey);
     return false;
   } catch {
@@ -174,16 +174,16 @@ async function handleStorageFailure() {
 // ──────── 权限校验 ────────
 
 export class RoutePermissionValidator {
-  static SHELL_SEGMENTS = new Set(["home", "profile", "changelog", "dashboard"]);
+  static SHELL_SEGMENTS = new Set(['home', 'profile', 'changelog', 'dashboard']);
 
   static hasPermission(targetPath, menuList) {
-    if (targetPath === "/") return true;
+    if (targetPath === '/') return true;
     if (this.isShellPath(targetPath)) return true;
     return this.matchRoute(targetPath, menuList);
   }
 
   static isShellPath(targetPath) {
-    const firstSegment = targetPath.split("/").filter(Boolean)[0] ?? "";
+    const firstSegment = targetPath.split('/').filter(Boolean)[0] ?? '';
     return this.SHELL_SEGMENTS.has(firstSegment);
   }
 
@@ -191,32 +191,25 @@ export class RoutePermissionValidator {
     if (!Array.isArray(routes) || routes.length === 0) return false;
     for (const route of routes) {
       if (!route.path) continue;
-      const routePath = route.path.startsWith("/") ? route.path : `/${route.path}`;
-      if (
-        routePath === targetPath ||
-        this.isDynamicRouteMatch(targetPath, routePath) ||
-        targetPath.startsWith(`${routePath}/`)
-      )
-        return true;
+      const routePath = route.path.startsWith('/') ? route.path : `/${route.path}`;
+      if (routePath === targetPath || this.isDynamicRouteMatch(targetPath, routePath) || targetPath.startsWith(`${routePath}/`)) return true;
       if (route.children?.length && this.matchRoute(targetPath, route.children)) return true;
     }
     return false;
   }
 
   static isDynamicRouteMatch(targetPath, routePath) {
-    if (!routePath.includes(":")) return false;
+    if (!routePath.includes(':')) return false;
     const pattern = routePath
-      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-      .replace(/:([^/]+)/g, "[^/]+")
-      .replace(/\\\*/g, ".*");
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      .replace(/:([^/]+)/g, '[^/]+')
+      .replace(/\\\*/g, '.*');
     return new RegExp(`^${pattern}$`).test(targetPath);
   }
 
-  static validatePath(targetPath, menuList, homePath = "/") {
+  static validatePath(targetPath, menuList, homePath = '/') {
     const hasPermission = this.hasPermission(targetPath, menuList);
-    return hasPermission
-      ? { path: targetPath, hasPermission: true }
-      : { path: homePath, hasPermission: false };
+    return hasPermission ? { path: targetPath, hasPermission: true } : { path: homePath, hasPermission: false };
   }
 }
 
