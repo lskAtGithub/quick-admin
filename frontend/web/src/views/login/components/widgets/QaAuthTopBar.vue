@@ -112,10 +112,9 @@ import { useConfigStore, useSettingStore, useUserStore } from "@/store";
 import { themeAnimation } from "@/utils/ui";
 import { languageOptions } from "@/locales";
 import AppConfig from "@/config";
+import { DEFAULT_APP_VERSION } from "@/constants/login";
 
 defineOptions({ name: "QaAuthTopBar" });
-
-const DEFAULT_APP_VERSION = "3.0.0";
 
 const props = defineProps({
   panelAlign: { type: String, default: null },

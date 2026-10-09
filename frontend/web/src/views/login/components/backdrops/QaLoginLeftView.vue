@@ -77,6 +77,7 @@
 
 <script setup>
 import AppConfig from "@/config";
+import { DEFAULT_APP_VERSION } from "@/constants/login";
 import loginIcon from "@qa_imgs/background.svg";
 import { useConfigStore } from "@/store/modules/config.store";
 import { themeAnimation } from "@/utils/ui";
@@ -96,7 +97,6 @@ const siteTitle = computed(
   () => configStore.configData?.sys_name?.config_value?.trim() || AppConfig.systemInfo.name
 );
 
-const DEFAULT_APP_VERSION = "3.0.0";
 const displayVersion = computed(() => {
   const raw = configStore.configData?.version?.config_value?.trim();
   const ver = raw || DEFAULT_APP_VERSION;
@@ -222,68 +222,44 @@ $bg-mix-light-7: color-mix(in srgb, $primary-light-7 80%, $main-bg);
     }
 
     // 动画 mixin
-    @mixin fadeAnimation($direction: "", $rotation: 0deg) {
-      from {
-        opacity: 0;
+    @mixin fadeAnimation($name, $direction: "", $rotation: 0deg) {
+      @keyframes #{$name} {
+        from {
+          opacity: 0;
 
-        @if $direction == "up" {
-          transform: translateY(30px) rotate($rotation);
-        } @else if $direction == "down" {
-          transform: translateY(-30px) rotate($rotation);
-        } @else if $direction == "left" {
-          transform: translateX(-30px) rotate($rotation);
-        } @else if $direction == "right" {
-          transform: translateX(30px) rotate($rotation);
+          @if $direction == "up" {
+            transform: translateY(30px) rotate($rotation);
+          } @else if $direction == "down" {
+            transform: translateY(-30px) rotate($rotation);
+          } @else if $direction == "left" {
+            transform: translateX(-30px) rotate($rotation);
+          } @else if $direction == "right" {
+            transform: translateX(30px) rotate($rotation);
+          }
         }
-      }
 
-      to {
-        opacity: 1;
+        to {
+          opacity: 1;
 
-        @if $direction == "up" or $direction == "down" {
-          transform: translateY(0) rotate($rotation);
-        } @else {
-          transform: translateX(0) rotate($rotation);
+          @if $direction == "up" or $direction == "down" {
+            transform: translateY(0) rotate($rotation);
+          } @else {
+            transform: translateX(0) rotate($rotation);
+          }
         }
       }
     }
 
     // 动画定义
-    @keyframes fadeInUp {
-      @include fadeAnimation("up");
-    }
-
-    @keyframes fadeInDown {
-      @include fadeAnimation("down");
-    }
-
-    @keyframes fadeInLeft {
-      @include fadeAnimation("left");
-    }
-
-    @keyframes fadeInLeftRotated {
-      @include fadeAnimation("left", -25deg);
-    }
-
-    @keyframes fadeInRight {
-      @include fadeAnimation("right");
-    }
-
-    @keyframes fadeInRightRotated {
-      @include fadeAnimation("right", 45deg);
-    }
-
-    @keyframes fadeInLeftRotatedBlue {
-      @include fadeAnimation("left", -10deg);
-    }
-
-    @keyframes fadeInLeftRotatedPink {
-      @include fadeAnimation("left", 10deg);
-    }
-
-    @keyframes fadeInLeftNoRotation {
-      @include fadeAnimation("left");
-    }
+    @include fadeAnimation(fadeInUp, "up");
+    @include fadeAnimation(fadeInDown, "down");
+    @include fadeAnimation(fadeInLeft, "left");
+    @include fadeAnimation(fadeInLeftRotated, "left", -25deg);
+    @include fadeAnimation(fadeInRight, "right");
+    @include fadeAnimation(fadeInRightRotated, "right", 45deg);
+    @include fadeAnimation(fadeInLeftRotatedBlue, "left", -10deg);
+    @include fadeAnimation(fadeInLeftRotatedPink, "left", 10deg);
+    @include fadeAnimation(fadeInLeftNoRotation, "left");
 
     @keyframes scaleIn {
       from {

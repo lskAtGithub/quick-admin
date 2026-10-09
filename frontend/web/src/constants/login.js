@@ -4,6 +4,8 @@ export const LOGIN_TYPE = "PC端";
 
 export const DEFAULT_REMEMBER_ME = true;
 
+export const DEFAULT_APP_VERSION = "1.0.0";
+
 export const LOGIN_TITLE = "QuickAdmin 管理后台";
 
 export const LOGIN_SUB_TITLE = "统一身份认证 · 安全登录";
