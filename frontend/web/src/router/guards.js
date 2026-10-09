@@ -174,7 +174,7 @@ async function handleStorageFailure() {
 // ──────── 权限校验 ────────
 
 export class RoutePermissionValidator {
-  static SHELL_SEGMENTS = new Set(['home', 'profile', 'changelog', 'dashboard']);
+  static SHELL_SEGMENTS = new Set(['home', 'profile', 'changelog', 'dashboard', 'system']);
 
   static hasPermission(targetPath, menuList) {
     if (targetPath === '/') return true;
