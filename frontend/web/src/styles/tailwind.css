@@ -162,7 +162,7 @@
 
 :root {
   --qa-color: #fff;
-  --theme-color: var(--main-color);
+  --theme-color: var(--el-color-primary);
 
   --qa-primary: oklch(70% 0.23 260deg);
   --qa-secondary: oklch(72% 0.19 231.6deg);
