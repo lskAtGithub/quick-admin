@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "aiosqlite>=0.22.1",
+    "bcrypt>=5.0.0",
     "fastapi>=0.143.0",
     "greenlet>=3.5.6",
     "loguru>=0.7.3",
