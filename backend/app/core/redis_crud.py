@@ -14,6 +14,7 @@ async def redis_connect(app: FastAPI, status: bool) -> Redis | None:
             url=settings.REDIS_URI,
             encoding="utf-8",
             decode_responses=True,
+            protocol=2,
         )
         app.state.redis = rd
         if await rd.ping():

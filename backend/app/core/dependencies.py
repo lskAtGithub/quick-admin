@@ -35,7 +35,7 @@ async def get_current_user(
     raw = await RedisCURD(redis).get(session_key)
 
     if not raw:
-        raise CustomException(msg="会话已过期,请重新登录", code=RET.TOKEN_EXPIRED.code, status_code=401)
+        raise CustomException(msg="会话已过期,请重新登录", code=RET.TOKEN_EXPIRE.code, status_code=401)
 
     session_data = json.loads(raw)
 

@@ -11,6 +11,7 @@ from app.core.logger import logger
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
+    from app.modules.system.user.model import UserModel
     from app.core.database import create_tables
     await create_tables()
     logger.info("数据库初始化完成")
