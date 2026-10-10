@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.common.enums import RET
@@ -22,6 +23,16 @@ def handle_exception(app: FastAPI) -> None:
         logger.error("[业务异常] {} {} | {}", request.method,
                      request.url.path, exc.msg)
         return ErrorResponse(msg=exc.msg, code=exc.code, status_code=exc.status_code)
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+        errors = []
+        for error in exc.errors():
+            loc = " -> ".join(str(x) for x in error["loc"])
+            errors.append(f"{loc}: {error['msg']}")
+        msg = "; ".join(errors)
+        logger.error("[参数校验失败] {} {} | {}", request.method, request.url.path, msg)
+        return ErrorResponse(msg=msg, code=RET.ERROR.code, status_code=400)
 
     @app.exception_handler(Exception)
     async def all_exception_handler(request: Request, exc: Exception) -> JSONResponse:

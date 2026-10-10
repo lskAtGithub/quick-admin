@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class BaseSchema(BaseModel):
@@ -32,6 +32,19 @@ class PageResultSchema(BaseModel):
     page_size: int = 10
     total: int = 0
     items: list = []
+
+
+class PageQuerySchema(BaseModel):
+    """分页查询基类"""
+    page_no: str | int = Field(default=1, description="页码")
+    page_size: str | int = Field(default=10, description="每页条数")
+
+    @field_validator("page_no", "page_size", mode="before")
+    @classmethod
+    def empty_to_default(cls, v, info):
+        if v == "" or v is None:
+            return cls.model_fields[info.field_name].default
+        return int(v)
 
 
 class CoreUserSchema(BaseModel):

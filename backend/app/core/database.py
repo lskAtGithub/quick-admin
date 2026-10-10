@@ -6,6 +6,11 @@ from app.core.logger import logger
 async_engine = create_async_engine(
     url=settings.ASYNC_DB_URI,
     echo=settings.DEBUG,
+    pool_size=10,
+    max_overflow=20,
+    pool_timeout=30,
+    pool_recycle=3600,
+    connect_args={"connect_timeout": 10},
 )
 
 async_db_session = async_sessionmaker(

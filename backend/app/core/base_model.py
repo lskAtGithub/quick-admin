@@ -1,8 +1,11 @@
-from datetime import UTC, datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import Boolean, DateTime, Integer, MetaData, String
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+
+SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 
 
 class MappedBase(AsyncAttrs, DeclarativeBase):
@@ -23,9 +26,9 @@ class ModelMixin(MappedBase):
     is_deleted: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False, comment="是否已删除")
     created_time: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False, comment="创建时间"
+        DateTime(timezone=True), default=lambda: datetime.now(SHANGHAI_TZ), nullable=False, comment="创建时间"
     )
     updated_time: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(UTC),
-        onupdate=lambda: datetime.now(UTC), nullable=False, comment="更新时间"
+        DateTime(timezone=True), default=lambda: datetime.now(SHANGHAI_TZ),
+        onupdate=lambda: datetime.now(SHANGHAI_TZ), nullable=False, comment="更新时间"
     )
