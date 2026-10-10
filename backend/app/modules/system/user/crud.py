@@ -20,10 +20,9 @@ class UserCRUD:
         return result.scalars().first()
 
     async def create(self, data: dict) -> UserModel:
-        """创建用户"""
         user = UserModel(**data)
         self.db.add(user)
-        await self.db.flush()
+        await self.db.commit()
         await self.db.refresh(user)
         return user
 
