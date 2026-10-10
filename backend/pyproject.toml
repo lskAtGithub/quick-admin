@@ -18,6 +18,7 @@ dependencies = [
     "pyjwt>=2.15.1",
     "redis>=8.1.0",
     "sqlalchemy>=2.1.4",
+    "tzdata>=2026.5",
     "uvicorn>=0.54.0",
 ]
 
