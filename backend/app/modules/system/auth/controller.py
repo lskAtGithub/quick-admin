@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from redis.asyncio.client import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,9 +38,10 @@ async def register(
 
 @AuthRouter.post("/logout", summary="退出登录")
 async def logout(
+    request: Request,
     redis: Annotated[Redis, Depends(redis_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
-    token: Annotated[str, Body(embed=True)],
 ) -> JSONResponse:
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
     await AuthService.logout(redis=redis, token=token)
     return SuccessResponse(msg="退出成功")

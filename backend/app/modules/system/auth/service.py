@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.enums import RedisInitKeyConfig, RET
 from app.core.base_schema import AuthSchema, JWTPayloadSchema
 from app.core.exceptions import CustomException
+from app.core.logger import logger
 from app.core.redis_crud import RedisCURD
 from app.core.security import create_access_token, decode_access_token
 from app.modules.system.user.crud import UserCRUD
@@ -62,11 +63,16 @@ class AuthService:
             "created_at": now.isoformat(),
         }
 
+        session_key = f"{RedisInitKeyConfig.USER_SESSION.key}:{session_id}"
+        logger.info(f"准备存储会话到 Redis: {session_key}")
+
         await RedisCURD(redis).set(
-            key=f"{RedisInitKeyConfig.USER_SESSION.key}:{session_id}",
+            key=session_key,
             value=json.dumps(session_data),
             expire=int(refresh_expires.total_seconds()),
         )
+
+        logger.info(f"会话已存储到 Redis: {session_key}")
 
         access_token = create_access_token(
             JWTPayloadSchema(sub=session_id, is_refresh=False, exp=int((now + access_expires).timestamp()))
