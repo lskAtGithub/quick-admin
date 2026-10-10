@@ -11,6 +11,9 @@ dist/
 logs/
 *.log
 
+# Database
+*.db
+
 # Env
 **/env/.env.*
 !**/env/.env.example
