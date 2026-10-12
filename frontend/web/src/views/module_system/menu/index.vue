@@ -76,7 +76,7 @@ const fetchData = async () => {
     const res = await MenuAPI.tree();
     tableData.value = res.data || [];
   } catch (error) {
-    ElMessage.error("获取菜单列表失败");
+    console.error("获取菜单列表失败", error);
   } finally {
     loading.value = false;
   }

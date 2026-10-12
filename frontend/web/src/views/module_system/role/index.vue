@@ -87,7 +87,7 @@ const fetchData = async () => {
     tableData.value = res.data.list || [];
     total.value = res.data.total || 0;
   } catch (error) {
-    ElMessage.error("获取角色列表失败");
+    console.error("获取角色列表失败", error);
   } finally {
     loading.value = false;
   }
