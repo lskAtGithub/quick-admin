@@ -404,10 +404,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 40px;
-  padding: 0 8px;
+  height: var(--qa-size-height-lg);
+  padding: 0 var(--qa-size-spacing-sm);
   background-color: var(--default-box-color);
-  border-bottom: 1px solid var(--qa-card-border);
+  border-bottom: var(--qa-size-border-width) solid var(--qa-card-border);
 }
 
 .qa-work-tab--dark {
@@ -420,7 +420,7 @@ onUnmounted(() => {
 }
 
 .qa-work-tab__item {
-  border-radius: 4px;
+  border-radius: var(--qa-size-radius-md);
   transition: all 0.2s ease;
 }
 
@@ -450,7 +450,7 @@ onUnmounted(() => {
 }
 
 .qa-work-tab--card .qa-work-tab__item {
-  border: 1px solid var(--qa-card-border);
+  border: var(--qa-size-border-width) solid var(--qa-card-border);
   border-radius: 6px 6px 0 0;
 }
 
@@ -460,7 +460,7 @@ onUnmounted(() => {
 }
 
 .qa-work-tab--google .qa-work-tab__item {
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--qa-size-radius-lg) var(--qa-size-radius-lg) 0 0;
   background-color: transparent;
 }
 
