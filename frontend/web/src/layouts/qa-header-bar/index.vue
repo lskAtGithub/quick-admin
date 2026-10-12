@@ -85,6 +85,9 @@
           </template>
         </ElDropdown>
 
+        <!-- 布局大小选择 -->
+        <QaSizeSelect v-if="shouldShowSizeSelect" />
+
         <!-- 主题切换按钮 -->
         <QaIconButton
           v-if="shouldShowThemeToggle"
@@ -121,6 +124,7 @@ import { themeAnimation } from "@/utils/ui";
 import { useCommon } from "@/hooks/core/useCommon";
 import { useHeaderBar } from "@/hooks/core/useHeaderBar";
 import QaUserMenu from "./widgets/QaUserMenu.vue";
+import QaSizeSelect from "@/components/actions/qa-size-select/index.vue";
 
 defineOptions({ name: "QaHeaderBar" });
 
@@ -151,6 +155,7 @@ const {
   shouldShowBreadcrumb,
   shouldShowFullscreen,
   shouldShowLanguage,
+  shouldShowSizeSelect,
   shouldShowThemeToggle,
   shouldShowSettings,
 } = useHeaderBar();
