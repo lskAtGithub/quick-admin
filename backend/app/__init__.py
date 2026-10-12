@@ -12,6 +12,7 @@ from app.core.logger import logger
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
     from app.modules.system.dept.model import DeptModel
+    from app.modules.system.dict.model import DictDataModel, DictTypeModel
     from app.modules.system.menu.model import MenuModel
     from app.modules.system.role.model import RoleModel, RoleMenusModel, UserRolesModel
     from app.modules.system.user.model import UserModel
