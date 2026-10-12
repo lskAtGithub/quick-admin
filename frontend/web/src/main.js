@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import "@/styles/tailwind.css";
-import "@/styles/index.css";
+import "@/styles/index.scss";
 import "@/styles/layouts/_layout.scss";
 import "@/styles/animations/_theme-animation.scss";
 import "@/styles/animations/_router-transition.scss";
