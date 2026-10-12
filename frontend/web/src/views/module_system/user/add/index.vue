@@ -74,11 +74,8 @@ const handleSubmit = async () => {
   submitLoading.value = true;
   try {
     await UserAPI.createUser(formData.value);
-    ElMessage.success('新增成功');
     visible.value = false;
     emit('success');
-  } catch (error) {
-    ElMessage.error('新增失败');
   } finally {
     submitLoading.value = false;
   }

@@ -69,7 +69,7 @@ const loadUserData = async () => {
       status: data.status
     };
   } catch (error) {
-    ElMessage.error('获取用户详情失败');
+    console.error('获取用户详情失败', error);
   }
 };
 
@@ -80,11 +80,8 @@ const handleSubmit = async () => {
   submitLoading.value = true;
   try {
     await UserAPI.updateUser(formData.value.id, formData.value);
-    ElMessage.success('修改成功');
     visible.value = false;
     emit('success');
-  } catch (error) {
-    ElMessage.error('修改失败');
   } finally {
     submitLoading.value = false;
   }

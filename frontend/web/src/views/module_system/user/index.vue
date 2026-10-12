@@ -189,11 +189,10 @@ const handleDelete = async (row) => {
       type: 'warning'
     });
     await UserAPI.deleteUser({ ids: [row.id] });
-    ElMessage.success('删除成功');
     await fetchData();
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('删除失败');
+      console.error('删除失败', error);
     }
   }
 };
@@ -210,11 +209,10 @@ const handleBatchDelete = async () => {
       type: 'warning'
     });
     await UserAPI.deleteUser({ ids: selectedIds.value });
-    ElMessage.success('批量删除成功');
     await fetchData();
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('批量删除失败');
+      console.error('批量删除失败', error);
     }
   }
 };
