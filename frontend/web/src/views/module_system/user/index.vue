@@ -78,7 +78,7 @@ const selectedIds = ref([]);
 const fetchData = async () => {
   loading.value = true;
   try {
-    const res = await UserAPI.list({
+    const res = await UserAPI.listUser({
       page: currentPage.value,
       limit: pageSize.value,
       username: searchKeyword.value || undefined,
@@ -87,7 +87,7 @@ const fetchData = async () => {
     tableData.value = res.data.list || [];
     total.value = res.data.total || 0;
   } catch (error) {
-    ElMessage.error("获取用户列表失败");
+    console.error("获取用户列表失败", error);
   } finally {
     loading.value = false;
   }
