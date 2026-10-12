@@ -54,21 +54,39 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { UserAPI } from "@/api/module_system/user";
 
 defineOptions({ name: "QaSystemUser" });
 
+const loading = ref(false);
 const searchKeyword = ref("");
 const searchStatus = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const tableData = ref([]);
 
-const tableData = ref([
-  { id: 1, username: "admin", nickname: "管理员", deptName: "技术部", roleName: "超级管理员", phone: "13800138000", status: 1 },
-  { id: 2, username: "test", nickname: "测试用户", deptName: "测试部", roleName: "普通用户", phone: "13800138001", status: 1 },
-]);
+const fetchData = async () => {
+  loading.value = true;
+  try {
+    const res = await UserAPI.list({
+      page: currentPage.value,
+      limit: pageSize.value,
+      username: searchKeyword.value || undefined,
+      status: searchStatus.value || undefined,
+    });
+    tableData.value = res.data.list || [];
+    total.value = res.data.total || 0;
+  } catch (error) {
+    ElMessage.error("获取用户列表失败");
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => fetchData());
 
 const handleAdd = () => {
   ElMessage.info("新增用户功能待实现");
@@ -89,12 +107,14 @@ const handleDelete = (row) => {
 };
 
 const handleSearch = () => {
-  ElMessage.info("搜索功能待实现");
+  currentPage.value = 1;
+  fetchData();
 };
 
 const handleReset = () => {
   searchKeyword.value = "";
   searchStatus.value = "";
-  ElMessage.success("已重置");
+  currentPage.value = 1;
+  fetchData();
 };
 </script>
