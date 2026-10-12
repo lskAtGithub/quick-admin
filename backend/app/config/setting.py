@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     # 日志
     LOGGER_LEVEL: str = "DEBUG"
 
+    # 验证码
+    CAPTCHA_ENABLE: bool = False
+    CAPTCHA_EXPIRE_SECONDS: int = 60
+
     @property
     def ASYNC_DB_URI(self) -> str:
         if self.DATABASE_TYPE == "sqlite":

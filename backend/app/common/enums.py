@@ -30,6 +30,7 @@ class RedisInitKeyConfig(Enum):
     ACCESS_TOKEN = {"key": "access_token", "remark": "访问令牌"}
     REFRESH_TOKEN = {"key": "refresh_token", "remark": "刷新令牌"}
     USER_SESSION = {"key": "user_session", "remark": "用户会话"}
+    CAPTCHA_CODES = {"key": "captcha_codes", "remark": "验证码"}
 
     @property
     def key(self) -> str:

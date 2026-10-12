@@ -9,10 +9,30 @@ from app.common.response import SuccessResponse
 from app.core.base_schema import AuthSchema
 from app.core.dependencies import db_getter, get_current_user, redis_getter
 
-from .schema import LoginOutSchema, LoginSchema, RegisterSchema
-from .service import AuthService
+from .schema import CaptchaOutSchema, LoginOutSchema, LoginSchema, RegisterSchema
+from .service import AuthService, CaptchaService
 
 AuthRouter = APIRouter(prefix="/auth", tags=["认证"])
+
+
+@AuthRouter.get("/captcha/get", summary="获取验证码")
+async def get_captcha(
+    request: Request,
+    redis: Annotated[Redis, Depends(redis_getter)],
+) -> JSONResponse:
+    result: CaptchaOutSchema = await CaptchaService.get_captcha(redis=redis, request=request)
+    return SuccessResponse(data=result.model_dump(), msg="获取验证码成功")
+
+
+@AuthRouter.post("/captcha/slider/complete", summary="滑块验证完成")
+async def slider_complete(
+    request: Request,
+    redis: Annotated[Redis, Depends(redis_getter)],
+    data: dict,
+) -> JSONResponse:
+    captcha_key = data.get("captcha_key", "")
+    result = await CaptchaService.slider_complete(redis=redis, request=request, captcha_key=captcha_key)
+    return SuccessResponse(data=result, msg="验证成功")
 
 
 @AuthRouter.post("/login", summary="登录")

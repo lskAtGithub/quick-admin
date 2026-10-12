@@ -1,11 +1,14 @@
 import json
+import time
 import uuid
 from datetime import datetime, timedelta
 
+from fastapi import Request
 from redis.asyncio.client import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.enums import RedisInitKeyConfig, RET
+from app.config.setting import settings
 from app.core.base_schema import AuthSchema, JWTPayloadSchema
 from app.core.exceptions import CustomException
 from app.core.logger import logger
@@ -14,7 +17,7 @@ from app.core.security import create_access_token, decode_access_token
 from app.modules.system.user.crud import UserCRUD
 from app.utils.password_util import PwdUtil
 
-from .schema import LoginOutSchema
+from .schema import CaptchaOutSchema, LoginOutSchema
 
 
 class AuthService:
@@ -104,3 +107,43 @@ class AuthService:
 
         await RedisCURD(redis).delete(f"{RedisInitKeyConfig.USER_SESSION.key}:{session_id}")
         return True
+
+
+class CaptchaService:
+    PENDING = "pending"
+    VERIFIED = "verified"
+
+    @staticmethod
+    def _redis_key(captcha_key: str) -> str:
+        return f"{RedisInitKeyConfig.CAPTCHA_CODES.key}:{captcha_key}"
+
+    @staticmethod
+    async def get_captcha(redis: Redis, request: Request) -> CaptchaOutSchema:
+        captcha_key = uuid.uuid4().hex
+        await RedisCURD(redis).set(
+            key=CaptchaService._redis_key(captcha_key),
+            value=json.dumps({"status": CaptchaService.PENDING, "issued_at": time.time()}),
+            expire=settings.CAPTCHA_EXPIRE_SECONDS,
+        )
+        return CaptchaOutSchema(enable=settings.CAPTCHA_ENABLE, key=captcha_key, img_base="")
+
+    @staticmethod
+    async def slider_complete(redis: Redis, request: Request, captcha_key: str) -> dict:
+        if not captcha_key:
+            raise CustomException(msg="验证码标识不能为空")
+        raw = await RedisCURD(redis).get(CaptchaService._redis_key(captcha_key))
+        if not raw:
+            raise CustomException(msg="验证码已过期，请刷新")
+        if isinstance(raw, bytes):
+            raw = raw.decode()
+        state = json.loads(raw)
+        if state.get("status") == CaptchaService.VERIFIED:
+            raise CustomException(msg="验证码已使用")
+        if state.get("status") != CaptchaService.PENDING:
+            raise CustomException(msg="验证码状态异常，请刷新重试")
+        await RedisCURD(redis).set(
+            key=CaptchaService._redis_key(captcha_key),
+            value=json.dumps({"status": CaptchaService.VERIFIED, "issued_at": state.get("issued_at")}),
+            expire=settings.CAPTCHA_EXPIRE_SECONDS,
+        )
+        return {"captcha_key": captcha_key, "verified": True}
