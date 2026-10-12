@@ -12,21 +12,14 @@
     <ElFormItem v-if="!isEdit" label="密码" prop="password">
       <ElInput v-model="formData.password" type="password" placeholder="请输入密码" show-password />
     </ElFormItem>
-    <ElFormItem label="姓名" prop="name">
-      <ElInput v-model="formData.name" placeholder="请输入姓名" />
+    <ElFormItem label="昵称" prop="name">
+      <ElInput v-model="formData.name" placeholder="请输入昵称" />
     </ElFormItem>
     <ElFormItem label="手机号" prop="mobile">
       <ElInput v-model="formData.mobile" placeholder="请输入手机号" />
     </ElFormItem>
     <ElFormItem label="邮箱" prop="email">
       <ElInput v-model="formData.email" placeholder="请输入邮箱" />
-    </ElFormItem>
-    <ElFormItem label="性别" prop="gender">
-      <ElSelect v-model="formData.gender" placeholder="请选择性别">
-        <ElOption label="男" value="0" />
-        <ElOption label="女" value="1" />
-        <ElOption label="未知" value="2" />
-      </ElSelect>
     </ElFormItem>
     <ElFormItem label="部门" prop="dept_id">
       <ElTreeSelect
@@ -38,10 +31,11 @@
         filterable
       />
     </ElFormItem>
-    <ElFormItem label="角色" prop="role_ids">
-      <ElSelect v-model="formData.role_ids" multiple placeholder="请选择角色" filterable>
-        <ElOption v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value" />
-      </ElSelect>
+    <ElFormItem label="超级管理员" prop="is_superuser">
+      <ElRadioGroup v-model="formData.is_superuser">
+        <ElRadio :value="false">否</ElRadio>
+        <ElRadio :value="true">是</ElRadio>
+      </ElRadioGroup>
     </ElFormItem>
     <ElFormItem label="状态" prop="status">
       <ElRadioGroup v-model="formData.status">
@@ -49,16 +43,13 @@
         <ElRadio :value="1">禁用</ElRadio>
       </ElRadioGroup>
     </ElFormItem>
-    <ElFormItem label="备注" prop="description">
-      <ElInput v-model="formData.description" type="textarea" :rows="3" placeholder="请输入备注" />
-    </ElFormItem>
   </ElForm>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { DeptAPI } from '@/api/module_system/dept';
-import { RoleAPI } from '@/api/module_system/role';
+import { isPhone, isEmail, isUsername, isPassword } from '@/utils/validator';
 
 defineOptions({ name: 'UserForm' });
 
@@ -69,15 +60,12 @@ const props = defineProps({
 
 const formRef = ref();
 const deptOptions = ref([]);
-const roleOptions = ref([]);
 
 const formRules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-  mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
-  dept_id: [{ required: true, message: '请选择部门', trigger: 'change' }],
-  role_ids: [{ required: true, message: '请选择角色', trigger: 'change' }]
+  username: [{ required: true, validator: isUsername, trigger: 'blur' }],
+  password: [{ required: true, validator: isPassword, trigger: 'blur' }],
+  mobile: [{ validator: isPhone, trigger: 'blur' }],
+  email: [{ validator: isEmail, trigger: 'blur' }]
 };
 
 const validate = async () => {
@@ -95,18 +83,6 @@ const loadDeptOptions = async () => {
     deptOptions.value = formatTree(res.data || []);
   } catch (error) {
     console.error('加载部门列表失败', error);
-  }
-};
-
-const loadRoleOptions = async () => {
-  try {
-    const res = await RoleAPI.list();
-    roleOptions.value = (res.data.items || []).map((item) => ({
-      label: item.name,
-      value: item.id
-    }));
-  } catch (error) {
-    console.error('加载角色列表失败', error);
   }
 };
 
@@ -128,7 +104,6 @@ const formatTree = (data, parentId = 0) => {
 
 onMounted(() => {
   loadDeptOptions();
-  loadRoleOptions();
 });
 
 defineExpose({ validate, resetFields });

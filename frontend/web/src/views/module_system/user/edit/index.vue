@@ -38,11 +38,9 @@ const formData = ref({
   name: '',
   mobile: '',
   email: '',
-  gender: '0',
   dept_id: undefined,
-  role_ids: [],
-  status: 0,
-  description: ''
+  is_superuser: false,
+  status: 0
 });
 
 watch(() => props.modelValue, async (val) => {
@@ -66,11 +64,9 @@ const loadUserData = async () => {
       name: data.name,
       mobile: data.mobile,
       email: data.email,
-      gender: data.gender || '0',
       dept_id: data.dept_id,
-      role_ids: data.role_ids || [],
-      status: data.status,
-      description: data.description
+      is_superuser: data.is_superuser,
+      status: data.status
     };
   } catch (error) {
     ElMessage.error('获取用户详情失败');
@@ -101,11 +97,9 @@ const handleClose = () => {
     name: '',
     mobile: '',
     email: '',
-    gender: '0',
     dept_id: undefined,
-    role_ids: [],
-    status: 0,
-    description: ''
+    is_superuser: false,
+    status: 0
   };
   formRef.value?.resetFields();
 };

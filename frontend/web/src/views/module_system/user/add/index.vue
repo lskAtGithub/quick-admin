@@ -37,11 +37,9 @@ const formData = ref({
   name: '',
   mobile: '',
   email: '',
-  gender: '0',
   dept_id: undefined,
-  role_ids: [],
-  status: 0,
-  description: ''
+  is_superuser: false,
+  status: 0
 });
 
 watch(() => props.modelValue, (val) => {
@@ -62,11 +60,9 @@ const resetForm = () => {
     name: '',
     mobile: '',
     email: '',
-    gender: '0',
     dept_id: undefined,
-    role_ids: [],
-    status: 0,
-    description: ''
+    is_superuser: false,
+    status: 0
   };
   formRef.value?.resetFields();
 };
