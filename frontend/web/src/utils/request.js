@@ -166,7 +166,7 @@ request.interceptors.response.use(
       }
     }
 
-    return response;
+    return response.data;
   },
   async (error) => {
     if (error.code === "ERR_CANCELED") {
