@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base_model import ModelMixin
+
+if TYPE_CHECKING:
+    from app.modules.system.user.model import UserModel
 
 
 class DeptModel(ModelMixin):
@@ -21,3 +26,4 @@ class DeptModel(ModelMixin):
         foreign_keys="DeptModel.parent_id", uselist=False)
     children: Mapped[list["DeptModel"] | None] = relationship(
         back_populates="parent", foreign_keys="DeptModel.parent_id", order_by="DeptModel.order")
+    users: Mapped[list["UserModel"] | None] = relationship(back_populates="dept", foreign_keys="UserModel.dept_id")

@@ -28,12 +28,13 @@ async def get_user_list(
         username=query.username,
         name=query.name,
         status=int(query.status) if query.status is not None else None,
+        dept_id=int(query.dept_id) if query.dept_id is not None else None,
     )
     result = PageResultSchema(
         page_no=int(query.page_no),
         page_size=int(query.page_size),
         total=total,
-        items=[UserOutSchema.model_validate(u).model_dump() for u in items],
+        items=[UserService._to_dict(u) for u in items],
     )
     return SuccessResponse(data=result.model_dump())
 
@@ -49,7 +50,7 @@ async def get_user_detail(
         from app.common.enums import RET
         from app.core.exceptions import CustomException
         raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
-    return SuccessResponse(data=UserOutSchema.model_validate(user).model_dump())
+    return SuccessResponse(data=UserService._to_dict(user))
 
 
 @UserRouter.post("", summary="创建用户")

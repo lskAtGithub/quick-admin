@@ -1,5 +1,5 @@
-from sqlalchemy import Boolean, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base_model import ModelMixin
 
@@ -25,3 +25,7 @@ class UserModel(ModelMixin):
         Boolean, default=False, nullable=False, comment="是否超级管理员")
     status: Mapped[int] = mapped_column(
         Integer, default=0, nullable=False, comment="状态(0:正常 1:停用)")
+    dept_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("sys_dept.id", ondelete="SET NULL"), default=None, comment="部门ID")
+
+    dept: Mapped["DeptModel | None"] = relationship(back_populates="users", foreign_keys=[dept_id])

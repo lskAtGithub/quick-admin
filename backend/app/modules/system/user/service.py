@@ -27,8 +27,9 @@ class UserService:
             "email": data.email,
             "is_superuser": data.is_superuser,
             "status": data.status,
+            "dept_id": data.dept_id,
         })
-        return UserOutSchema.model_validate(user).model_dump()
+        return self._to_dict(user)
 
     async def update(self, user_id: int, data: UserUpdateSchema) -> dict:
         crud = UserCRUD(self.auth, self.db)
@@ -36,10 +37,30 @@ class UserService:
         user = await crud.update(user_id, update_data)
         if not user:
             raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
-        return UserOutSchema.model_validate(user).model_dump()
+        return self._to_dict(user)
 
     async def delete(self, user_id: int) -> None:
         crud = UserCRUD(self.auth, self.db)
         success = await crud.delete(user_id)
         if not success:
             raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
+
+    @staticmethod
+    def _to_dict(user) -> dict:
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
+        return {
+            "id": user.id,
+            "username": user.username,
+            "name": user.name,
+            "mobile": user.mobile,
+            "email": user.email,
+            "avatar": user.avatar,
+            "is_superuser": user.is_superuser,
+            "status": user.status,
+            "dept_id": user.dept_id,
+            "dept_name": user.dept.name if user.dept else None,
+            "created_time": user.created_time.strftime("%Y-%m-%d %H:%M:%S") if user.created_time else None,
+            "updated_time": user.updated_time.strftime("%Y-%m-%d %H:%M:%S") if user.updated_time else None,
+        }

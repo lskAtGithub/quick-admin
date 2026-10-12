@@ -13,6 +13,7 @@ class UserCreateSchema(BaseModel):
     email: str | None = Field(default=None, description="邮箱")
     is_superuser: bool = Field(default=False, description="是否超级管理员")
     status: int = Field(default=0, description="状态(0:正常 1:停用)")
+    dept_id: int | None = Field(default=None, description="部门ID")
 
 
 class UserUpdateSchema(BaseModel):
@@ -22,14 +23,16 @@ class UserUpdateSchema(BaseModel):
     avatar: str | None = Field(default=None, description="头像URL")
     is_superuser: bool | None = Field(default=None, description="是否超级管理员")
     status: int | None = Field(default=None, description="状态(0:正常 1:停用)")
+    dept_id: int | None = Field(default=None, description="部门ID")
 
 
 class UserQuerySchema(PageQuerySchema):
     username: str | None = Field(default=None, description="用户名(模糊)")
     name: str | None = Field(default=None, description="昵称(模糊)")
     status: str | None = Field(default=None, description="状态")
+    dept_id: str | None = Field(default=None, description="部门ID")
 
-    @field_validator("username", "name", "status", mode="before")
+    @field_validator("username", "name", "status", "dept_id", mode="before")
     @classmethod
     def empty_str_to_none(cls, v):
         return None if v == "" else v
@@ -46,6 +49,8 @@ class UserOutSchema(BaseModel):
     avatar: str | None = None
     is_superuser: bool
     status: int
+    dept_id: int | None = None
+    dept_name: str | None = None
     created_time: datetime | None = None
     updated_time: datetime | None = None
 
