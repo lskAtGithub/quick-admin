@@ -1,7 +1,21 @@
 <template>
-  <div class="flex h-full flex-col p-4">
-    <!-- 搜索栏 -->
-    <div class="mb-3 flex flex-wrap items-center gap-3">
+  <div class="flex h-full p-4">
+    <!-- 左侧部门树 -->
+    <div class="w-65 flex-shrink-0 pr-2">
+      <ElCard class="h-full" shadow="hover">
+        <template #header>
+          <b>部门</b>
+        </template>
+        <ElScrollbar class="h-full">
+          <QaDeptTree v-model="deptFilterId" @node-click="handleDeptNodeClick" />
+        </ElScrollbar>
+      </ElCard>
+    </div>
+
+    <!-- 右侧表格区域 -->
+    <div class="flex flex-1 flex-col min-w-0 pl-2">
+      <!-- 搜索栏 -->
+      <div class="mb-3 flex flex-wrap items-center gap-3">
       <ElInput v-model="searchForm.username" placeholder="用户名" clearable style="width: 150px" />
       <ElInput v-model="searchForm.name" placeholder="姓名" clearable style="width: 150px" />
       <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable style="width: 150px" />
@@ -74,6 +88,7 @@
         />
       </div>
     </ElCard>
+    </div>
   </div>
 </template>
 
@@ -82,6 +97,7 @@ import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { UserAPI } from '@/api/module_system/user';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
+import QaDeptTree from './components/QaDeptTree.vue';
 
 defineOptions({ name: 'QaSystemUser' });
 
@@ -91,6 +107,7 @@ const pageSize = ref(10);
 const total = ref(0);
 const tableData = ref([]);
 const selectedIds = ref([]);
+const deptFilterId = ref();
 
 const searchForm = ref({
   username: '',
@@ -105,7 +122,8 @@ const fetchData = async () => {
     const res = await UserAPI.listUser({
       page: currentPage.value,
       limit: pageSize.value,
-      ...searchForm.value
+      ...searchForm.value,
+      dept_id: deptFilterId.value
     });
     console.log(res.data);
     tableData.value = res.data.items || [];
@@ -118,6 +136,11 @@ const fetchData = async () => {
 };
 
 onMounted(() => fetchData());
+
+const handleDeptNodeClick = () => {
+  currentPage.value = 1;
+  fetchData();
+};
 
 const onSelectionChange = (rows) => {
   selectedIds.value = rows.map((r) => r.id);
