@@ -46,7 +46,7 @@ async def get_dict_type_list(
     return SuccessResponse(data=result.model_dump())
 
 
-@DictTypeRouter.get("/{type_id}", summary="字典类型详情")
+@DictTypeRouter.get("/detail/{type_id}", summary="字典类型详情")
 async def get_dict_type_detail(
     type_id: int,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -60,7 +60,7 @@ async def get_dict_type_detail(
     return SuccessResponse(data=DictTypeService._to_dict(obj))
 
 
-@DictTypeRouter.post("", summary="创建字典类型")
+@DictTypeRouter.post("/create", summary="创建字典类型")
 async def create_dict_type(
     data: DictTypeCreateSchema,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -70,7 +70,7 @@ async def create_dict_type(
     return SuccessResponse(data=result, msg="创建成功")
 
 
-@DictTypeRouter.put("/{type_id}", summary="更新字典类型")
+@DictTypeRouter.put("/update/{type_id}", summary="更新字典类型")
 async def update_dict_type(
     type_id: int,
     data: DictTypeUpdateSchema,
@@ -81,13 +81,15 @@ async def update_dict_type(
     return SuccessResponse(data=result, msg="更新成功")
 
 
-@DictTypeRouter.delete("/{type_id}", summary="删除字典类型")
+@DictTypeRouter.delete("/delete", summary="删除字典类型")
 async def delete_dict_type(
-    type_id: int,
+    data: dict,
     db: Annotated[AsyncSession, Depends(db_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
 ) -> JSONResponse:
-    await DictTypeService(auth, db).delete(type_id)
+    ids = data.get("ids", [])
+    for type_id in ids:
+        await DictTypeService(auth, db).delete(type_id)
     return SuccessResponse(msg="删除成功")
 
 
@@ -124,7 +126,7 @@ async def get_dict_data_by_type(
     return SuccessResponse(data=result)
 
 
-@DictDataRouter.get("/{data_id}", summary="字典数据详情")
+@DictDataRouter.get("/detail/{data_id}", summary="字典数据详情")
 async def get_dict_data_detail(
     data_id: int,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -138,7 +140,7 @@ async def get_dict_data_detail(
     return SuccessResponse(data=DictDataService._to_dict(obj))
 
 
-@DictDataRouter.post("", summary="创建字典数据")
+@DictDataRouter.post("/create", summary="创建字典数据")
 async def create_dict_data(
     data: DictDataCreateSchema,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -148,7 +150,7 @@ async def create_dict_data(
     return SuccessResponse(data=result, msg="创建成功")
 
 
-@DictDataRouter.put("/{data_id}", summary="更新字典数据")
+@DictDataRouter.put("/update/{data_id}", summary="更新字典数据")
 async def update_dict_data(
     data_id: int,
     data: DictDataUpdateSchema,
@@ -159,11 +161,13 @@ async def update_dict_data(
     return SuccessResponse(data=result, msg="更新成功")
 
 
-@DictDataRouter.delete("/{data_id}", summary="删除字典数据")
+@DictDataRouter.delete("/delete", summary="删除字典数据")
 async def delete_dict_data(
-    data_id: int,
+    data: dict,
     db: Annotated[AsyncSession, Depends(db_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
 ) -> JSONResponse:
-    await DictDataService(auth, db).delete(data_id)
+    ids = data.get("ids", [])
+    for data_id in ids:
+        await DictDataService(auth, db).delete(data_id)
     return SuccessResponse(msg="删除成功")

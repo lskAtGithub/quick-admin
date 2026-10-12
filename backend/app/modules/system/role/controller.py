@@ -38,7 +38,7 @@ async def get_role_list(
     return SuccessResponse(data=result.model_dump())
 
 
-@RoleRouter.get("/{role_id}", summary="角色详情")
+@RoleRouter.get("/detail/{role_id}", summary="角色详情")
 async def get_role_detail(
     role_id: int,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -52,7 +52,7 @@ async def get_role_detail(
     return SuccessResponse(data=RoleService._to_dict(role))
 
 
-@RoleRouter.post("", summary="创建角色")
+@RoleRouter.post("/create", summary="创建角色")
 async def create_role(
     data: RoleCreateSchema,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -62,7 +62,7 @@ async def create_role(
     return SuccessResponse(data=result, msg="创建成功")
 
 
-@RoleRouter.put("/{role_id}", summary="更新角色")
+@RoleRouter.put("/update/{role_id}", summary="更新角色")
 async def update_role(
     role_id: int,
     data: RoleUpdateSchema,
@@ -73,11 +73,13 @@ async def update_role(
     return SuccessResponse(data=result, msg="更新成功")
 
 
-@RoleRouter.delete("/{role_id}", summary="删除角色")
+@RoleRouter.delete("/delete", summary="删除角色")
 async def delete_role(
-    role_id: int,
+    data: dict,
     db: Annotated[AsyncSession, Depends(db_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
 ) -> JSONResponse:
-    await RoleService(auth, db).delete(role_id)
+    ids = data.get("ids", [])
+    for role_id in ids:
+        await RoleService(auth, db).delete(role_id)
     return SuccessResponse(msg="删除成功")

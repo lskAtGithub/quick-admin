@@ -52,7 +52,7 @@ async def get_user_list(
     return SuccessResponse(data=result.model_dump())
 
 
-@UserRouter.get("/{user_id}", summary="用户详情")
+@UserRouter.get("/detail/{user_id}", summary="用户详情")
 async def get_user_detail(
     user_id: int,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -66,7 +66,7 @@ async def get_user_detail(
     return SuccessResponse(data=UserService._to_dict(user))
 
 
-@UserRouter.post("", summary="创建用户")
+@UserRouter.post("/create", summary="创建用户")
 async def create_user(
     data: UserCreateSchema,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -76,7 +76,7 @@ async def create_user(
     return SuccessResponse(data=result, msg="创建成功")
 
 
-@UserRouter.put("/{user_id}", summary="更新用户")
+@UserRouter.put("/update/{user_id}", summary="更新用户")
 async def update_user(
     user_id: int,
     data: UserUpdateSchema,
@@ -87,11 +87,13 @@ async def update_user(
     return SuccessResponse(data=result, msg="更新成功")
 
 
-@UserRouter.delete("/{user_id}", summary="删除用户")
+@UserRouter.delete("/delete", summary="删除用户")
 async def delete_user(
-    user_id: int,
+    data: dict,
     db: Annotated[AsyncSession, Depends(db_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
 ) -> JSONResponse:
-    await UserService(auth, db).delete(user_id)
+    ids = data.get("ids", [])
+    for user_id in ids:
+        await UserService(auth, db).delete(user_id)
     return SuccessResponse(msg="删除成功")

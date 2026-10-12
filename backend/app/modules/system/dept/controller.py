@@ -46,7 +46,7 @@ async def get_dept_list(
     return SuccessResponse(data=result.model_dump())
 
 
-@DeptRouter.get("/{dept_id}", summary="部门详情")
+@DeptRouter.get("/detail/{dept_id}", summary="部门详情")
 async def get_dept_detail(
     dept_id: int,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -60,7 +60,7 @@ async def get_dept_detail(
     return SuccessResponse(data=DeptService._to_dict(dept))
 
 
-@DeptRouter.post("", summary="创建部门")
+@DeptRouter.post("/create", summary="创建部门")
 async def create_dept(
     data: DeptCreateSchema,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -70,7 +70,7 @@ async def create_dept(
     return SuccessResponse(data=result, msg="创建成功")
 
 
-@DeptRouter.put("/{dept_id}", summary="更新部门")
+@DeptRouter.put("/update/{dept_id}", summary="更新部门")
 async def update_dept(
     dept_id: int,
     data: DeptUpdateSchema,
@@ -81,11 +81,13 @@ async def update_dept(
     return SuccessResponse(data=result, msg="更新成功")
 
 
-@DeptRouter.delete("/{dept_id}", summary="删除部门")
+@DeptRouter.delete("/delete", summary="删除部门")
 async def delete_dept(
-    dept_id: int,
+    data: dict,
     db: Annotated[AsyncSession, Depends(db_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
 ) -> JSONResponse:
-    await DeptService(auth, db).delete(dept_id)
+    ids = data.get("ids", [])
+    for dept_id in ids:
+        await DeptService(auth, db).delete(dept_id)
     return SuccessResponse(msg="删除成功")

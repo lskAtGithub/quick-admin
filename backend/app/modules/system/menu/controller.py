@@ -47,7 +47,7 @@ async def get_menu_list(
     return SuccessResponse(data=result.model_dump())
 
 
-@MenuRouter.get("/{menu_id}", summary="菜单详情")
+@MenuRouter.get("/detail/{menu_id}", summary="菜单详情")
 async def get_menu_detail(
     menu_id: int,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -61,7 +61,7 @@ async def get_menu_detail(
     return SuccessResponse(data=MenuService._to_dict(menu))
 
 
-@MenuRouter.post("", summary="创建菜单")
+@MenuRouter.post("/create", summary="创建菜单")
 async def create_menu(
     data: MenuCreateSchema,
     db: Annotated[AsyncSession, Depends(db_getter)],
@@ -71,7 +71,7 @@ async def create_menu(
     return SuccessResponse(data=result, msg="创建成功")
 
 
-@MenuRouter.put("/{menu_id}", summary="更新菜单")
+@MenuRouter.put("/update/{menu_id}", summary="更新菜单")
 async def update_menu(
     menu_id: int,
     data: MenuUpdateSchema,
@@ -82,11 +82,13 @@ async def update_menu(
     return SuccessResponse(data=result, msg="更新成功")
 
 
-@MenuRouter.delete("/{menu_id}", summary="删除菜单")
+@MenuRouter.delete("/delete", summary="删除菜单")
 async def delete_menu(
-    menu_id: int,
+    data: dict,
     db: Annotated[AsyncSession, Depends(db_getter)],
     auth: Annotated[AuthSchema, Depends(get_current_user)],
 ) -> JSONResponse:
-    await MenuService(auth, db).delete(menu_id)
+    ids = data.get("ids", [])
+    for menu_id in ids:
+        await MenuService(auth, db).delete(menu_id)
     return SuccessResponse(msg="删除成功")
