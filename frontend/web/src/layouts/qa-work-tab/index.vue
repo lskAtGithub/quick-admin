@@ -91,7 +91,7 @@
       </div>
     </div>
 
-    <QaMenuRight ref="menuRightRef" :menu-items="contextMenuItems" />
+    <QaMenuRight ref="menuRightRef" :menu-items="contextMenuItems" @select="handleMenuSelect" />
   </div>
 </template>
 
@@ -135,6 +135,7 @@ const currentPath = computed(() => route.path);
 const qaWorkTabRef = ref(null);
 const tabContentRef = ref(null);
 const menuRightRef = ref(null);
+const contextMenuTab = ref(null);
 
 const tabItemRefs = ref([]);
 const setTabItemRef = (el) => {
@@ -234,6 +235,7 @@ const handleTabMiddleClick = (e, item) => {
 };
 
 const handleTabContextmenu = (e, item) => {
+  contextMenuTab.value = item;
   menuRightRef.value?.show(e);
 };
 
@@ -241,22 +243,36 @@ const handleToggleFixed = (item) => {
   worktabStore.toggleFixedTab(item.path);
 };
 
-const handleMenuSelect = (item) => {
-  switch (item.key) {
+const handleMenuSelect = (menu) => {
+  if (!contextMenuTab.value) return;
+  const tab = contextMenuTab.value;
+  
+  switch (menu.key) {
     case "refresh":
-      useCommon().refresh();
+      if (tab.path === currentPath.value) {
+        useCommon().refresh();
+      } else {
+        router.push(tab.path);
+        nextTick(() => useCommon().refresh());
+      }
       break;
     case "close":
-      handleTabClose(route);
+      handleTabClose(tab);
       break;
     case "closeOthers":
-      worktabStore.removeOthers(route.path);
+      worktabStore.removeOthers(tab.path);
+      if (tab.path !== currentPath.value) {
+        router.push(tab.path);
+      }
       break;
     case "closeAll":
       worktabStore.removeAll();
-      router.push(homePath.value);
+      if (tab.path !== homePath.value) {
+        router.push(homePath.value);
+      }
       break;
   }
+  contextMenuTab.value = null;
 };
 
 const handleScrollStart = (e) => {
