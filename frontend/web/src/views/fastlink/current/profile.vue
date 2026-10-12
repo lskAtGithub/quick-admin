@@ -277,7 +277,7 @@ async function fetchCurrentSessions() {
   try {
     const response = await OnlineAPI.listCurrentOnline();
     if (response.data.code === 0) {
-      currentSessions.value = response.data.data ?? [];
+      currentSessions.value = response.data ?? [];
     }
   } catch {
     // ignore
@@ -429,8 +429,8 @@ const handleUpload = async (options) => {
     const formData = new FormData();
     formData.append('file', file);
     const response = await UserAPI.uploadCurrentUserAvatar(formData);
-    if (response.data.code === 0 && response.data.data) {
-      const fileUrl = response.data.data.file_url;
+    if (response.data.code === 0 && response.data) {
+      const fileUrl = response.data.file_url;
       updateAvatar(fileUrl);
       options.onSuccess(response);
       uploadRef.value?.clearFiles();
@@ -483,7 +483,7 @@ const handleSave = async () => {
       avatar: infoFormState.avatar,
       description: infoFormState.description
     });
-    await userStore.setUserInfo(response.data.data);
+    await userStore.setUserInfo(response.data);
     initInfoForm();
     ElMessage.success('个人资料已保存');
     return true;
