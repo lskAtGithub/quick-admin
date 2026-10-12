@@ -89,7 +89,6 @@ const visible = computed({
 .qa-drawer-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
   padding: 16px 20px;
   border-top: 1px solid var(--el-border-color-light);
 }
