@@ -63,13 +63,14 @@
 
       <!-- 分页 -->
       <div class="mt-4 flex justify-end">
-        <!-- eslint-disable-next-line vue/no-v-model-argument -->
         <ElPagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
+          :current-page="currentPage"
+          :page-size="pageSize"
           :total="total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
+          @current-change="handlePageChange"
+          @size-change="handleSizeChange"
         />
       </div>
     </ElCard>
@@ -162,6 +163,17 @@ const handleReset = () => {
     mobile: '',
     status: undefined
   };
+  currentPage.value = 1;
+  fetchData();
+};
+
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchData();
+};
+
+const handleSizeChange = (size) => {
+  pageSize.value = size;
   currentPage.value = 1;
   fetchData();
 };
