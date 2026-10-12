@@ -1,0 +1,95 @@
+// 尺寸变量定义
+// Element Plus 尺寸比例：large=40px, default=32px, small=24px
+// 比例：large=1.25x, default=1x, small=0.75x
+
+$size-map: (
+  'large': (
+    // 间距
+    'spacing-xs': 5px,
+    'spacing-sm': 10px,
+    'spacing-md': 15px,
+    'spacing-lg': 20px,
+    'spacing-xl': 25px,
+    'spacing-2xl': 30px,
+    // 字体
+    'font-xs': 13px,
+    'font-sm': 14px,
+    'font-md': 15px,
+    'font-lg': 17px,
+    'font-xl': 19px,
+    'font-2xl': 22px,
+    // 布局
+    'page-padding': 25px,
+    'card-padding': 25px
+  ),
+  'default': (
+    // 间距
+    'spacing-xs': 4px,
+    'spacing-sm': 8px,
+    'spacing-md': 12px,
+    'spacing-lg': 16px,
+    'spacing-xl': 20px,
+    'spacing-2xl': 24px,
+    // 字体
+    'font-xs': 12px,
+    'font-sm': 13px,
+    'font-md': 14px,
+    'font-lg': 16px,
+    'font-xl': 18px,
+    'font-2xl': 20px,
+    // 布局
+    'page-padding': 20px,
+    'card-padding': 20px
+  ),
+  'small': (
+    // 间距
+    'spacing-xs': 3px,
+    'spacing-sm': 6px,
+    'spacing-md': 9px,
+    'spacing-lg': 12px,
+    'spacing-xl': 15px,
+    'spacing-2xl': 18px,
+    // 字体
+    'font-xs': 11px,
+    'font-sm': 12px,
+    'font-md': 13px,
+    'font-lg': 15px,
+    'font-xl': 17px,
+    'font-2xl': 18px,
+    // 布局
+    'page-padding': 15px,
+    'card-padding': 15px
+  )
+);
+
+// 生成默认变量（:root）
+:root {
+  $default-sizes: map-get($size-map, 'default');
+  @each $key, $value in $default-sizes {
+    --qa-size-#{$key}: #{$value};
+  }
+  
+  // 固定尺寸（不随 size 变化）
+  --qa-size-height-sm: 24px;
+  --qa-size-height-md: 32px;
+  --qa-size-height-lg: 40px;
+  --qa-size-radius-sm: 2px;
+  --qa-size-radius-md: 4px;
+  --qa-size-radius-lg: 8px;
+  --qa-size-radius-xl: 12px;
+  --qa-size-border-width: 1px;
+  --qa-size-sidebar-width: 210px;
+  --qa-size-sidebar-width-collapse: 64px;
+  --qa-size-header-height: 60px;
+}
+
+// 生成 large 和 small 的变量
+@each $size-name, $sizes in $size-map {
+  @if $size-name != 'default' {
+    html.size-#{$size-name} {
+      @each $key, $value in $sizes {
+        --qa-size-#{$key}: #{$value};
+      }
+    }
+  }
+}

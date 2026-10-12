@@ -1,3 +1,5 @@
+@import './size.scss';
+
 :root {
   --app-bg: #f5f7fa;
   --app-box-bg: #ffffff;

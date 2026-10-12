@@ -233,6 +233,11 @@ export const useSettingStore = defineStore(
 
     function setSize(newSize) {
       size.value = newSize;
+      // 切换 html 上的 size class
+      document.documentElement.classList.remove('size-large', 'size-small');
+      if (newSize !== 'default') {
+        document.documentElement.classList.add(`size-${newSize}`);
+      }
     }
 
     function toggleShowLanguage() {
