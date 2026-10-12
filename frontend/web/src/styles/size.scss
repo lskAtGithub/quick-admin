@@ -85,7 +85,7 @@ $size-map: (
 
 // 生成 large 和 small 的变量
 @each $size-name, $sizes in $size-map {
-  @if $size-name != 'default' {
+  @if ($size-name != 'default') {
     html.size-#{$size-name} {
       @each $key, $value in $sizes {
         --qa-size-#{$key}: #{$value};
