@@ -17,12 +17,7 @@
     <ElCard class="flex flex-1 flex-col overflow-hidden" shadow="never">
       <!-- 工具栏 -->
       <div class="mb-3">
-        <QaTableHeaderLeft
-          :remove-ids="selectedIds"
-          :create-loading="loading"
-          @add="handleAdd"
-          @delete="handleBatchDelete"
-        />
+        <QaTableHeaderLeft :remove-ids="selectedIds" :create-loading="loading" @add="handleAdd" @delete="handleBatchDelete" />
       </div>
 
       <!-- 表格 -->
@@ -45,7 +40,7 @@
           <ElTableColumn prop="status" label="状态" width="100">
             <template #default="{ row }">
               <ElTag :type="row.status === 0 ? 'success' : 'danger'">
-                {{ row.status === 0 ? "启用" : "禁用" }}
+                {{ row.status === 0 ? '启用' : '禁用' }}
               </ElTag>
             </template>
           </ElTableColumn>
@@ -69,19 +64,25 @@
       <!-- 分页 -->
       <div class="mt-4 flex justify-end">
         <!-- eslint-disable-next-line vue/no-v-model-argument -->
-        <ElPagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" />
+        <ElPagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :total="total"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+        />
       </div>
     </ElCard>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { UserAPI } from "@/api/module_system/user";
-import QaTableHeaderLeft from "@/components/tables/qa-table-header-left/index.vue";
+import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { UserAPI } from '@/api/module_system/user';
+import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
 
-defineOptions({ name: "QaSystemUser" });
+defineOptions({ name: 'QaSystemUser' });
 
 const loading = ref(false);
 const currentPage = ref(1);
@@ -91,10 +92,10 @@ const tableData = ref([]);
 const selectedIds = ref([]);
 
 const searchForm = ref({
-  username: "",
-  name: "",
-  mobile: "",
-  status: undefined,
+  username: '',
+  name: '',
+  mobile: '',
+  status: undefined
 });
 
 const fetchData = async () => {
@@ -103,12 +104,13 @@ const fetchData = async () => {
     const res = await UserAPI.listUser({
       page: currentPage.value,
       limit: pageSize.value,
-      ...searchForm.value,
+      ...searchForm.value
     });
+    console.log(res.data);
     tableData.value = res.data.items || [];
     total.value = res.data.total || 0;
   } catch (error) {
-    console.error("获取用户列表失败", error);
+    console.error('获取用户列表失败', error);
   } finally {
     loading.value = false;
   }
@@ -121,7 +123,7 @@ const onSelectionChange = (rows) => {
 };
 
 const handleAdd = () => {
-  ElMessage.info("新增用户功能待实现");
+  ElMessage.info('新增用户功能待实现');
 };
 
 const handleEdit = (row) => {
@@ -129,22 +131,22 @@ const handleEdit = (row) => {
 };
 
 const handleDelete = (row) => {
-  ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
+  ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   }).then(() => {
-    ElMessage.success("删除成功");
+    ElMessage.success('删除成功');
   });
 };
 
 const handleBatchDelete = () => {
-  ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个用户吗？`, "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
+  ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个用户吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   }).then(() => {
-    ElMessage.success("批量删除成功");
+    ElMessage.success('批量删除成功');
   });
 };
 
@@ -155,10 +157,10 @@ const handleSearch = () => {
 
 const handleReset = () => {
   searchForm.value = {
-    username: "",
-    name: "",
-    mobile: "",
-    status: undefined,
+    username: '',
+    name: '',
+    mobile: '',
+    status: undefined
   };
   currentPage.value = 1;
   fetchData();
