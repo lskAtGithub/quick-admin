@@ -53,30 +53,30 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { MenuAPI } from "@/api/module_system/menu";
 
 defineOptions({ name: "QaSystemMenu" });
 
+const loading = ref(false);
 const searchKeyword = ref("");
 const searchStatus = ref("");
+const tableData = ref([]);
 
-const tableData = ref([
-  {
-    id: 1,
-    name: "系统管理",
-    icon: "ri:settings-3-line",
-    path: "/system",
-    component: "Layout",
-    sort: 1,
-    status: 1,
-    children: [
-      { id: 11, name: "用户管理", icon: "ri:user-line", path: "/system/user", component: "module_system/user/index", sort: 1, status: 1 },
-      { id: 12, name: "角色管理", icon: "ri:team-line", path: "/system/role", component: "module_system/role/index", sort: 2, status: 1 },
-      { id: 13, name: "菜单管理", icon: "ri:menu-line", path: "/system/menu", component: "module_system/menu/index", sort: 3, status: 1 },
-    ],
-  },
-]);
+const fetchData = async () => {
+  loading.value = true;
+  try {
+    const res = await MenuAPI.tree();
+    tableData.value = res.data || [];
+  } catch (error) {
+    ElMessage.error("获取菜单列表失败");
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => fetchData());
 
 const handleAdd = () => {
   ElMessage.info("新增菜单功能待实现");
