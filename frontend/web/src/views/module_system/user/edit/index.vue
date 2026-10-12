@@ -1,17 +1,15 @@
 <template>
-  <ElDialog
+  <QaDrawer
     v-model="visible"
     title="编辑用户"
-    width="600px"
-    :close-on-click-modal="false"
+    size="450px"
+    form-mode="update"
+    :confirm-loading="submitLoading"
     @close="handleClose"
+    @confirm="handleSubmit"
   >
     <UserForm ref="formRef" :form-data="formData" :is-edit="true" />
-    <template #footer>
-      <ElButton @click="visible = false">取消</ElButton>
-      <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">确定</ElButton>
-    </template>
-  </ElDialog>
+  </QaDrawer>
 </template>
 
 <script setup>
@@ -19,6 +17,7 @@ import { ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { UserAPI } from '@/api/module_system/user';
 import UserForm from '../components/UserForm.vue';
+import QaDrawer from '@/components/modal/qa-drawer/index.vue';
 
 defineOptions({ name: 'UserEdit' });
 
