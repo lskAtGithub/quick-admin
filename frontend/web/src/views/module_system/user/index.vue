@@ -2,10 +2,12 @@
   <div class="flex h-full flex-col p-4">
     <!-- 搜索栏 -->
     <div class="mb-3 flex flex-wrap items-center gap-3">
-      <ElInput v-model="searchKeyword" placeholder="搜索用户名" clearable style="width: 200px" />
-      <ElSelect v-model="searchStatus" placeholder="状态" clearable style="width: 120px">
-        <ElOption label="启用" value="1" />
-        <ElOption label="禁用" value="0" />
+      <ElInput v-model="searchForm.username" placeholder="用户名" clearable style="width: 150px" />
+      <ElInput v-model="searchForm.name" placeholder="姓名" clearable style="width: 150px" />
+      <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable style="width: 150px" />
+      <ElSelect v-model="searchForm.status" placeholder="状态" clearable style="width: 120px">
+        <ElOption label="启用" :value="0" />
+        <ElOption label="禁用" :value="1" />
       </ElSelect>
       <ElButton type="primary" @click="handleSearch">搜索</ElButton>
       <ElButton @click="handleReset">重置</ElButton>
@@ -29,17 +31,32 @@
           <ElTableColumn type="selection" width="50" />
           <ElTableColumn prop="id" label="ID" width="80" />
           <ElTableColumn prop="username" label="用户名" width="120" />
-          <ElTableColumn prop="nickname" label="昵称" width="120" />
-          <ElTableColumn prop="deptName" label="部门" width="150" />
-          <ElTableColumn prop="roleName" label="角色" width="150" />
-          <ElTableColumn prop="phone" label="手机号" width="130" />
+          <ElTableColumn prop="name" label="姓名" width="120" />
+          <ElTableColumn prop="mobile" label="手机号" width="130" />
+          <ElTableColumn prop="email" label="邮箱" width="180" />
+          <ElTableColumn prop="gender" label="性别" width="80">
+            <template #default="{ row }">
+              <ElTag v-if="row.gender === '0'" type="success">男</ElTag>
+              <ElTag v-else-if="row.gender === '1'" type="warning">女</ElTag>
+              <ElTag v-else type="info">未知</ElTag>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="dept_name" label="部门" width="150" />
           <ElTableColumn prop="status" label="状态" width="100">
             <template #default="{ row }">
-              <ElTag :type="row.status === 1 ? 'success' : 'danger'">
-                {{ row.status === 1 ? "启用" : "禁用" }}
+              <ElTag :type="row.status === 0 ? 'success' : 'danger'">
+                {{ row.status === 0 ? "启用" : "禁用" }}
               </ElTag>
             </template>
           </ElTableColumn>
+          <ElTableColumn prop="is_superuser" label="超管" width="80">
+            <template #default="{ row }">
+              <ElTag v-if="row.is_superuser" type="danger">是</ElTag>
+              <ElTag v-else type="info">否</ElTag>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="last_login" label="最后登录" width="180" />
+          <ElTableColumn prop="description" label="备注" show-overflow-tooltip />
           <ElTableColumn label="操作" fixed="right" width="200">
             <template #default="{ row }">
               <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
@@ -67,13 +84,18 @@ import QaTableHeaderLeft from "@/components/tables/qa-table-header-left/index.vu
 defineOptions({ name: "QaSystemUser" });
 
 const loading = ref(false);
-const searchKeyword = ref("");
-const searchStatus = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 const tableData = ref([]);
 const selectedIds = ref([]);
+
+const searchForm = ref({
+  username: "",
+  name: "",
+  mobile: "",
+  status: undefined,
+});
 
 const fetchData = async () => {
   loading.value = true;
@@ -81,8 +103,7 @@ const fetchData = async () => {
     const res = await UserAPI.listUser({
       page: currentPage.value,
       limit: pageSize.value,
-      username: searchKeyword.value || undefined,
-      status: searchStatus.value || undefined,
+      ...searchForm.value,
     });
     tableData.value = res.data.list || [];
     total.value = res.data.total || 0;
@@ -133,8 +154,12 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  searchKeyword.value = "";
-  searchStatus.value = "";
+  searchForm.value = {
+    username: "",
+    name: "",
+    mobile: "",
+    status: undefined,
+  };
   currentPage.value = 1;
   fetchData();
 };
