@@ -17,10 +17,10 @@
       <!-- 搜索栏 -->
       <div class="mb-3 flex items-center gap-2">
         <div class="flex flex-1 flex-wrap items-center gap-2">
-          <ElInput v-model="searchForm.username" placeholder="用户名" clearable style="width: 150px" />
-          <ElInput v-model="searchForm.name" placeholder="姓名" clearable style="width: 150px" />
-          <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable style="width: 150px" />
-          <ElSelect v-model="searchForm.status" placeholder="状态" clearable style="width: 120px">
+          <ElInput v-model="searchForm.username" placeholder="用户名" clearable class="search-input-sm" />
+          <ElInput v-model="searchForm.name" placeholder="姓名" clearable class="search-input-sm" />
+          <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable class="search-input-sm" />
+          <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
             <ElOption label="启用" :value="0" />
             <ElOption label="禁用" :value="1" />
           </ElSelect>
@@ -244,3 +244,13 @@ const handleSizeChange = (size) => {
   fetchData();
 };
 </script>
+
+<style scoped>
+.search-input-sm {
+  width: 150px;
+}
+
+.search-input-xs {
+  width: 120px;
+}
+</style>
