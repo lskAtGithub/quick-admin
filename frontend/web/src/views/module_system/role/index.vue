@@ -54,21 +54,39 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { RoleAPI } from "@/api/module_system/role";
 
 defineOptions({ name: "QaSystemRole" });
 
+const loading = ref(false);
 const searchKeyword = ref("");
 const searchStatus = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const tableData = ref([]);
 
-const tableData = ref([
-  { id: 1, name: "超级管理员", code: "super_admin", sort: 1, status: 1, remark: "系统最高权限角色" },
-  { id: 2, name: "普通用户", code: "user", sort: 2, status: 1, remark: "普通访问权限" },
-]);
+const fetchData = async () => {
+  loading.value = true;
+  try {
+    const res = await RoleAPI.list({
+      page: currentPage.value,
+      limit: pageSize.value,
+      name: searchKeyword.value || undefined,
+      status: searchStatus.value || undefined,
+    });
+    tableData.value = res.data.list || [];
+    total.value = res.data.total || 0;
+  } catch (error) {
+    ElMessage.error("获取角色列表失败");
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => fetchData());
 
 const handleAdd = () => {
   ElMessage.info("新增角色功能待实现");
