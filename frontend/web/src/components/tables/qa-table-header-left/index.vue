@@ -68,10 +68,10 @@ defineOptions({ name: "QaTableHeaderLeft" });
 
 defineProps({
   removeIds: { type: Array, default: () => [] },
-  permCreate: { type: [String, Array], default: undefined },
+  permCreate: { type: [String, Array], default: true },
   permImport: { type: [String, Array], default: undefined },
   permExport: { type: [String, Array], default: undefined },
-  permDelete: { type: [String, Array], default: undefined },
+  permDelete: { type: [String, Array], default: true },
   permPatch: { type: [String, Array], default: undefined },
   createLoading: { type: Boolean, default: false },
   importLoading: { type: Boolean, default: false },
