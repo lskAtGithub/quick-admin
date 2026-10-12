@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:clean": "node -e \"const fs=require('fs');const p=require('path');const d=p.join(__dirname,'node_modules/.vite');fs.existsSync(d)&&fs.rmSync(d,{recursive:true,force:true});console.log('✓ Vite cache cleared');\" && vite",
     "build": "vite build",
     "preview": "vite preview"
   },

@@ -70,6 +70,16 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       port: Number(env.VITE_PORT) || 5173,
+      // 文件系统监听配置，解决 Windows 下文件变更检测问题
+      watch: {
+        // 使用轮询模式，解决某些环境下文件系统事件失效的问题
+        usePolling: true,
+        interval: 1000,
+      },
+      // HMR 配置
+      hmr: {
+        overlay: true,
+      },
       proxy: env.VITE_API_BASE_URL
         ? {
             [env.VITE_APP_BASE_API]: {
@@ -79,6 +89,11 @@ export default defineConfig(({ mode }) => {
             },
           }
         : undefined,
+    },
+    // 依赖预构建配置
+    optimizeDeps: {
+      // 强制重新预构建依赖，解决缓存问题
+      force: false,
     },
     css: {
       preprocessorOptions: {
