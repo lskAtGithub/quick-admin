@@ -1,28 +1,32 @@
 <template>
   <div class="flex h-full flex-col p-4">
-    <QaCardBanner title="菜单管理" class="flex flex-1 flex-col overflow-hidden">
-      <template #header>
-        <div class="flex items-center justify-between">
-          <span class="text-lg font-bold">菜单列表</span>
-          <ElButton type="primary" @click="handleAdd">
-            <QaSvgIcon icon="ri:add-line" class="mr-1" />
-            新增菜单
-          </ElButton>
-        </div>
-      </template>
+    <!-- 搜索栏 -->
+    <div class="mb-3 flex flex-wrap items-center gap-3">
+      <ElInput v-model="searchKeyword" placeholder="搜索菜单名" clearable style="width: 200px" />
+      <ElSelect v-model="searchStatus" placeholder="状态" clearable style="width: 120px">
+        <ElOption label="启用" value="1" />
+        <ElOption label="禁用" value="0" />
+      </ElSelect>
+      <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+      <ElButton @click="handleReset">重置</ElButton>
+    </div>
 
-      <div class="mb-4 flex flex-wrap items-center gap-3">
-        <ElInput v-model="searchKeyword" placeholder="搜索菜单名" clearable style="width: 200px" />
-        <ElSelect v-model="searchStatus" placeholder="状态" clearable style="width: 120px">
-          <ElOption label="启用" value="1" />
-          <ElOption label="禁用" value="0" />
-        </ElSelect>
-        <ElButton type="primary" @click="handleSearch">搜索</ElButton>
-        <ElButton @click="handleReset">重置</ElButton>
+    <!-- 表格卡片 -->
+    <ElCard class="flex flex-1 flex-col overflow-hidden" shadow="never">
+      <!-- 工具栏 -->
+      <div class="mb-3">
+        <QaTableHeaderLeft
+          :remove-ids="selectedIds"
+          :create-loading="loading"
+          @add="handleAdd"
+          @delete="handleBatchDelete"
+        />
       </div>
 
+      <!-- 表格 -->
       <div class="flex-1 overflow-auto">
-        <ElTable :data="tableData" row-key="id" border default-expand-all :tree-props="{ children: 'children' }" class="w-full">
+        <ElTable :data="tableData" row-key="id" border default-expand-all :tree-props="{ children: 'children' }" class="w-full" @selection-change="onSelectionChange">
+          <ElTableColumn type="selection" width="50" />
           <ElTableColumn prop="name" label="菜单名称" width="200" />
           <ElTableColumn prop="icon" label="图标" width="100">
             <template #default="{ row }">
@@ -48,7 +52,7 @@
           </ElTableColumn>
         </ElTable>
       </div>
-    </QaCardBanner>
+    </ElCard>
   </div>
 </template>
 
@@ -56,6 +60,7 @@
 import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { MenuAPI } from "@/api/module_system/menu";
+import QaTableHeaderLeft from "@/components/tables/qa-table-header-left/index.vue";
 
 defineOptions({ name: "QaSystemMenu" });
 
@@ -63,6 +68,7 @@ const loading = ref(false);
 const searchKeyword = ref("");
 const searchStatus = ref("");
 const tableData = ref([]);
+const selectedIds = ref([]);
 
 const fetchData = async () => {
   loading.value = true;
@@ -77,6 +83,10 @@ const fetchData = async () => {
 };
 
 onMounted(() => fetchData());
+
+const onSelectionChange = (rows) => {
+  selectedIds.value = rows.map((r) => r.id);
+};
 
 const handleAdd = () => {
   ElMessage.info("新增菜单功能待实现");
@@ -100,13 +110,23 @@ const handleDelete = (row) => {
   });
 };
 
+const handleBatchDelete = () => {
+  ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个菜单吗？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    ElMessage.success("批量删除成功");
+  });
+};
+
 const handleSearch = () => {
-  ElMessage.info("搜索功能待实现");
+  fetchData();
 };
 
 const handleReset = () => {
   searchKeyword.value = "";
   searchStatus.value = "";
-  ElMessage.success("已重置");
+  fetchData();
 };
 </script>
