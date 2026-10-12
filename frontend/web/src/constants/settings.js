@@ -1,6 +1,11 @@
 import { MenuTypeEnum } from "../enums/appEnum.js";
 
-export const AVAILABLE_MENU_TYPES = Object.freeze([MenuTypeEnum.LEFT]);
+export const AVAILABLE_MENU_TYPES = Object.freeze([
+  MenuTypeEnum.LEFT,
+  MenuTypeEnum.TOP,
+  MenuTypeEnum.MIXED,
+  MenuTypeEnum.DUAL_MENU,
+]);
 
 export const PENDING_SETTING_KEYS = Object.freeze([
   "showFastEnter", "showMenuSearch", "showSizeSelect",
