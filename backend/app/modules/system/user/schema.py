@@ -29,10 +29,11 @@ class UserUpdateSchema(BaseModel):
 class UserQuerySchema(PageQuerySchema):
     username: str | None = Field(default=None, description="用户名(模糊)")
     name: str | None = Field(default=None, description="昵称(模糊)")
+    mobile: str | None = Field(default=None, description="手机号(模糊)")
     status: str | None = Field(default=None, description="状态")
     dept_id: str | None = Field(default=None, description="部门ID")
 
-    @field_validator("username", "name", "status", "dept_id", mode="before")
+    @field_validator("username", "name", "mobile", "status", "dept_id", mode="before")
     @classmethod
     def empty_str_to_none(cls, v):
         return None if v == "" else v

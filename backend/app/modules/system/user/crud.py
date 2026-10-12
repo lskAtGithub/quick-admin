@@ -31,7 +31,7 @@ class UserCRUD:
 
         for key, value in kwargs.items():
             if value is not None and hasattr(UserModel, key):
-                if key in ("username", "name"):
+                if key in ("username", "name", "mobile"):
                     stmt = stmt.where(getattr(UserModel, key).like(f"%{value}%"))
                 else:
                     stmt = stmt.where(getattr(UserModel, key) == value)

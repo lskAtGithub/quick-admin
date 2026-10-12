@@ -40,6 +40,7 @@ async def get_user_list(
         page_size=int(query.page_size),
         username=query.username,
         name=query.name,
+        mobile=query.mobile,
         status=int(query.status) if query.status is not None else None,
         dept_id=int(query.dept_id) if query.dept_id is not None else None,
     )
