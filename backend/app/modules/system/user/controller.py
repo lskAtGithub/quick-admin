@@ -15,6 +15,19 @@ from .service import UserService
 UserRouter = APIRouter(prefix="/user", tags=["用户管理"])
 
 
+@UserRouter.get("/current/info", summary="获取当前用户信息")
+async def get_current_user_info(
+    db: Annotated[AsyncSession, Depends(db_getter)],
+    auth: Annotated[AuthSchema, Depends(get_current_user)],
+) -> JSONResponse:
+    user = await UserCRUD(auth, db).get_by_id(auth.user.id)
+    if not user:
+        from app.common.enums import RET
+        from app.core.exceptions import CustomException
+        raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
+    return SuccessResponse(data=UserService._to_dict(user))
+
+
 @UserRouter.get("/list", summary="用户列表")
 async def get_user_list(
     query: Annotated[UserQuerySchema, Depends()],
