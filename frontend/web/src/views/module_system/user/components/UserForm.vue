@@ -57,8 +57,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import DeptAPI from '@/api/module_system/dept';
-import RoleAPI from '@/api/module_system/role';
+import { DeptAPI } from '@/api/module_system/dept';
+import { RoleAPI } from '@/api/module_system/role';
 
 defineOptions({ name: 'UserForm' });
 
