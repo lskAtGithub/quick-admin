@@ -7,9 +7,6 @@ const AuthAPI = {
     return request({
       url: `${API_PATH}/login`,
       method: "post",
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
       data: body,
     });
   },
