@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base_model import ModelMixin
+
+if TYPE_CHECKING:
+    from app.modules.system.role.model import RoleModel
 
 
 class MenuModel(ModelMixin):
@@ -28,3 +33,4 @@ class MenuModel(ModelMixin):
         foreign_keys="MenuModel.parent_id", uselist=False)
     children: Mapped[list["MenuModel"] | None] = relationship(
         back_populates="parent", foreign_keys="MenuModel.parent_id", order_by="MenuModel.order")
+    roles: Mapped[list["RoleModel"] | None] = relationship(secondary="sys_role_menus", back_populates="menus")
