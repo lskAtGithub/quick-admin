@@ -93,6 +93,74 @@
         </div>
       </ElCard>
     </div>
+
+    <!-- 新增/编辑对话框 -->
+    <ElDialog
+      v-model="dialogVisible"
+      :title="dialogTitle"
+      width="600px"
+      :close-on-click-modal="false"
+      @close="handleDialogClose"
+    >
+      <ElForm
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="100px"
+        label-position="right"
+      >
+        <ElFormItem label="用户名" prop="username">
+          <ElInput v-model="formData.username" placeholder="请输入用户名" :disabled="!!formData.id" />
+        </ElFormItem>
+        <ElFormItem label="密码" prop="password" v-if="!formData.id">
+          <ElInput v-model="formData.password" type="password" placeholder="请输入密码" show-password />
+        </ElFormItem>
+        <ElFormItem label="姓名" prop="name">
+          <ElInput v-model="formData.name" placeholder="请输入姓名" />
+        </ElFormItem>
+        <ElFormItem label="手机号" prop="mobile">
+          <ElInput v-model="formData.mobile" placeholder="请输入手机号" />
+        </ElFormItem>
+        <ElFormItem label="邮箱" prop="email">
+          <ElInput v-model="formData.email" placeholder="请输入邮箱" />
+        </ElFormItem>
+        <ElFormItem label="性别" prop="gender">
+          <ElSelect v-model="formData.gender" placeholder="请选择性别">
+            <ElOption label="男" value="0" />
+            <ElOption label="女" value="1" />
+            <ElOption label="未知" value="2" />
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem label="部门" prop="dept_id">
+          <ElTreeSelect
+            v-model="formData.dept_id"
+            placeholder="请选择部门"
+            :data="deptOptions"
+            :props="{ children: 'children', label: 'label', value: 'value' }"
+            check-strictly
+            filterable
+          />
+        </ElFormItem>
+        <ElFormItem label="角色" prop="role_ids">
+          <ElSelect v-model="formData.role_ids" multiple placeholder="请选择角色" filterable>
+            <ElOption v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem label="状态" prop="status">
+          <ElRadioGroup v-model="formData.status">
+            <ElRadio :value="0">启用</ElRadio>
+            <ElRadio :value="1">禁用</ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+        <ElFormItem label="备注" prop="description">
+          <ElInput v-model="formData.description" type="textarea" :rows="3" placeholder="请输入备注" />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <ElButton @click="dialogVisible = false">取消</ElButton>
+        <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">确定</ElButton>
+      </template>
+    </ElDialog>
   </div>
 </template>
 
@@ -100,6 +168,8 @@
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { UserAPI } from '@/api/module_system/user';
+import DeptAPI from '@/api/module_system/dept';
+import RoleAPI from '@/api/module_system/role';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
 import QaDeptTree from './components/QaDeptTree.vue';
 
@@ -120,6 +190,36 @@ const searchForm = ref({
   status: undefined
 });
 
+const dialogVisible = ref(false);
+const dialogTitle = ref('');
+const submitLoading = ref(false);
+const formRef = ref();
+const formData = ref({
+  id: undefined,
+  username: '',
+  password: '',
+  name: '',
+  mobile: '',
+  email: '',
+  gender: '0',
+  dept_id: undefined,
+  role_ids: [],
+  status: 0,
+  description: ''
+});
+
+const formRules = {
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+  mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
+  dept_id: [{ required: true, message: '请选择部门', trigger: 'change' }],
+  role_ids: [{ required: true, message: '请选择角色', trigger: 'change' }]
+};
+
+const deptOptions = ref([]);
+const roleOptions = ref([]);
+
 const fetchData = async () => {
   loading.value = true;
   try {
@@ -139,7 +239,48 @@ const fetchData = async () => {
   }
 };
 
-onMounted(() => fetchData());
+onMounted(() => {
+  fetchData();
+  loadDeptOptions();
+  loadRoleOptions();
+});
+
+const loadDeptOptions = async () => {
+  try {
+    const res = await DeptAPI.list();
+    deptOptions.value = formatTree(res.data || []);
+  } catch (error) {
+    console.error('加载部门列表失败', error);
+  }
+};
+
+const loadRoleOptions = async () => {
+  try {
+    const res = await RoleAPI.list();
+    roleOptions.value = (res.data.items || []).map((item) => ({
+      label: item.name,
+      value: item.id
+    }));
+  } catch (error) {
+    console.error('加载角色列表失败', error);
+  }
+};
+
+const formatTree = (data, parentId = 0) => {
+  const result = [];
+  for (const item of data) {
+    if (item.parent_id === parentId) {
+      const children = formatTree(data, item.id);
+      const node = {
+        value: item.id,
+        label: item.name,
+        children: children.length > 0 ? children : undefined
+      };
+      result.push(node);
+    }
+  }
+  return result;
+};
 
 const handleDeptNodeClick = () => {
   currentPage.value = 1;
@@ -150,32 +291,124 @@ const onSelectionChange = (rows) => {
   selectedIds.value = rows.map((r) => r.id);
 };
 
-const handleAdd = () => {
-  ElMessage.info('新增用户功能待实现');
+const handleAdd = async () => {
+  dialogTitle.value = '新增用户';
+  formData.value = {
+    id: undefined,
+    username: '',
+    password: '',
+    name: '',
+    mobile: '',
+    email: '',
+    gender: '0',
+    dept_id: undefined,
+    role_ids: [],
+    status: 0,
+    description: ''
+  };
+  dialogVisible.value = true;
 };
 
-const handleEdit = (row) => {
-  ElMessage.info(`编辑用户：${row.username}`);
+const handleEdit = async (row) => {
+  dialogTitle.value = '编辑用户';
+  try {
+    const res = await UserAPI.detailUser(row.id);
+    const data = res.data;
+    formData.value = {
+      id: data.id,
+      username: data.username,
+      password: '',
+      name: data.name,
+      mobile: data.mobile,
+      email: data.email,
+      gender: data.gender || '0',
+      dept_id: data.dept_id,
+      role_ids: data.role_ids || [],
+      status: data.status,
+      description: data.description
+    };
+    dialogVisible.value = true;
+  } catch (error) {
+    ElMessage.error('获取用户详情失败');
+  }
 };
 
-const handleDelete = (row) => {
-  ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    });
+    await UserAPI.deleteUser({ ids: [row.id] });
     ElMessage.success('删除成功');
-  });
+    await fetchData();
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败');
+    }
+  }
 };
 
-const handleBatchDelete = () => {
-  ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个用户吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
+const handleBatchDelete = async () => {
+  if (selectedIds.value.length === 0) {
+    ElMessage.warning('请选择要删除的用户');
+    return;
+  }
+  try {
+    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个用户吗？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    });
+    await UserAPI.deleteUser({ ids: selectedIds.value });
     ElMessage.success('批量删除成功');
-  });
+    await fetchData();
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('批量删除失败');
+    }
+  }
+};
+
+const handleSubmit = async () => {
+  if (!formRef.value) return;
+  const valid = await formRef.value.validate().catch(() => false);
+  if (!valid) return;
+  
+  submitLoading.value = true;
+  try {
+    if (formData.value.id) {
+      await UserAPI.updateUser(formData.value.id, formData.value);
+      ElMessage.success('修改成功');
+    } else {
+      await UserAPI.createUser(formData.value);
+      ElMessage.success('新增成功');
+    }
+    dialogVisible.value = false;
+    await fetchData();
+  } catch (error) {
+    ElMessage.error(formData.value.id ? '修改失败' : '新增失败');
+  } finally {
+    submitLoading.value = false;
+  }
+};
+
+const handleDialogClose = () => {
+  formRef.value?.resetFields();
+  formData.value = {
+    id: undefined,
+    username: '',
+    password: '',
+    name: '',
+    mobile: '',
+    email: '',
+    gender: '0',
+    dept_id: undefined,
+    role_ids: [],
+    status: 0,
+    description: ''
+  };
 };
 
 const handleSearch = () => {
