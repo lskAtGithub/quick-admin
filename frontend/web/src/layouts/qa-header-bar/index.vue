@@ -55,6 +55,9 @@
         <QaBreadcrumb
           v-if="(shouldShowBreadcrumb && isLeftMenu) || (shouldShowBreadcrumb && isDualMenu)"
         />
+
+        <!-- 水平菜单 -->
+        <QaHorizontalMenu v-if="isTopMenu" :list="menuList" />
       </div>
 
       <div id="app-header-toolbar" class="flex items-center gap-2.5">
@@ -117,7 +120,7 @@ import { useRouter } from "vue-router";
 import { useFullscreen, useWindowSize } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { MenuTypeEnum } from "@/enums/appEnum";
-import { useSettingStore, useUserStore, useConfigStore } from "@/store";
+import { useSettingStore, useUserStore, useConfigStore, useMenuStore } from "@/store";
 import AppConfig from "@/config";
 import { languageOptions } from "@/locales";
 import { themeAnimation } from "@/utils/ui";
@@ -125,6 +128,7 @@ import { useCommon } from "@/hooks/core/useCommon";
 import { useHeaderBar } from "@/hooks/core/useHeaderBar";
 import QaUserMenu from "./widgets/QaUserMenu.vue";
 import QaSizeSelect from "@/components/actions/qa-size-select/index.vue";
+import QaHorizontalMenu from "@/layouts/qa-menus/qa-horizontal-menu/index.vue";
 
 defineOptions({ name: "QaHeaderBar" });
 
@@ -135,6 +139,7 @@ const { width } = useWindowSize();
 const settingStore = useSettingStore();
 const userStore = useUserStore();
 const configStore = useConfigStore();
+const menuStore = useMenuStore();
 
 /** 租户配置：logo_url / sys_name */
 const headerLogoSrc = computed(() => {
@@ -162,6 +167,7 @@ const {
 
 const { menuOpen, menuType, isDark, tabStyle, showAppLogo } = storeToRefs(settingStore);
 const { language } = storeToRefs(userStore);
+const { visibleMenus: menuList } = storeToRefs(menuStore);
 
 // 菜单类型判断
 const isLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT);
