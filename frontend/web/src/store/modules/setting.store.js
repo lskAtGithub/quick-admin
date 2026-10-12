@@ -94,6 +94,7 @@ export const useSettingStore = defineStore(
     const sidebarColorScheme = ref(D.sidebarColorScheme);
     const layout = ref(D.layout);
     const language = ref(D.language);
+    const size = ref(D.size);
 
     // 持久化：系统设置
     const grayMode = ref(D.grayMode);
@@ -118,7 +119,7 @@ export const useSettingStore = defineStore(
       showMenuButton, showFastEnter, showRefreshButton, showCrumbs, showWorkTab, showLanguage,
       showNprogress, showSettingGuide, showFestivalText, watermarkVisible, autoClose, uniqueOpened,
       colorWeak, boxBorderMode, pageTransition, tabStyle, customRadius, containerWidth,
-      language, pageSwitchingAnimation,
+      language, pageSwitchingAnimation, size,
       showTagsView,
       showAppLogo,
       showWatermark,
@@ -230,6 +231,10 @@ export const useSettingStore = defineStore(
       }
     }
 
+    function setSize(newSize) {
+      size.value = newSize;
+    }
+
     function toggleShowLanguage() {
       showLanguage.value = !showLanguage.value;
     }
@@ -337,6 +342,7 @@ export const useSettingStore = defineStore(
       sidebarColorScheme,
       layout,
       language,
+      size,
       grayMode,
       userEnableAi,
       pageSwitchingAnimation,
@@ -355,6 +361,7 @@ export const useSettingStore = defineStore(
       applyMode,
       resolveAndApply,
       setLanguage,
+      setSize,
       toggleShowLanguage,
       setShowGuide,
       switchMenuLayouts,
