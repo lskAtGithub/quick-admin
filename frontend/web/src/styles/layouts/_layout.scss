@@ -22,7 +22,7 @@
       z-index: 50;
       flex-shrink: 0;
       width: 100%;
-      border-bottom: 1px solid var(--qa-gray-200);
+      border-bottom: var(--qa-size-border-width) solid var(--qa-gray-200);
       // 毛玻璃效果移到伪元素，避免创建 containing block 影响内部 fixed 定位元素
       &::before {
         position: absolute;
@@ -41,7 +41,7 @@
       flex: 1;
       flex-direction: column;
       min-height: 0;
-      padding: 20px;
+      padding: var(--qa-size-page-padding);
       overflow: auto;
 
       .layout-content {
@@ -55,7 +55,7 @@
           position: relative;
           box-sizing: border-box;
           min-height: 0;
-          padding: 20px;
+          padding: var(--qa-size-card-padding);
           overflow: hidden auto;
           background: var(--default-box-color);
           border-radius: calc(var(--custom-radius) / 2 + 2px) !important;
@@ -98,10 +98,10 @@
       overflow: hidden;
 
       #app-content {
-        padding: 12px;
+        padding: var(--qa-size-spacing-md);
 
         .layout-content {
-          width: calc(100% - 24px);
+          width: calc(100% - var(--qa-size-spacing-2xl));
         }
       }
     }
@@ -112,10 +112,10 @@
   .app-layout {
     #app-main {
       #app-content {
-        padding: 8px;
+        padding: var(--qa-size-spacing-sm);
 
         .layout-content {
-          width: calc(100% - 16px);
+          width: calc(100% - var(--qa-size-spacing-lg));
         }
       }
     }

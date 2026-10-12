@@ -75,7 +75,7 @@ const visible = computed({
 }
 
 .qa-drawer-title {
-  font-size: 16px;
+  font-size: var(--qa-size-font-xl);
   font-weight: 600;
   color: var(--el-text-color-primary);
 }
@@ -83,13 +83,13 @@ const visible = computed({
 .qa-drawer-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--qa-size-spacing-sm);
 }
 
 .qa-drawer-footer {
   display: flex;
   justify-content: flex-end;
-  padding: 16px 20px;
-  border-top: 1px solid var(--el-border-color-light);
+  padding: var(--qa-size-spacing-lg) var(--qa-size-spacing-xl);
+  border-top: var(--qa-size-border-width) solid var(--el-border-color-light);
 }
 </style>

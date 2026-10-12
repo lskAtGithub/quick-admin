@@ -5,12 +5,12 @@
 
 // 盒子默认边框
 .page-content {
-  border: 1px solid var(--qa-card-border) !important;
+  border: var(--qa-size-border-width) solid var(--qa-card-border) !important;
 }
 
 @mixin qa-card-base($border-color, $shadow: none, $radius-diff: 4px) {
   background: var(--default-box-color);
-  border: 1px solid #{$border-color} !important;
+  border: var(--qa-size-border-width) solid #{$border-color} !important;
   border-radius: calc(var(--custom-radius) + #{$radius-diff}) !important;
   box-shadow: #{$shadow} !important;
 
@@ -25,7 +25,7 @@
 .qa-card,
 .qa-card-sm,
 .qa-card-xs {
-  border: 1px solid var(--qa-card-border);
+  border: var(--qa-size-border-width) solid var(--qa-card-border);
 }
 
 .qa-card {
