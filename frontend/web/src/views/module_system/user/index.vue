@@ -105,7 +105,7 @@ const fetchData = async () => {
       limit: pageSize.value,
       ...searchForm.value,
     });
-    tableData.value = res.data.list || [];
+    tableData.value = res.data.items || [];
     total.value = res.data.total || 0;
   } catch (error) {
     console.error("获取用户列表失败", error);
