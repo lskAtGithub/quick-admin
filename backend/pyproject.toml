@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "aiomysql>=0.3.2",
     "aiosqlite>=0.22.1",
+    "alembic>=1.20.0",
     "bcrypt>=5.0.0",
     "fastapi>=0.143.0",
     "greenlet>=3.5.6",
