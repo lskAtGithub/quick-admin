@@ -80,7 +80,7 @@ export const useUserStore = defineStore(
 
     async function getUserInfo(checkDataScope) {
       const response = await UserAPI.getCurrentUserInfo(checkDataScope);
-      const data = response.data.data;
+      const data = response.data;
       const menus = data?.menus || [];
       if (data) delete data.menus;
       info.value = { ...info.value, ...data };
@@ -97,7 +97,7 @@ export const useUserStore = defineStore(
 
     async function login(loginForm) {
       const response = await AuthAPI.login(loginForm);
-      const data = response.data.data;
+      const data = response.data;
       if (response.data.code === ResultEnum.SUCCESS) {
         ElNotification({
           title: "通知",
@@ -157,7 +157,7 @@ export const useUserStore = defineStore(
         throw new Error("没有有效的刷新令牌");
       }
       const response = await AuthAPI.refreshToken(currentRefreshToken);
-      const data = response.data.data;
+      const data = response.data;
       Auth.setTokens(data.access_token, data.refresh_token, Auth.getRememberMe());
       setToken(data.access_token, data.refresh_token);
     }
