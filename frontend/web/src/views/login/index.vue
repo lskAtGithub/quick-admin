@@ -362,7 +362,7 @@ async function getCaptcha() {
   try {
     codeLoading.value = true;
     const response = await AuthAPI.getCaptcha();
-    const data = response.data.data;
+    const data = response.data;
     loginForm.captcha_key = data.key;
     captchaState.img_base = data.img_base;
     captchaState.enable = data.enable;
