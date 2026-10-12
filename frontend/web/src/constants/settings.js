@@ -3,7 +3,7 @@ import { MenuTypeEnum } from "../enums/appEnum.js";
 export const AVAILABLE_MENU_TYPES = Object.freeze([
   MenuTypeEnum.LEFT,
   MenuTypeEnum.TOP,
-  MenuTypeEnum.MIXED,
+  MenuTypeEnum.TOP_LEFT,
   MenuTypeEnum.DUAL_MENU,
 ]);
 
