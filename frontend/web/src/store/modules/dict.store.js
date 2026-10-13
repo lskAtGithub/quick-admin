@@ -24,8 +24,8 @@ export const useDictStore = defineStore("dictStore", () => {
     if (toLoad.length === 0) return;
     const results = await Promise.all(toLoad.map((t) => DictAPI.listDataByType(t)));
     results.forEach((res, idx) => {
-      if (res.data?.code === 0) {
-        dictData.value[toLoad[idx]] = res.data.data ?? [];
+      if (res.code === 0) {
+        dictData.value[toLoad[idx]] = res.data ?? [];
       }
     });
     isLoaded.value = true;
