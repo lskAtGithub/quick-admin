@@ -44,7 +44,8 @@ def create_app() -> FastAPI:
 
     handle_exception(app)
 
-    from app.core.middlewares import CustomCORSMiddleware, CustomGZipMiddleware
+    from app.core.middlewares import CustomCORSMiddleware, CustomGZipMiddleware, PermissionMiddleware
+    app.add_middleware(PermissionMiddleware)
     app.add_middleware(CustomGZipMiddleware)
     app.add_middleware(CustomCORSMiddleware)
 
