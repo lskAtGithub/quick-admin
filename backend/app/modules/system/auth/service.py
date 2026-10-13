@@ -21,6 +21,9 @@ from .schema import CaptchaOutSchema, LoginOutSchema
 
 
 class AuthService:
+    ACCESS_EXPIRE_HOURS = 12
+    REFRESH_EXPIRE_HOURS = 24
+
     def __init__(self, auth: AuthSchema, db: AsyncSession) -> None:
         self.auth = auth
         self.db = db
@@ -51,10 +54,10 @@ class AuthService:
         })
         return {"id": user.id, "username": user.username, "name": user.name}
 
-    async def _create_token(self, user, redis: Redis) -> LoginOutSchema:
-        session_id = str(uuid.uuid4())
-        access_expires = timedelta(hours=12)
-        refresh_expires = timedelta(hours=24)
+    async def _create_token(self, user, redis: Redis, session_id: str | None = None) -> LoginOutSchema:
+        session_id = session_id or str(uuid.uuid4())
+        access_expires = timedelta(hours=self.ACCESS_EXPIRE_HOURS)
+        refresh_expires = timedelta(hours=self.REFRESH_EXPIRE_HOURS)
         now = datetime.now()
 
         session_data = {
@@ -67,21 +70,29 @@ class AuthService:
         }
 
         session_key = f"{RedisInitKeyConfig.USER_SESSION.key}:{session_id}"
-        logger.info(f"准备存储会话到 Redis: {session_key}")
-
         await RedisCURD(redis).set(
             key=session_key,
             value=json.dumps(session_data),
             expire=int(refresh_expires.total_seconds()),
         )
 
-        logger.info(f"会话已存储到 Redis: {session_key}")
-
         access_token = create_access_token(
             JWTPayloadSchema(sub=session_id, is_refresh=False, exp=int((now + access_expires).timestamp()))
         )
         refresh_token = create_access_token(
             JWTPayloadSchema(sub=session_id, is_refresh=True, exp=int((now + refresh_expires).timestamp()))
+        )
+
+        crud = RedisCURD(redis)
+        await crud.set(
+            key=f"{RedisInitKeyConfig.ACCESS_TOKEN.key}:{session_id}",
+            value=access_token,
+            expire=int(access_expires.total_seconds()),
+        )
+        await crud.set(
+            key=f"{RedisInitKeyConfig.REFRESH_TOKEN.key}:{session_id}",
+            value=refresh_token,
+            expire=int(refresh_expires.total_seconds()),
         )
 
         user_info = {
@@ -97,6 +108,43 @@ class AuthService:
             expires_in=int(access_expires.total_seconds()),
             user_info=user_info,
         )
+
+    async def refresh_token(self, refresh_token: str, redis: Redis) -> LoginOutSchema:
+        payload = decode_access_token(refresh_token)
+        if not payload.is_refresh:
+            raise CustomException(msg="非法凭证，请传入刷新令牌")
+
+        session_id = payload.sub
+        crud = RedisCURD(redis)
+        session_key = f"{RedisInitKeyConfig.USER_SESSION.key}:{session_id}"
+        refresh_key = f"{RedisInitKeyConfig.REFRESH_TOKEN.key}:{session_id}"
+
+        session_info = await crud.get(session_key)
+        if not session_info:
+            raise CustomException(msg="会话已过期，请重新登录")
+
+        # 轮换校验：与当前会话存储的 refresh token 不一致视为重放，撤销整个会话
+        stored_refresh = await crud.get(refresh_key)
+        if isinstance(stored_refresh, bytes):
+            stored_refresh = stored_refresh.decode()
+        if not stored_refresh or stored_refresh != refresh_token:
+            await crud.delete(
+                session_key,
+                refresh_key,
+                f"{RedisInitKeyConfig.ACCESS_TOKEN.key}:{session_id}",
+            )
+            logger.warning(f"检测到疑似 refresh token 重放，已撤销会话: {session_id}")
+            raise CustomException(msg="刷新凭证已失效，请重新登录")
+
+        user_id = json.loads(session_info).get("user_id")
+        user = await UserCRUD(self.auth, self.db).get(id=user_id)
+        if not user:
+            raise CustomException(msg="刷新token失败，用户不存在")
+        if user.status == 1:
+            raise CustomException(msg="用户已被停用")
+
+        await crud.expire(session_key, int(timedelta(hours=self.REFRESH_EXPIRE_HOURS).total_seconds()))
+        return await self._create_token(user, redis, session_id=session_id)
 
     @staticmethod
     async def logout(redis: Redis, token: str) -> bool:

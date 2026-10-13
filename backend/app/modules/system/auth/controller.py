@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import JSONResponse
 from redis.asyncio.client import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -54,6 +54,17 @@ async def register(
     auth = AuthSchema()
     result = await AuthService(auth, db).register(username=data.username, password=data.password, name=data.name)
     return SuccessResponse(data=result, msg="注册成功")
+
+
+@AuthRouter.post("/token/refresh", summary="刷新token")
+async def refresh_token(
+    db: Annotated[AsyncSession, Depends(db_getter)],
+    redis: Annotated[Redis, Depends(redis_getter)],
+    payload: Annotated[str, Body(description="刷新token参数")],
+) -> JSONResponse:
+    auth = AuthSchema()
+    result = await AuthService(auth, db).refresh_token(refresh_token=payload, redis=redis)
+    return SuccessResponse(data=result.model_dump(), msg="刷新成功")
 
 
 @AuthRouter.post("/logout", summary="退出登录")
