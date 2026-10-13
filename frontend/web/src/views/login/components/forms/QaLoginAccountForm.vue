@@ -9,24 +9,6 @@
       :validate-on-rule-change="false"
       @keyup.enter="$emit('submit')"
     >
-      <ElFormItem>
-        <ElSelect
-          :model-value="demoAccountKey"
-          class="custom-height w-full"
-          :placeholder="$t('login.quickSelectAccount')"
-          @update:model-value="$emit('setupAccount', $event)"
-        >
-          <ElOption
-            v-for="account in accounts"
-            :key="account.key"
-            :label="account.label"
-            :value="account.key"
-          >
-            <span>{{ account.label }}</span>
-          </ElOption>
-        </ElSelect>
-      </ElFormItem>
-
       <ElFormItem prop="username">
         <ElInput
           class="custom-height"
@@ -136,15 +118,13 @@ defineProps({
   rules: { type: Object, required: true },
   captchaState: { type: Object, required: true },
   codeLoading: { type: Boolean, required: true },
-  demoAccountKey: { type: String, required: true },
-  accounts: { type: Array, required: true },
   formKey: { type: [Number, String], required: true },
   isDark: { type: Boolean, required: true },
   dragVerifyTextColor: { type: String, required: true },
   loading: { type: Boolean, required: true },
 });
 
-const emit = defineEmits(["submit", "setupAccount", "getCaptcha", "forget", "register", "oauth"]);
+const emit = defineEmits(["submit", "getCaptcha", "forget", "register", "oauth"]);
 
 const formRef = ref();
 const dragVerifyRef = ref(null);

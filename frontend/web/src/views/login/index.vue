@@ -35,8 +35,6 @@
                       :rules="rules"
                       :captcha-state="captchaState"
                       :code-loading="codeLoading"
-                      :demo-account-key="demoAccountKey"
-                      :accounts="accounts"
                       :form-key="formKey"
                       :is-dark="isDark"
                       :drag-verify-text-color="dragVerifyTextColor"
@@ -44,7 +42,6 @@
                       @update:is-passing="isPassing = $event"
                       @update:is-click-pass="isClickPass = $event"
                       @submit="handleSubmit"
-                      @setup-account="setupAccount"
                       @get-captcha="getCaptcha"
                       @forget="setAuthPanel('forget')"
                       @register="setAuthPanel('register')"
@@ -215,31 +212,6 @@ watch(authPanel, (panel) => {
   isClickPass.value = false;
 });
 
-const accounts = computed(() => [
-  {
-    key: 'super',
-    label: t('login.roles.super'),
-    username: 'super',
-    password: '123456',
-    roles: ['R_SUPER']
-  },
-  {
-    key: 'admin',
-    label: t('login.roles.admin'),
-    username: 'admin',
-    password: '123456',
-    roles: ['R_ADMIN']
-  },
-  {
-    key: 'user',
-    label: t('login.roles.user'),
-    username: 'user',
-    password: '123456',
-    roles: ['R_USER']
-  }
-]);
-
-const demoAccountKey = ref('super');
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
@@ -351,13 +323,6 @@ const rules = computed(() => ({
   ]
 }));
 
-function setupAccount(key) {
-  const selected = accounts.value.find((a) => a.key === key);
-  demoAccountKey.value = key;
-  loginForm.username = selected?.username ?? '';
-  loginForm.password = selected?.password ?? '';
-}
-
 async function getCaptcha() {
   try {
     codeLoading.value = true;
@@ -423,7 +388,6 @@ const showVoteNotification = () => {
 let voteTimer = null;
 
 onMounted(async () => {
-  setupAccount('super');
   await configStore.getConfig(true);
   await tryConsumeOAuthCallback();
   if (userStore.isLogin) {
