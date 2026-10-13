@@ -31,7 +31,12 @@
         filterable
       />
     </ElFormItem>
-    <ElFormItem label="超级管理员" prop="is_superuser">
+    <ElFormItem label="角色" prop="role_ids">
+      <ElSelect v-model="formData.role_ids" multiple filterable placeholder="请选择角色" style="width: 100%">
+        <ElOption v-for="role in roleOptions" :key="role.id" :label="role.name" :value="role.id" />
+      </ElSelect>
+    </ElFormItem>
+    <ElFormItem v-if="isSuperUser" label="超级管理员" prop="is_superuser">
       <ElRadioGroup v-model="formData.is_superuser">
         <ElRadio :value="false">否</ElRadio>
         <ElRadio :value="true">是</ElRadio>
@@ -47,8 +52,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { DeptAPI } from '@/api/module_system/dept';
+import { RoleAPI } from '@/api/module_system/role';
+import { useUserStore } from '@/store';
 import { isPhone, isEmail, isUsername, isPassword } from '@/utils/validator';
 
 defineOptions({ name: 'UserForm' });
@@ -60,6 +67,9 @@ const props = defineProps({
 
 const formRef = ref();
 const deptOptions = ref([]);
+const roleOptions = ref([]);
+const userStore = useUserStore();
+const isSuperUser = computed(() => userStore.info?.is_superuser);
 
 const formRules = {
   username: [{ required: true, validator: isUsername, trigger: 'blur' }],
@@ -86,6 +96,15 @@ const loadDeptOptions = async () => {
   }
 };
 
+const loadRoleOptions = async () => {
+  try {
+    const res = await RoleAPI.list({ page_no: 1, page_size: 1000 });
+    roleOptions.value = (res.data?.items || []);
+  } catch (error) {
+    console.error('加载角色列表失败', error);
+  }
+};
+
 const formatTree = (data, parentId = 0) => {
   const result = [];
   for (const item of data) {
@@ -104,6 +123,7 @@ const formatTree = (data, parentId = 0) => {
 
 onMounted(() => {
   loadDeptOptions();
+  loadRoleOptions();
 });
 
 defineExpose({ validate, resetFields });

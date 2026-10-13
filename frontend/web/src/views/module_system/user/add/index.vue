@@ -38,6 +38,7 @@ const formData = ref({
   mobile: '',
   email: '',
   dept_id: undefined,
+  role_ids: [],
   is_superuser: false,
   status: 0
 });
@@ -61,6 +62,7 @@ const resetForm = () => {
     mobile: '',
     email: '',
     dept_id: undefined,
+    role_ids: [],
     is_superuser: false,
     status: 0
   };

@@ -129,8 +129,8 @@ const fetchData = async () => {
   loading.value = true;
   try {
     const res = await UserAPI.listUser({
-      page: currentPage.value,
-      limit: pageSize.value,
+      page_no: currentPage.value,
+      page_size: pageSize.value,
       ...searchForm.value,
       dept_id: deptFilterId.value
     });

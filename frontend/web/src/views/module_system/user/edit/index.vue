@@ -39,6 +39,7 @@ const formData = ref({
   mobile: '',
   email: '',
   dept_id: undefined,
+  role_ids: [],
   is_superuser: false,
   status: 0
 });
@@ -65,6 +66,7 @@ const loadUserData = async () => {
       mobile: data.mobile,
       email: data.email,
       dept_id: data.dept_id,
+      role_ids: data.role_ids || [],
       is_superuser: data.is_superuser,
       status: data.status
     };
@@ -95,6 +97,7 @@ const handleClose = () => {
     mobile: '',
     email: '',
     dept_id: undefined,
+    role_ids: [],
     is_superuser: false,
     status: 0
   };
