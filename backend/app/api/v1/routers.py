@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.modules.common.file.controller import FileRouter
 from app.modules.system.auth.controller import AuthRouter
 from app.modules.system.dept.controller import DeptRouter
 from app.modules.system.dict.controller import DictDataRouter, DictTypeRouter
@@ -18,6 +19,9 @@ DOMAIN_CONTROLLERS: dict[str, list[APIRouter]] = {
         DictTypeRouter,
         DictDataRouter,
         ParamRouter,
+    ],
+    "/common": [
+        FileRouter,
     ],
 }
 

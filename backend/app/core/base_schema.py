@@ -63,3 +63,14 @@ class AuthSchema(BaseModel):
 
     user: CoreUserSchema = Field(default_factory=CoreUserSchema)
     permissions: list[str] = Field(default_factory=list)
+
+
+class UploadResponseSchema(BaseModel):
+    """上传响应模型"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    file_path: str | None = Field(default=None, description="新文件映射路径")
+    file_name: str | None = Field(default=None, description="新文件名称")
+    origin_name: str | None = Field(default=None, description="原文件名称")
+    file_url: str | None = Field(default=None, description="新文件访问地址")

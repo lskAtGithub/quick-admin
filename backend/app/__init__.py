@@ -3,7 +3,9 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
+from fastapi.staticfiles import StaticFiles
 
+from app.config.path_conf import STATIC_DIR
 from app.config.setting import settings
 from app.core.exceptions import handle_exception
 from app.core.logger import logger
@@ -51,5 +53,7 @@ def create_app() -> FastAPI:
 
     from app.api.v1.routers import api_v1
     app.include_router(api_v1, prefix="/api/v1")
+
+    app.mount(path=settings.STATIC_URL, app=StaticFiles(directory=STATIC_DIR), name="static")
 
     return app

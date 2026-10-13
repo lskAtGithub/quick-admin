@@ -50,6 +50,29 @@ class Settings(BaseSettings):
     CAPTCHA_ENABLE: bool = False
     CAPTCHA_EXPIRE_SECONDS: int = 60
 
+    # 静态文件
+    STATIC_URL: str = "/static"
+
+    # 文件上传
+    UPLOAD_FILE_PATH: Path = Path("static/upload")
+    UPLOAD_MACHINE: str = "A"
+    ALLOWED_EXTENSIONS: list[str] = [
+        ".gif",
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".ico",
+        ".svg",
+        ".xls",
+        ".xlsx",
+        ".doc",
+        ".docx",
+        ".pdf",
+        ".txt",
+        ".csv",
+    ]
+    MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 最大文件大小(10MB)
+
     @property
     def ASYNC_DB_URI(self) -> str:
         if self.DATABASE_TYPE == "sqlite":
