@@ -7,15 +7,15 @@ export const RoleAPI = {
     return request({ url: `${API_PATH}/list`, method: "get", params: query });
   },
   detail(id) {
-    return request({ url: `${API_PATH}/${id}`, method: "get" });
+    return request({ url: `${API_PATH}/detail/${id}`, method: "get" });
   },
   create(body) {
-    return request({ url: API_PATH, method: "post", data: body });
+    return request({ url: `${API_PATH}/create`, method: "post", data: body });
   },
   update(id, body) {
-    return request({ url: `${API_PATH}/${id}`, method: "put", data: body });
+    return request({ url: `${API_PATH}/update/${id}`, method: "put", data: body });
   },
   delete(ids) {
-    return request({ url: `${API_PATH}/delete`, method: "post", data: { ids } });
+    return request({ url: `${API_PATH}/delete`, method: "delete", data: { ids } });
   },
 };
