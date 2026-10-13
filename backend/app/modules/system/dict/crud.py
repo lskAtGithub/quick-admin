@@ -33,8 +33,8 @@ class DictTypeCRUD:
 
         for key, value in kwargs.items():
             if value is not None and hasattr(DictTypeModel, key):
-                if key == "dict_name":
-                    stmt = stmt.where(DictTypeModel.dict_name.like(f"%{value}%"))
+                if key in ("dict_name", "dict_type"):
+                    stmt = stmt.where(getattr(DictTypeModel, key).like(f"%{value}%"))
                 else:
                     stmt = stmt.where(getattr(DictTypeModel, key) == value)
 
