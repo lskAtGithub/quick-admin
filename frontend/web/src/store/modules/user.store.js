@@ -1,10 +1,13 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { ElNotification } from "element-plus";
-import { Auth, redirectToLogin } from "@/utils/auth";
+import { Auth } from "@/utils/auth";
 import { ResultEnum } from "@/utils/request";
 import AuthAPI from "@/api/module_system/auth";
 import UserAPI from "@/api/module_system/user";
+import { useMenuStore } from "./menu.store";
+import { useWorktabStore } from "./worktab.store";
+import { resetRouteInitState } from "@/router/refresh";
 
 export const useUserStore = defineStore(
   "user",
@@ -123,12 +126,18 @@ export const useUserStore = defineStore(
         try {
           await AuthAPI.logout(token);
         } catch {
-          // 登出接口失败仍继续本地清理
         }
       }
       resetAllState();
       if (shouldNavigate) {
-        redirectToLogin("已退出登录");
+        ElNotification({
+          title: "提示",
+          message: "已退出登录",
+          type: "success",
+          duration: 2000,
+        });
+        const { router } = await import("@/router");
+        router.push("/login");
       }
     }
 
@@ -143,6 +152,14 @@ export const useUserStore = defineStore(
       prems.value = [];
       isLock.value = false;
       lockPassword.value = "";
+
+      const menuStore = useMenuStore();
+      menuStore.clearMenu();
+
+      const worktabStore = useWorktabStore();
+      worktabStore.clearAll(true);
+
+      resetRouteInitState();
     }
 
     function clearUserInfo() {

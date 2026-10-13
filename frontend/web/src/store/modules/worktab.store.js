@@ -286,7 +286,13 @@ export const useWorktabStore = defineStore(
       }
     };
 
-    const clearAll = () => {
+    const clearAll = (includeFixed = false) => {
+      if (includeFixed) {
+        current.value = {};
+        opened.value = [];
+        keepAliveExclude.value = [];
+        return;
+      }
       const fixedTabs = opened.value.filter((tab) => tab.fixedTab);
       const removedTabs = fixedTabs.length > 0 ? opened.value.filter((tab) => !tab.fixedTab) : opened.value;
       const excludeNames = new Set();
