@@ -1,4 +1,6 @@
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { router } from "@/router";
+import { useUserStore } from "@/store";
 
 const AUTH_KEYS = {
   ACCESS_TOKEN: "access_token",
@@ -60,17 +62,20 @@ export async function redirectToLogin(message = "请重新登录") {
 
   redirectToLoginInFlight = (async () => {
     try {
-      ElNotification({
-        title: "提示",
-        message,
+      await ElMessageBox.alert(message, "提示", {
+        confirmButtonText: "确认",
         type: "warning",
-        duration: 3000,
       });
+    } catch {
+      // 用户关闭弹窗同样视为已确认
+    }
 
-      Auth.clearAuth();
+    try {
+      // 同步重置 store 内存状态，避免登录页误判“已登录”而回跳
+      useUserStore().resetAllState();
 
-      const currentPath = window.location.hash.replace(/^#/, "") || "/";
-      window.location.hash = `/login?redirect=${encodeURIComponent(currentPath)}`;
+      const currentPath = router.currentRoute.value.fullPath;
+      await router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
     } catch (error) {
       ElMessage.error(error?.message ?? String(error));
     } finally {
