@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // 尺寸变量定义
 // Element Plus 尺寸比例：large=40px, default=32px, small=24px
 // 比例：large=1.25x, default=1x, small=0.75x
@@ -64,7 +66,7 @@ $size-map: (
 
 // 生成默认变量（:root）
 :root {
-  $default-sizes: map-get($size-map, 'default');
+  $default-sizes: map.get($size-map, 'default');
   @each $key, $value in $default-sizes {
     --qa-size-#{$key}: #{$value};
   }
