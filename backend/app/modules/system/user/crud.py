@@ -3,8 +3,10 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.base_schema import AuthSchema
+from app.modules.system.role.model import RoleModel
 from app.modules.system.user.model import UserModel
 
 SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
@@ -16,7 +18,10 @@ class UserCRUD:
         self.db = db
 
     async def get(self, **kwargs) -> UserModel | None:
-        stmt = select(UserModel).where(UserModel.is_deleted == False)
+        stmt = select(UserModel).options(
+            selectinload(UserModel.dept),
+            selectinload(UserModel.roles).selectinload(RoleModel.menus)
+        ).where(UserModel.is_deleted == False)
         for key, value in kwargs.items():
             if hasattr(UserModel, key):
                 stmt = stmt.where(getattr(UserModel, key) == value)

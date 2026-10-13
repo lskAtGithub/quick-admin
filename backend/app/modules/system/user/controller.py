@@ -25,7 +25,10 @@ async def get_current_user_info(
         from app.common.enums import RET
         from app.core.exceptions import CustomException
         raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
-    return SuccessResponse(data=UserService._to_dict(user))
+    user_service = UserService(auth, db)
+    data = UserService._to_dict(user)
+    data["menus"] = await user_service.get_user_menus(user)
+    return SuccessResponse(data=data)
 
 
 @UserRouter.get("/list", summary="用户列表")

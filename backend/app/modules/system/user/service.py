@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.enums import RET
 from app.core.base_schema import AuthSchema
 from app.core.exceptions import CustomException
+from app.modules.system.menu.service import MenuService
 from app.modules.system.user.crud import UserCRUD
 from app.modules.system.user.schema import UserCreateSchema, UserOutSchema, UserUpdateSchema
 from app.utils.password_util import PwdUtil
@@ -44,6 +45,26 @@ class UserService:
         success = await crud.delete(user_id)
         if not success:
             raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
+
+    async def get_user_menus(self, user) -> list[dict]:
+        menu_service = MenuService(self.auth, self.db)
+        all_menus = await menu_service.get_tree()
+        if user.is_superuser:
+            return all_menus
+        allowed_ids = set()
+        for role in (user.roles or []):
+            for menu in (role.menus or []):
+                allowed_ids.add(menu.id)
+        return self._filter_menu_tree(all_menus, allowed_ids)
+
+    def _filter_menu_tree(self, menus: list[dict], allowed_ids: set[int]) -> list[dict]:
+        result = []
+        for menu in menus:
+            children = self._filter_menu_tree(menu.get("children") or [], allowed_ids)
+            if menu["id"] in allowed_ids or children:
+                item = {**menu, "children": children}
+                result.append(item)
+        return result
 
     @staticmethod
     def _to_dict(user) -> dict:
