@@ -20,7 +20,7 @@ class RoleCRUD:
         self.db = db
 
     async def get(self, **kwargs) -> RoleModel | None:
-        stmt = select(RoleModel).where(RoleModel.is_deleted == False)
+        stmt = select(RoleModel).options(selectinload(RoleModel.menus)).where(RoleModel.is_deleted == False)
         for key, value in kwargs.items():
             if hasattr(RoleModel, key):
                 stmt = stmt.where(getattr(RoleModel, key) == value)
@@ -63,8 +63,9 @@ class RoleCRUD:
             role.menus = list(result.scalars().all())
         self.db.add(role)
         await self.db.commit()
-        await self.db.refresh(role)
-        return role
+        stmt = select(RoleModel).options(selectinload(RoleModel.menus)).where(RoleModel.id == role.id)
+        result = await self.db.execute(stmt)
+        return result.scalar_one()
 
     async def update(self, role_id: int, data: dict) -> RoleModel | None:
         role = await self.get_by_id(role_id)
@@ -80,8 +81,9 @@ class RoleCRUD:
             role.menus = list(result.scalars().all())
         role.updated_time = datetime.now(SHANGHAI_TZ)
         await self.db.commit()
-        await self.db.refresh(role)
-        return role
+        stmt = select(RoleModel).options(selectinload(RoleModel.menus)).where(RoleModel.id == role.id)
+        result = await self.db.execute(stmt)
+        return result.scalar_one()
 
     async def delete(self, role_id: int) -> bool:
         role = await self.get(role_id=role_id)

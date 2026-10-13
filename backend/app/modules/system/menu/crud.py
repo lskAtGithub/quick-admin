@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.base_schema import AuthSchema
 from app.modules.system.menu.model import MenuModel
@@ -18,7 +19,7 @@ class MenuCRUD:
         self.db = db
 
     async def get(self, **kwargs) -> MenuModel | None:
-        stmt = select(MenuModel).where(MenuModel.is_deleted == False)
+        stmt = select(MenuModel).options(selectinload(MenuModel.parent)).where(MenuModel.is_deleted == False)
         for key, value in kwargs.items():
             if hasattr(MenuModel, key):
                 stmt = stmt.where(getattr(MenuModel, key) == value)
@@ -29,7 +30,7 @@ class MenuCRUD:
         return await self.get(id=menu_id)
 
     async def list(self, page_no: int = 1, page_size: int = 10, **kwargs) -> tuple[list[MenuModel], int]:
-        stmt = select(MenuModel).where(MenuModel.is_deleted == False)
+        stmt = select(MenuModel).options(selectinload(MenuModel.parent)).where(MenuModel.is_deleted == False)
 
         for key, value in kwargs.items():
             if value is not None and hasattr(MenuModel, key):
@@ -49,7 +50,7 @@ class MenuCRUD:
         return list(items), total
 
     async def list_all(self, **kwargs) -> list[MenuModel]:
-        stmt = select(MenuModel).where(MenuModel.is_deleted == False)
+        stmt = select(MenuModel).options(selectinload(MenuModel.parent)).where(MenuModel.is_deleted == False)
         for key, value in kwargs.items():
             if value is not None and hasattr(MenuModel, key):
                 if key == "name":
@@ -65,10 +66,14 @@ class MenuCRUD:
         self.db.add(menu)
         await self.db.commit()
         await self.db.refresh(menu)
-        return menu
+        stmt = select(MenuModel).options(selectinload(MenuModel.parent)).where(MenuModel.id == menu.id)
+        result = await self.db.execute(stmt)
+        return result.scalar_one()
 
     async def update(self, menu_id: int, data: dict) -> MenuModel | None:
-        menu = await self.get_by_id(menu_id)
+        stmt = select(MenuModel).options(selectinload(MenuModel.parent)).where(MenuModel.id == menu_id, MenuModel.is_deleted == False)
+        result = await self.db.execute(stmt)
+        menu = result.scalar_one_or_none()
         if not menu:
             return None
         for key, value in data.items():
@@ -77,7 +82,9 @@ class MenuCRUD:
         menu.updated_time = datetime.now(SHANGHAI_TZ)
         await self.db.commit()
         await self.db.refresh(menu)
-        return menu
+        stmt2 = select(MenuModel).options(selectinload(MenuModel.parent)).where(MenuModel.id == menu.id)
+        result2 = await self.db.execute(stmt2)
+        return result2.scalar_one()
 
     async def delete(self, menu_id: int) -> bool:
         menu = await self.get_by_id(menu_id)
