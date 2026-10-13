@@ -1,6 +1,7 @@
 import { useMenuStore, useWorktabStore } from "@/store";
 import { MenuProcessor } from "./menu-processor";
 import { IframeRouteManager } from "@/constants/router";
+import { RouteRegistry } from "./route-loader";
 
 export const refreshState = {
   pendingLoading: false,
@@ -23,7 +24,6 @@ export async function resetDynamicRoutesSync() {
 
 export async function refreshMenuAndRoutes(router) {
   await resetDynamicRoutesSync();
-  const { RouteRegistry } = await import("./route-loader");
   const menuProcessor = new MenuProcessor();
   const menuList = await menuProcessor.getMenuList();
   useMenuStore().setMenuList(menuList);

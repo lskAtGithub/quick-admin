@@ -7,13 +7,13 @@
 import { ref } from 'vue';
 import { useUserStore, useMenuStore, useWorktabStore, useSettingStore } from '@/store';
 import { IframeRouteManager, ROUTE_PATH_LOGIN_ALT, HOME_PAGE_PATH, ROUTE_PATH_LOGIN } from '@/constants/router';
-import { STATIC_MENU_LIST } from '@/constants/menu';
 import { setPageTitle, setWorktab } from '@/utils/navigation';
 import { MenuProcessor } from './menu-processor';
 import { NProgress } from '@/utils/ui';
 import { Auth } from '@/utils/auth';
 import { isHttpError, ApiStatus } from '@/utils/request';
 import { refreshState } from './refresh';
+import { RouteRegistry } from './route-loader';
 import { getMainScrollEl } from '@/hooks/core/useCommon';
 
 const globalLoading = ref(false);
@@ -39,37 +39,31 @@ function setupBeforeEachGuard(routerInstance) {
     if (globalLoading.value) globalLoading.value = false;
     if (useSettingStore().showNprogress) NProgress.start();
 
-    // 免鉴权开发态：若菜单尚未被后端列表覆盖，则填充默认静态菜单，保证侧边栏有“首页”。
-    if (useMenuStore().menuList.length === 0) {
-      useMenuStore().setMenuList(STATIC_MENU_LIST);
+    if (checkStorageHealth()) {
+      await handleStorageFailure();
+      return ROUTE_PATH_LOGIN;
     }
 
-    // 暂时跳过鉴权：未登录也直接放行到目标路由（默认回落到 /home）
-    // if (checkStorageHealth()) {
-    //   await handleStorageFailure();
-    //   return ROUTE_PATH_LOGIN;
-    // }
+    if (!(await handleLoginStatus(to))) {
+      return isLoginRoute(to) ? true : ROUTE_PATH_LOGIN;
+    }
 
-    // if (!(await handleLoginStatus(to))) {
-    //   return isLoginRoute(to) ? true : ROUTE_PATH_LOGIN;
-    // }
+    if (refreshState.routeInitFailed && !isAnonymousPublicPath(to)) {
+      return '/500';
+    }
 
-    // if (refreshState.routeInitFailed && !isAnonymousPublicPath(to)) {
-    //   return '/500';
-    // }
+    if (!refreshState.dynamicRoutesRegistered && !isAnonymousPublicPath(to)) {
+      if (refreshState.pendingLoading) {
+        return { path: HOME_PAGE_PATH, replace: true };
+      }
+      const redirect = await handleDynamicRoutes(to);
+      if (redirect) return redirect;
+      refreshState.dynamicRoutesRegistered = true;
 
-    // if (!refreshState.dynamicRoutesRegistered && !isAnonymousPublicPath(to)) {
-    //   if (refreshState.pendingLoading) {
-    //     return { path: HOME_PAGE_PATH, replace: true };
-    //   }
-    //   const redirect = await handleDynamicRoutes(to);
-    //   if (redirect) return redirect;
-    //   refreshState.dynamicRoutesRegistered = true;
-
-    //   if (to.matched.some((r) => r.name === 'CatchAll404')) {
-    //     return { path: to.path, replace: true };
-    //   }
-    // }
+      if (to.matched.some((r) => r.name === 'CatchAll404')) {
+        return { path: to.path, replace: true };
+      }
+    }
 
     if (to.path === '/') {
       return { path: HOME_PAGE_PATH, replace: true };
@@ -112,7 +106,6 @@ async function handleDynamicRoutes(to) {
 
     useMenuStore().setMenuList(menuList);
 
-    const { RouteRegistry } = await import('./route-loader');
     const routeRegistry = new RouteRegistry(router);
     routeRegistry.register(menuList);
 
