@@ -15,21 +15,23 @@
     <!-- 右侧表格区域 -->
     <div class="flex flex-1 flex-col min-w-0 pl-2">
       <!-- 搜索栏 -->
-      <div class="mb-3 flex items-center gap-2">
-        <div class="flex flex-1 flex-wrap items-center gap-2">
-          <ElInput v-model="searchForm.username" placeholder="用户名" clearable class="search-input-sm" />
-          <ElInput v-model="searchForm.name" placeholder="姓名" clearable class="search-input-sm" />
-          <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable class="search-input-sm" />
-          <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
-            <ElOption label="启用" :value="0" />
-            <ElOption label="禁用" :value="1" />
-          </ElSelect>
+      <ElCard class="mb-3" shadow="never">
+        <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center gap-2">
+            <ElInput v-model="searchForm.username" placeholder="用户名" clearable class="search-input-sm" />
+            <ElInput v-model="searchForm.name" placeholder="姓名" clearable class="search-input-sm" />
+            <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable class="search-input-sm" />
+            <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
+              <ElOption label="启用" :value="0" />
+              <ElOption label="禁用" :value="1" />
+            </ElSelect>
+          </div>
+          <div class="flex items-center">
+            <ElButton @click="handleReset">重置</ElButton>
+            <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+          </div>
         </div>
-        <div class="flex items-center">
-          <ElButton @click="handleReset">重置</ElButton>
-          <ElButton type="primary" @click="handleSearch">搜索</ElButton>
-        </div>
-      </div>
+      </ElCard>
 
       <!-- 表格卡片 -->
       <ElCard class="flex flex-1 flex-col overflow-hidden" shadow="never">
