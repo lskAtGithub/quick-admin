@@ -359,23 +359,29 @@ const handleUpload = async (options) => {
     const file = options.file;
     const formData = new FormData();
     formData.append('file', file);
-    const response = await UserAPI.uploadCurrentUserAvatar(formData);
-    if (response.data.code === 0 && response.data) {
-      const fileUrl = response.data.file_url;
+    const res = await UserAPI.uploadCurrentUserAvatar(formData);
+    if (res.code === 0 && res.data) {
+      const fileUrl = res.data.file_url;
       updateAvatar(fileUrl);
-      options.onSuccess(response);
+      const updateRes = await UserAPI.updateCurrentUserInfo({
+        name: infoFormState.name,
+        gender: infoFormState.gender,
+        mobile: infoFormState.mobile,
+        email: infoFormState.email,
+        avatar: fileUrl,
+        description: infoFormState.description
+      });
+      await userStore.setUserInfo(updateRes.data);
+      initInfoForm();
+      options.onSuccess(res);
       uploadRef.value?.clearFiles();
       fileList.value = [];
-      ElMessage.success('头像已更新，请保存基本设置以同步资料（如需）');
     } else {
-      const errorMsg = response.data.msg || '上传失败';
-      ElMessage.error(errorMsg);
-      options.onError({ ...new Error(errorMsg), status: response.status || 500, method: 'POST', url: '/system/user/current/avatar/upload' });
+      options.onError({ ...new Error(res.msg || '上传失败'), status: 500, method: 'POST', url: '/common/file/upload' });
     }
   } catch (error) {
-    ElMessage.error('头像上传失败，请重试');
     const errorObj = error instanceof Error ? error : new Error(String(error));
-    options.onError({ ...errorObj, status: 500, method: 'POST', url: '/system/user/current/avatar/upload' });
+    options.onError({ ...errorObj, status: 500, method: 'POST', url: '/common/file/upload' });
   }
 };
 
@@ -392,8 +398,6 @@ const handleAvatarFileChange = (file) => {
 const updateAvatar = (fileUrl) => {
   if (fileUrl) {
     infoFormState.avatar = fileUrl.trim();
-  } else {
-    ElMessage.error('无效的头像URL');
   }
 };
 
@@ -416,7 +420,6 @@ const handleSave = async () => {
     });
     await userStore.setUserInfo(response.data);
     initInfoForm();
-    ElMessage.success('个人资料已保存');
     return true;
   } catch (e) {
     console.error(e);
