@@ -21,6 +21,7 @@ const goHome = () => router.replace("/home");
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
+  min-height: 100vh;
+  background: var(--default-box-color);
 }
 </style>
