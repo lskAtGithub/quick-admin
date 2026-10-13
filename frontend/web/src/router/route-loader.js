@@ -236,7 +236,7 @@ export class RouteRegistry {
   }
 
   isShellSegment(segment) {
-    return ["home", "profile", "changelog", "dashboard"].includes(segment);
+    return ["home", "profile", "changelog", "dashboard", "system"].includes(segment);
   }
 }
 
