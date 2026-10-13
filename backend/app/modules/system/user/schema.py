@@ -28,6 +28,21 @@ class UserUpdateSchema(BaseModel):
     role_ids: list[int] | None = Field(default=None, description="角色ID列表")
 
 
+class CurrentUserUpdateSchema(BaseModel):
+    name: str | None = Field(default=None, max_length=64, description="昵称")
+    gender: str | None = Field(default=None, description="性别")
+    mobile: str | None = Field(default=None, description="手机号")
+    email: str | None = Field(default=None, description="邮箱")
+    avatar: str | None = Field(default=None, description="头像URL")
+    description: str | None = Field(default=None, description="描述")
+
+
+class ChangePasswordSchema(BaseModel):
+    old_password: str = Field(..., min_length=6, max_length=128, description="当前密码")
+    new_password: str = Field(..., min_length=6, max_length=128, description="新密码")
+    confirm_password: str = Field(..., min_length=6, max_length=128, description="确认新密码")
+
+
 class UserQuerySchema(PageQuerySchema):
     username: str | None = Field(default=None, description="用户名(模糊)")
     name: str | None = Field(default=None, description="昵称(模糊)")

@@ -163,35 +163,6 @@
         </div>
 
         <div class="qa-card-sm my-5">
-          <h1 class="p-4 text-xl font-normal border-b border-g-300">登录会话</h1>
-
-          <div v-if="loadingSessions" class="flex justify-center py-6">
-            <ElIcon class="is-loading" :size="20">
-              <Loading />
-            </ElIcon>
-          </div>
-
-          <div v-else-if="currentSessions.length === 0" class="p-5 text-sm text-g-400 text-center">暂无活跃会话</div>
-
-          <ElTable v-else :data="currentSessions" stripe class="p-4" size="small">
-            <ElTableColumn type="index" label="#" width="50" />
-            <ElTableColumn label="浏览器" min-width="110">
-              <template #default="{ row }"> <QaSvgIcon :icon="getBrowserIcon(row.browser)" class="mr-1" />{{ row.browser || '—' }} </template>
-            </ElTableColumn>
-            <ElTableColumn label="操作系统" min-width="110">
-              <template #default="{ row }"> <QaSvgIcon :icon="getOsIcon(row.os)" class="mr-1" />{{ row.os || '—' }} </template>
-            </ElTableColumn>
-            <ElTableColumn prop="ipaddr" label="IP 地址" min-width="130" />
-            <ElTableColumn prop="login_location" label="登录位置" min-width="120" />
-            <ElTableColumn label="登录时间" min-width="160">
-              <template #default="{ row }">
-                {{ row.login_time ? formatDate(row.login_time) : '—' }}
-              </template>
-            </ElTableColumn>
-          </ElTable>
-        </div>
-
-        <div class="qa-card-sm my-5">
           <h1 class="p-4 text-xl font-normal border-b border-g-300">更改密码</h1>
 
           <ElForm ref="passwordFormRef" :model="passwordFormState" class="box-border p-5" :rules="resetPasswordRules" label-width="86px" label-position="top">
@@ -221,11 +192,10 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import { Camera, Loading } from '@element-plus/icons-vue';
+import { Camera } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import UserAPI from '@/api/module_system/user';
-import OnlineAPI from '@/api/module_monitor/online';
 import { useUserStore, useDictStore } from '@/store';
 import { redirectToLogin } from '@/utils/auth';
 
@@ -246,45 +216,6 @@ const dictDataStore = computed(() => dictStore.dictData);
 const greeting = ref('');
 
 const roleTagList = computed(() => (infoFormState.roles ?? []).map((r) => r.name).filter((n) => !!n && n.trim().length > 0));
-
-const currentSessions = ref([]);
-const loadingSessions = ref(false);
-
-function getBrowserIcon(browser) {
-  if (!browser) return 'ri:question-line';
-  const lower = browser.toLowerCase();
-  if (lower.includes('chrome')) return 'ri:chrome-fill';
-  if (lower.includes('firefox') || lower.includes('mozilla')) return 'ri:firefox-fill';
-  if (lower.includes('safari')) return 'ri:safari-fill';
-  if (lower.includes('edge')) return 'ri:edge-fill';
-  if (lower.includes('opera')) return 'ri:opera-fill';
-  return 'ri:earth-line';
-}
-
-function getOsIcon(os) {
-  if (!os) return 'ri:question-line';
-  const lower = os.toLowerCase();
-  if (lower.includes('windows')) return 'ri:windows-fill';
-  if (lower.includes('mac') || lower.includes('darwin')) return 'ri:apple-fill';
-  if (lower.includes('linux')) return 'ri:linux-fill';
-  if (lower.includes('android')) return 'ri:android-fill';
-  if (lower.includes('ios')) return 'ri:apple-fill';
-  return 'ri:computer-line';
-}
-
-async function fetchCurrentSessions() {
-  loadingSessions.value = true;
-  try {
-    const response = await OnlineAPI.listCurrentOnline();
-    if (response.data.code === 0) {
-      currentSessions.value = response.data ?? [];
-    }
-  } catch {
-    // ignore
-  } finally {
-    loadingSessions.value = false;
-  }
-}
 
 const hasThirdPartyBindings = computed(() => !!(infoFormState.github_login || infoFormState.gitee_login || infoFormState.wx_login || infoFormState.qq_login));
 
@@ -534,7 +465,6 @@ onMounted(async () => {
   refreshGreeting();
   await getOptions();
   initInfoForm();
-  await fetchCurrentSessions();
 });
 </script>
 

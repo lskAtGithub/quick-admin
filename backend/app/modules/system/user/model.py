@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base_model import ModelMixin
@@ -27,6 +27,10 @@ class UserModel(ModelMixin):
         String(128), nullable=True, comment="邮箱")
     avatar: Mapped[str | None] = mapped_column(
         String(255), nullable=True, comment="头像URL")
+    gender: Mapped[str | None] = mapped_column(
+        String(10), nullable=True, default="1", comment="性别(1:男 2:女 0:未知)")
+    description: Mapped[str | None] = mapped_column(
+        Text, nullable=True, comment="描述")
     is_superuser: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False, comment="是否超级管理员")
     status: Mapped[int] = mapped_column(

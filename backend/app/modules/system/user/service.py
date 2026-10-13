@@ -91,20 +91,20 @@ class UserService:
 
     @staticmethod
     def _to_dict(user) -> dict:
-        from datetime import datetime
-        from zoneinfo import ZoneInfo
-        SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
         return {
             "id": user.id,
             "username": user.username,
             "name": user.name,
+            "gender": user.gender,
             "mobile": user.mobile,
             "email": user.email,
             "avatar": user.avatar,
+            "description": user.description,
             "is_superuser": user.is_superuser,
             "status": user.status,
             "dept_id": user.dept_id,
-            "dept_name": user.dept.name if user.dept else None,
+            "dept": {"id": user.dept.id, "name": user.dept.name} if user.dept else None,
+            "roles": [{"id": r.id, "name": r.name} for r in (user.roles or [])],
             "role_ids": [r.id for r in (user.roles or [])],
             "created_time": user.created_time.strftime("%Y-%m-%d %H:%M:%S") if user.created_time else None,
             "updated_time": user.updated_time.strftime("%Y-%m-%d %H:%M:%S") if user.updated_time else None,

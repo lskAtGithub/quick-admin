@@ -9,7 +9,7 @@ from app.core.base_schema import AuthSchema, PageResultSchema
 from app.core.dependencies import db_getter, get_current_user
 
 from .crud import UserCRUD
-from .schema import UserCreateSchema, UserOutSchema, UserQuerySchema, UserUpdateSchema
+from .schema import ChangePasswordSchema, CurrentUserUpdateSchema, UserCreateSchema, UserOutSchema, UserQuerySchema, UserUpdateSchema
 from .service import UserService
 
 UserRouter = APIRouter(prefix="/user", tags=["用户管理"])
@@ -29,6 +29,51 @@ async def get_current_user_info(
     data = UserService._to_dict(user)
     data["menus"] = await user_service.get_user_menus(user)
     return SuccessResponse(data=data)
+
+
+@UserRouter.put("/current/info/update", summary="更新当前用户信息")
+async def update_current_user_info(
+    data: CurrentUserUpdateSchema,
+    db: Annotated[AsyncSession, Depends(db_getter)],
+    auth: Annotated[AuthSchema, Depends(get_current_user)],
+) -> JSONResponse:
+    user = await UserCRUD(auth, db).get_by_id(auth.user.id)
+    if not user:
+        from app.common.enums import RET
+        from app.core.exceptions import CustomException
+        raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
+
+    update_data = data.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(user, key, value)
+    await db.commit()
+    await db.refresh(user)
+    return SuccessResponse(data=UserService._to_dict(user), msg="更新成功")
+
+
+@UserRouter.put("/password/change", summary="修改当前用户密码")
+async def change_current_user_password(
+    data: ChangePasswordSchema,
+    db: Annotated[AsyncSession, Depends(db_getter)],
+    auth: Annotated[AuthSchema, Depends(get_current_user)],
+) -> JSONResponse:
+    from app.common.enums import RET
+    from app.core.exceptions import CustomException
+    from app.utils.password_util import PwdUtil
+
+    if data.new_password != data.confirm_password:
+        raise CustomException(msg="两次密码输入不一致", code=RET.VALIDATE_ERROR.code, status_code=400)
+
+    user = await UserCRUD(auth, db).get_by_id(auth.user.id)
+    if not user:
+        raise CustomException(msg="用户不存在", code=RET.NOT_FOUND.code, status_code=404)
+
+    if not PwdUtil.verify_password(data.old_password, user.password):
+        raise CustomException(msg="当前密码错误", code=RET.VALIDATE_ERROR.code, status_code=400)
+
+    user.password = PwdUtil.hash_password(data.new_password)
+    await db.commit()
+    return SuccessResponse(msg="密码修改成功，请重新登录")
 
 
 @UserRouter.get("/list", summary="用户列表")
