@@ -14,6 +14,7 @@ class UserCreateSchema(BaseModel):
     is_superuser: bool = Field(default=False, description="是否超级管理员")
     status: int = Field(default=0, description="状态(0:正常 1:停用)")
     dept_id: int | None = Field(default=None, description="部门ID")
+    role_ids: list[int] = Field(default_factory=list, description="角色ID列表")
 
 
 class UserUpdateSchema(BaseModel):
@@ -24,6 +25,7 @@ class UserUpdateSchema(BaseModel):
     is_superuser: bool | None = Field(default=None, description="是否超级管理员")
     status: int | None = Field(default=None, description="状态(0:正常 1:停用)")
     dept_id: int | None = Field(default=None, description="部门ID")
+    role_ids: list[int] | None = Field(default=None, description="角色ID列表")
 
 
 class UserQuerySchema(PageQuerySchema):

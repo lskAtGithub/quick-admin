@@ -32,7 +32,10 @@ class UserCRUD:
         return await self.get(id=user_id)
 
     async def list(self, page_no: int = 1, page_size: int = 10, **kwargs) -> tuple[list[UserModel], int]:
-        stmt = select(UserModel).where(UserModel.is_deleted == False)
+        stmt = select(UserModel).options(
+            selectinload(UserModel.dept),
+            selectinload(UserModel.roles)
+        ).where(UserModel.is_deleted == False)
 
         for key, value in kwargs.items():
             if value is not None and hasattr(UserModel, key):
