@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import DictAPI from "@/api/module_system/dict";
 
 export const useDictStore = defineStore("dictStore", () => {
   const dictData = ref({});
@@ -17,8 +18,17 @@ export const useDictStore = defineStore("dictStore", () => {
     return item?.dict_label || value;
   };
 
-  const loadDict = async (_types) => {
-    // 后端字典接口暂未接入，保留入口
+  const loadDict = async (types) => {
+    if (!types || types.length === 0) return;
+    const toLoad = types.filter((t) => !dictData.value[t]);
+    if (toLoad.length === 0) return;
+    const results = await Promise.all(toLoad.map((t) => DictAPI.listDataByType(t)));
+    results.forEach((res, idx) => {
+      if (res.data?.code === 0) {
+        dictData.value[toLoad[idx]] = res.data.data ?? [];
+      }
+    });
+    isLoaded.value = true;
   };
 
   const clearDict = () => {
