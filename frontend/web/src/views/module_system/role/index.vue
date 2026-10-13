@@ -1,93 +1,109 @@
 <template>
-  <div class="flex h-full flex-col p-4">
+  <div class="flex h-full flex-col">
     <!-- 搜索栏 -->
-    <div class="mb-3 flex flex-wrap items-center gap-3">
-      <ElInput v-model="searchKeyword" placeholder="搜索角色名" clearable style="width: 200px" />
-      <ElSelect v-model="searchStatus" placeholder="状态" clearable style="width: 120px">
-        <ElOption label="启用" value="1" />
-        <ElOption label="禁用" value="0" />
-      </ElSelect>
-      <ElButton type="primary" @click="handleSearch">搜索</ElButton>
-      <ElButton @click="handleReset">重置</ElButton>
-    </div>
+    <ElCard class="mb-3" shadow="never">
+      <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center gap-2">
+          <ElInput v-model="searchForm.name" placeholder="角色名称" clearable class="search-input-sm" />
+          <ElInput v-model="searchForm.code" placeholder="角色编码" clearable class="search-input-sm" />
+          <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
+            <ElOption label="启用" :value="0" />
+            <ElOption label="停用" :value="1" />
+          </ElSelect>
+        </div>
+        <div class="flex items-center">
+          <ElButton @click="handleReset">重置</ElButton>
+          <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+        </div>
+      </div>
+    </ElCard>
 
     <!-- 表格卡片 -->
     <ElCard class="flex flex-1 flex-col overflow-hidden" shadow="never">
       <!-- 工具栏 -->
       <div class="mb-3">
-        <QaTableHeaderLeft
-          :remove-ids="selectedIds"
-          :create-loading="loading"
-          @add="handleAdd"
-          @delete="handleBatchDelete"
-        />
+        <QaTableHeaderLeft :remove-ids="selectedIds" @add="handleAdd" @delete="handleBatchDelete" />
       </div>
 
       <!-- 表格 -->
-      <div class="flex-1 overflow-auto">
-        <ElTable :data="tableData" border stripe class="w-full" @selection-change="onSelectionChange">
-          <ElTableColumn type="selection" width="50" />
-          <ElTableColumn prop="id" label="ID" width="80" />
-          <ElTableColumn prop="name" label="角色名称" width="150" />
-          <ElTableColumn prop="code" label="角色编码" width="150" />
-          <ElTableColumn prop="sort" label="排序" width="100" />
-          <ElTableColumn prop="status" label="状态" width="100">
-            <template #default="{ row }">
-              <ElTag :type="row.status === 1 ? 'success' : 'danger'">
-                {{ row.status === 1 ? "启用" : "禁用" }}
-              </ElTag>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="remark" label="备注" />
-          <ElTableColumn label="操作" fixed="right" width="250">
-            <template #default="{ row }">
-              <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-              <ElButton link type="warning" @click="handlePermission(row)">权限</ElButton>
-              <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-      </div>
-
-      <!-- 分页 -->
-      <div class="mt-4 flex justify-end">
-        <!-- eslint-disable-next-line vue/no-v-model-argument -->
-        <ElPagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" />
-      </div>
+      <QaTable
+        :data-source="tableData"
+        :columns="columns"
+        :paging="{ page_no: currentPage, page_size: pageSize, total }"
+        @selection-change="onSelectionChange"
+        @page-change="handlePageChange"
+      >
+        <template #status="{ row }">
+          <ElTag :type="row.status === 0 ? 'success' : 'danger'">
+            {{ row.status === 0 ? '启用' : '停用' }}
+          </ElTag>
+        </template>
+        <template #action="{ row }">
+          <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
+          <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+        </template>
+      </QaTable>
     </ElCard>
+
+    <!-- 新增角色抽屉 -->
+    <RoleAdd v-model="addDrawerVisible" @success="handleAddSuccess" />
+
+    <!-- 编辑角色抽屉 -->
+    <RoleEdit v-model="editDrawerVisible" :role-id="editRoleId" @success="handleEditSuccess" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { RoleAPI } from "@/api/module_system/role";
-import QaTableHeaderLeft from "@/components/tables/qa-table-header-left/index.vue";
+import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { RoleAPI } from '@/api/module_system/role';
+import QaTable from '@/components/tables/qa-table/index.vue';
+import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
+import RoleAdd from './add/index.vue';
+import RoleEdit from './edit/index.vue';
 
-defineOptions({ name: "QaSystemRole" });
+defineOptions({ name: 'QaSystemRole' });
 
 const loading = ref(false);
-const searchKeyword = ref("");
-const searchStatus = ref("");
+const tableData = ref([]);
+const selectedIds = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
-const tableData = ref([]);
-const selectedIds = ref([]);
+
+const searchForm = ref({
+  name: '',
+  code: '',
+  status: undefined
+});
+
+const columns = [
+  { type: 'selection', width: 50 },
+  { prop: 'name', label: '角色名称', minWidth: 120 },
+  { prop: 'code', label: '角色编码', minWidth: 120 },
+  { prop: 'order', label: '排序', width: 80, align: 'center' },
+  { prop: 'status', label: '状态', width: 80, align: 'center', slotName: 'status' },
+  { prop: 'description', label: '备注', minWidth: 160, showOverflowTooltip: true },
+  { label: '操作', fixed: 'right', width: 150, slotName: 'action' }
+];
+
+const addDrawerVisible = ref(false);
+const editDrawerVisible = ref(false);
+const editRoleId = ref(null);
 
 const fetchData = async () => {
   loading.value = true;
   try {
     const res = await RoleAPI.list({
-      page: currentPage.value,
-      limit: pageSize.value,
-      name: searchKeyword.value || undefined,
-      status: searchStatus.value || undefined,
+      page_no: currentPage.value,
+      page_size: pageSize.value,
+      name: searchForm.value.name || undefined,
+      code: searchForm.value.code || undefined,
+      status: searchForm.value.status !== undefined ? searchForm.value.status : undefined
     });
-    tableData.value = res.data.list || [];
-    total.value = res.data.total || 0;
-  } catch (error) {
-    console.error("获取角色列表失败", error);
+    const data = res.data;
+    tableData.value = data.items || [];
+    total.value = data.total || 0;
   } finally {
     loading.value = false;
   }
@@ -99,36 +115,59 @@ const onSelectionChange = (rows) => {
   selectedIds.value = rows.map((r) => r.id);
 };
 
+const handlePageChange = ({ page_no, page_size }) => {
+  currentPage.value = page_no;
+  pageSize.value = page_size;
+  fetchData();
+};
+
 const handleAdd = () => {
-  ElMessage.info("新增角色功能待实现");
+  addDrawerVisible.value = true;
+};
+
+const handleAddSuccess = () => {
+  fetchData();
 };
 
 const handleEdit = (row) => {
-  ElMessage.info(`编辑角色：${row.name}`);
+  editRoleId.value = row.id;
+  editDrawerVisible.value = true;
 };
 
-const handlePermission = (row) => {
-  ElMessage.info(`设置权限：${row.name}`);
+const handleEditSuccess = () => {
+  fetchData();
 };
 
-const handleDelete = (row) => {
-  ElMessageBox.confirm(`确定删除角色"${row.name}"吗？`, "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  }).then(() => {
-    ElMessage.success("删除成功");
-  });
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(`确定删除角色"${row.name}"吗？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    });
+    await RoleAPI.delete([row.id]);
+    await fetchData();
+  } catch {
+    // 用户取消
+  }
 };
 
-const handleBatchDelete = () => {
-  ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个角色吗？`, "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  }).then(() => {
-    ElMessage.success("批量删除成功");
-  });
+const handleBatchDelete = async () => {
+  if (selectedIds.value.length === 0) {
+    ElMessage.warning('请选择要删除的角色');
+    return;
+  }
+  try {
+    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个角色吗？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    });
+    await RoleAPI.delete(selectedIds.value);
+    await fetchData();
+  } catch {
+    // 用户取消
+  }
 };
 
 const handleSearch = () => {
@@ -137,9 +176,22 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  searchKeyword.value = "";
-  searchStatus.value = "";
+  searchForm.value = {
+    name: '',
+    code: '',
+    status: undefined
+  };
   currentPage.value = 1;
   fetchData();
 };
 </script>
+
+<style scoped>
+.search-input-sm {
+  width: 150px;
+}
+
+.search-input-xs {
+  width: 120px;
+}
+</style>
