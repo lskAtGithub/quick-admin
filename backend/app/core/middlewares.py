@@ -40,6 +40,10 @@ PUBLIC_PATHS = [
     "/openapi.json",
 ]
 
+PUBLIC_PATH_PREFIXES = [
+    "/api/v1/system/dict/data/type/",
+]
+
 
 def path_to_permission(path: str, method: str) -> str | None:
     path = re.sub(r"^/api/v1", "", path)
@@ -70,6 +74,9 @@ class PermissionMiddleware(BaseHTTPMiddleware):
         path = request.url.path
 
         if any(path.startswith(p) or path == p for p in PUBLIC_PATHS):
+            return await call_next(request)
+
+        if any(path.startswith(p) for p in PUBLIC_PATH_PREFIXES):
             return await call_next(request)
 
         if not path.startswith("/api/v1/"):
