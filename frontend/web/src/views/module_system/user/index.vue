@@ -39,58 +39,32 @@
         </div>
 
         <!-- 表格 -->
-        <div class="flex-1 overflow-auto">
-          <ElTable :data="tableData" border stripe class="w-full" @selection-change="onSelectionChange">
-            <ElTableColumn type="selection" width="50" />
-            <ElTableColumn prop="id" label="ID" width="80" />
-            <ElTableColumn prop="username" label="用户名" width="120" />
-            <ElTableColumn prop="name" label="姓名" width="120" />
-            <ElTableColumn prop="mobile" label="手机号" width="130" />
-            <ElTableColumn prop="email" label="邮箱" width="180" />
-            <ElTableColumn prop="gender" label="性别" width="80">
-              <template #default="{ row }">
-                <ElTag v-if="row.gender === '0'" type="success">男</ElTag>
-                <ElTag v-else-if="row.gender === '1'" type="warning">女</ElTag>
-                <ElTag v-else type="info">未知</ElTag>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn prop="dept_name" label="部门" width="150" />
-            <ElTableColumn prop="status" label="状态" width="100">
-              <template #default="{ row }">
-                <ElTag :type="row.status === 0 ? 'success' : 'danger'">
-                  {{ row.status === 0 ? '启用' : '禁用' }}
-                </ElTag>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn prop="is_superuser" label="超管" width="80">
-              <template #default="{ row }">
-                <ElTag v-if="row.is_superuser" type="danger">是</ElTag>
-                <ElTag v-else type="info">否</ElTag>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn prop="last_login" label="最后登录" width="180" />
-            <ElTableColumn prop="description" label="备注" show-overflow-tooltip />
-            <ElTableColumn label="操作" fixed="right" width="200">
-              <template #default="{ row }">
-                <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-                <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
-              </template>
-            </ElTableColumn>
-          </ElTable>
-        </div>
-
-        <!-- 分页 -->
-        <div class="mt-4 flex justify-end">
-          <ElPagination
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :total="total"
-            :page-sizes="[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next, jumper"
-            @current-change="handlePageChange"
-            @size-change="handleSizeChange"
-          />
-        </div>
+        <QaTable
+          :data-source="tableData"
+          :columns="columns"
+          :paging="{ page_no: currentPage, page_size: pageSize, total }"
+          @selection-change="onSelectionChange"
+          @page-change="handlePageChange"
+        >
+          <template #gender="{ row }">
+            <ElTag v-if="row.gender === '0'" type="success">男</ElTag>
+            <ElTag v-else-if="row.gender === '1'" type="warning">女</ElTag>
+            <ElTag v-else type="info">未知</ElTag>
+          </template>
+          <template #status="{ row }">
+            <ElTag :type="row.status === 0 ? 'success' : 'danger'">
+              {{ row.status === 0 ? '启用' : '禁用' }}
+            </ElTag>
+          </template>
+          <template #is_superuser="{ row }">
+            <ElTag v-if="row.is_superuser" type="danger">是</ElTag>
+            <ElTag v-else type="info">否</ElTag>
+          </template>
+          <template #action="{ row }">
+            <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
+            <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+          </template>
+        </QaTable>
       </ElCard>
     </div>
 
@@ -106,6 +80,7 @@
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { UserAPI } from '@/api/module_system/user';
+import QaTable from '@/components/tables/qa-table/index.vue';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
 import QaDeptTree from './components/QaDeptTree.vue';
 import UserAdd from './add/index.vue';
@@ -120,6 +95,22 @@ const total = ref(0);
 const tableData = ref([]);
 const selectedIds = ref([]);
 const deptFilterId = ref();
+
+const columns = [
+  { type: 'selection', width: 50 },
+  { prop: 'id', label: 'ID', width: 80 },
+  { prop: 'username', label: '用户名', width: 120 },
+  { prop: 'name', label: '姓名', width: 120 },
+  { prop: 'mobile', label: '手机号', width: 130 },
+  { prop: 'email', label: '邮箱', width: 180 },
+  { prop: 'gender', label: '性别', width: 80, slotName: 'gender' },
+  { prop: 'dept_name', label: '部门', width: 150 },
+  { prop: 'status', label: '状态', width: 100, slotName: 'status' },
+  { prop: 'is_superuser', label: '超管', width: 80, slotName: 'is_superuser' },
+  { prop: 'last_login', label: '最后登录', width: 180 },
+  { prop: 'description', label: '备注', showOverflowTooltip: true },
+  { label: '操作', fixed: 'right', width: 200, slotName: 'action' }
+];
 
 const searchForm = ref({
   username: '',
@@ -141,11 +132,8 @@ const fetchData = async () => {
       ...searchForm.value,
       dept_id: deptFilterId.value
     });
-    console.log(res.data);
     tableData.value = res.data.items || [];
     total.value = res.data.total || 0;
-  } catch (error) {
-    console.error('获取用户列表失败', error);
   } finally {
     loading.value = false;
   }
@@ -182,19 +170,13 @@ const handleEditSuccess = () => {
 };
 
 const handleDelete = async (row) => {
-  try {
-    await ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    });
-    await UserAPI.deleteUser({ ids: [row.id] });
-    await fetchData();
-  } catch (error) {
-    if (error !== 'cancel') {
-      console.error('删除失败', error);
-    }
-  }
+  await ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  });
+  await UserAPI.deleteUser({ ids: [row.id] });
+  await fetchData();
 };
 
 const handleBatchDelete = async () => {
@@ -233,14 +215,9 @@ const handleReset = () => {
   fetchData();
 };
 
-const handlePageChange = (page) => {
-  currentPage.value = page;
-  fetchData();
-};
-
-const handleSizeChange = (size) => {
-  pageSize.value = size;
-  currentPage.value = 1;
+const handlePageChange = ({ page_no, page_size }) => {
+  currentPage.value = page_no;
+  pageSize.value = page_size;
   fetchData();
 };
 </script>
