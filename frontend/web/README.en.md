@@ -13,19 +13,19 @@ An admin frontend built on **Vue 3 + Vite + Element Plus**, paired with the Quic
 | Tool | Version |
 |------|---------|
 | Node.js | ≥ 20 |
-| npm | Ships with Node (this project uses npm) |
+| pnpm | Dependencies are managed by pnpm (the repo contains `pnpm-lock.yaml`); if not installed, run `corepack enable` or `npm i -g pnpm` |
 
 ### Install & Run
 
 ```bash
 cd frontend/web
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 The default dev port comes from **`VITE_PORT`** in `.env.development` (currently **5173**).
 
-> You can also run `npm run dev` from the repository root, which uses `scripts/dev.js` to start this frontend together with the backend.
+> You can also run `pnpm run dev` from the repository root, which uses `scripts/dev.js` to start this frontend together with the backend.
 
 ### Working with the Backend
 
@@ -70,10 +70,10 @@ Routing uses **Hash mode**: static routes (login / layout / exception pages) are
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Local development (reads `.env.development`) |
-| `npm run dev:clean` | Clear the Vite pre-bundle cache then start (when the cache misbehaves) |
-| `npm run build` | Production build (reads `.env.production`), output in **`dist/`** |
-| `npm run preview` | Preview the build result locally |
+| `pnpm run dev` | Local development (reads `.env.development`) |
+| `pnpm run dev:clean` | Clear the Vite pre-bundle cache then start (when the cache misbehaves) |
+| `pnpm run build` | Production build (reads `.env.production`), output in **`dist/`** |
+| `pnpm run preview` | Preview the build result locally |
 
 ## Directory Structure (src)
 
@@ -117,7 +117,7 @@ Configured in `vite.config.js`:
 
 ## Environment Variables
 
-Only variables prefixed with **`VITE_`** are injected into the frontend code; actual values live in `.env.development` / `.env.production`, and you must **restart** `npm run dev` after changing them.
+Only variables prefixed with **`VITE_`** are injected into the frontend code; actual values live in `.env.development` / `.env.production`, and you must **restart** `pnpm run dev` after changing them.
 
 | Variable | Purpose |
 |----------|---------|
@@ -148,8 +148,8 @@ Adding a business page generally requires a **view + (optional) route + backend 
 | Symptom | Suggestion |
 |---------|------------|
 | Can't reach the backend | Backend not started, or wrong `VITE_API_BASE_URL` port |
-| env changes not applied | You must restart `npm run dev` after editing `.env.*` |
-| HMR behaves oddly | Try `npm run dev:clean` to clear the cache and restart |
+| env changes not applied | You must restart `pnpm run dev` after editing `.env.*` |
+| HMR behaves oddly | Try `pnpm run dev:clean` to clear the cache and restart |
 
 ## Build & Deploy
 

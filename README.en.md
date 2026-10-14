@@ -48,7 +48,7 @@ A **front-end / back-end separated admin platform** focused on the most essentia
 | Requirement | Version |
 |-------------|---------|
 | Python | ≥ 3.12 (dependency management with [uv](https://github.com/astral-sh/uv) recommended) |
-| Node.js | ≥ 20, package manager: npm |
+| Node.js | ≥ 20, package manager: pnpm |
 | Database | MySQL 8.0+ / PostgreSQL / SQLite (defaults to SQLite; dev environment configured for MySQL) |
 | Cache | Redis 7.x |
 
@@ -61,7 +61,7 @@ The backend reads `backend/env/.env.dev` by default; the frontend dev server run
 cd backend && uv sync && cd ..
 
 # 2. Start frontend + backend with a single command
-npm run dev
+pnpm run dev
 
 # ✅ Open http://127.0.0.1:5173 in your browser and log in with admin / admin
 ```
@@ -73,7 +73,7 @@ You can also start them separately:
 uv run python main.py          # or python main.py
 
 # Frontend (in the frontend/web directory)
-npm install && npm run dev
+pnpm install && pnpm run dev
 ```
 
 > On first startup the backend automatically creates tables and seeds a default super-admin account `admin` / `admin` (idempotent — please change the password promptly).

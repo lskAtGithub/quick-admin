@@ -13,19 +13,19 @@
 | 工具 | 版本要求 |
 |-------|---------|
 | Node.js | ≥ 20 |
-| npm | 随 Node 附带即可（本项目使用 npm） |
+| pnpm | 依赖用 pnpm 管理（仓库含 `pnpm-lock.yaml`）；未安装时 `corepack enable` 或 `npm i -g pnpm` |
 
 ### 安装依赖并启动
 
 ```bash
 cd frontend/web
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 默认开发端口由 `.env.development` 中的 **`VITE_PORT`** 决定（当前为 **5173**）。
 
-> 也可在仓库根目录执行 `npm run dev`，由 `scripts/dev.js` 同时拉起本前端与后端。
+> 也可在仓库根目录执行 `pnpm run dev`，由 `scripts/dev.js` 同时拉起本前端与后端。
 
 ### 与后端联调
 
@@ -70,10 +70,10 @@ main.js 启动
 
 | 命令 | 说明 |
 |------|------|
-| `npm run dev` | 本地开发（读取 `.env.development`） |
-| `npm run dev:clean` | 清理 Vite 预构建缓存后启动（缓存异常时） |
-| `npm run build` | 生产构建（读取 `.env.production`），产物在 **`dist/`** |
-| `npm run preview` | 本地预览构建结果 |
+| `pnpm run dev` | 本地开发（读取 `.env.development`） |
+| `pnpm run dev:clean` | 清理 Vite 预构建缓存后启动（缓存异常时） |
+| `pnpm run build` | 生产构建（读取 `.env.production`），产物在 **`dist/`** |
+| `pnpm run preview` | 本地预览构建结果 |
 
 ## 目录结构（src）
 
@@ -117,7 +117,7 @@ src/
 
 ## 环境变量
 
-只有以 **`VITE_`** 开头的变量会注入前端代码；实际取值以 `.env.development` / `.env.production` 为准，修改后需 **重启** `npm run dev`。
+只有以 **`VITE_`** 开头的变量会注入前端代码；实际取值以 `.env.development` / `.env.production` 为准，修改后需 **重启** `pnpm run dev`。
 
 | 变量 | 作用 |
 |------|------|
@@ -148,8 +148,8 @@ src/
 | 现象 | 建议 |
 |------|------|
 | 连&#8288;不&#8288;上&#8288;后&#8288;端 | 后端未启动或 `VITE_API_BASE_URL` 端口错误 |
-| env&#8288;不&#8288;生&#8288;效 | 修改 `.env.*` 后必须重启 `npm run dev` |
-| 热&#8288;更&#8288;新&#8288;异&#8288;常 | 尝试 `npm run dev:clean` 清理缓存后重启 |
+| env&#8288;不&#8288;生&#8288;效 | 修改 `.env.*` 后必须重启 `pnpm run dev` |
+| 热&#8288;更&#8288;新&#8288;异&#8288;常 | 尝试 `pnpm run dev:clean` 清理缓存后重启 |
 
 ## 构建与部署
 

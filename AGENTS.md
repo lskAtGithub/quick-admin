@@ -7,7 +7,7 @@
 Quick Admin：FastAPI + Vue3 的前后端分离管理后台。
 
 - 后端：`backend/`，Python ≥ 3.12，FastAPI + SQLAlchemy(async) + Alembic + Redis，依赖用 **uv** 管理（`uv.lock` 冻结）。
-- 前端：`frontend/web/`，Vue3 + Vite + Element Plus + Pinia + Tailwind CSS 4 / SCSS，**使用 JavaScript（不引入 TypeScript）**，包管理用 **npm**。
+- 前端：`frontend/web/`，Vue3 + Vite + Element Plus + Pinia + Tailwind CSS 4 / SCSS，**使用 JavaScript（不引入 TypeScript）**，包管理用 **pnpm**（`pnpm-lock.yaml`；`npm i -g pnpm` 或 `corepack enable` 安装）。
 - 数据库：MySQL / PostgreSQL / SQLite 三方可切，默认种子账号 `admin`/`admin`。
 
 ## 通用协作规则

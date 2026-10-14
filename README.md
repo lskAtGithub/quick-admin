@@ -48,7 +48,7 @@
 | 需求 | 版本 |
 |------|------|
 | Python | ≥ 3.12（推荐用 [uv](https://github.com/astral-sh/uv) 管理依赖） |
-| Node.js | ≥ 20，包管理使用 npm |
+| Node.js | ≥ 20，包管理使用 pnpm |
 | 数据库 | MySQL 8.0+ / PostgreSQL / SQLite（默认 SQLite，开发环境配 MySQL） |
 | 缓存 | Redis 7.x |
 
@@ -61,7 +61,7 @@
 cd backend && uv sync && cd ..
 
 # 2. 一条命令同时启动前端 + 后端
-npm run dev
+pnpm run dev
 
 # ✅ 浏览器打开 http://127.0.0.1:5173，用 admin / admin 登录
 ```
@@ -73,7 +73,7 @@ npm run dev
 uv run python main.py          # 或 python main.py
 
 # 前端（frontend/web 目录）
-npm install && npm run dev
+pnpm install && pnpm run dev
 ```
 
 > 首次启动后端会自动建表并初始化默认超级管理员账号 `admin` / `admin`（幂等，请尽快改密）。
