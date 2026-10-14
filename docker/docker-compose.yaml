@@ -20,7 +20,9 @@ services:
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      # 用 TCP（127.0.0.1）而非 socket（localhost）探测：全新卷初始化期间的临时实例是 --skip-networking 的，
+      # socket 能 ping 通但 3306 未开放，会导致依赖方抢跑连不上库
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 10s
       retries: 10
