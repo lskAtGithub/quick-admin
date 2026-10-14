@@ -45,7 +45,7 @@
         <div class="relative pb-3">
           <div
             class="relative z-2 overflow-hidden select-none rounded-lg border border-transparent transition duration-300"
-            :class="{ 'border-[#FF4E4F]!': !isPassing && isClickPass }"
+            :class="{ 'border-(--qa-danger)!': !isPassing && isClickPass }"
           >
             <QaDragVerify
               ref="dragVerifyRef"
@@ -55,12 +55,12 @@
               :text-color="dragVerifyTextColor"
               :success-text="$t('login.sliderSuccessText')"
               progress-bar-bg="var(--el-color-success)"
-              :background="isDark ? '#26272F' : 'var(--el-border-color-light)'"
+              :background="isDark ? 'var(--default-box-color)' : 'var(--el-border-color-light)'"
               handler-bg="var(--default-box-color)"
             />
           </div>
           <p
-            class="absolute top-0 z-1 mt-2 px-px text-xs text-[#f56c6c] transition duration-300"
+            class="absolute top-0 z-1 mt-2 px-px text-xs text-(--qa-danger) transition duration-300"
             :class="{ 'translate-y-10': !isPassing && isClickPass }"
           >
             {{ $t("login.placeholder.slider") }}
@@ -145,3 +145,37 @@ defineExpose({
   resetDragVerify: () => dragVerifyRef.value?.reset?.(),
 });
 </script>
+
+<style scoped>
+@keyframes qa-login-form-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-page-form :deep(.el-form-item) {
+  animation: qa-login-form-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.login-page-form :deep(.el-form-item:nth-child(1)) { animation-delay: 120ms; }
+.login-page-form :deep(.el-form-item:nth-child(2)) { animation-delay: 200ms; }
+
+.login-form-tail {
+  animation: qa-login-form-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-page-form :deep(.el-form-item),
+  .login-form-tail {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+</style>
