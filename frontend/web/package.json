@@ -7,7 +7,11 @@
     "dev": "vite",
     "dev:clean": "node -e \"const fs=require('fs');const p=require('path');const d=p.join(__dirname,'node_modules/.vite');fs.existsSync(d)&&fs.rmSync(d,{recursive:true,force:true});console.log('✓ Vite cache cleared');\" && vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{js,vue,css,scss,json}\"",
+    "format:check": "prettier --check \"src/**/*.{js,vue,css,scss,json}\"",
+    "lint": "eslint \"src/**/*.{js,vue}\"",
+    "lint:fix": "eslint \"src/**/*.{js,vue}\" --fix"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
@@ -28,12 +32,17 @@
     "vue-router": "^5.3.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@iconify-json/ep": "^1.2.4",
     "@iconify-json/ri": "^1.2.10",
     "@iconify/vue": "^5.0.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/crypto-js": "^4.2.2",
     "@vitejs/plugin-vue": "^6.0.8",
+    "eslint": "^9.17.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
     "sass": "^1.105.1",
     "tailwindcss": "^4.3.3",
     "unplugin-auto-import": "^21.1.0",
