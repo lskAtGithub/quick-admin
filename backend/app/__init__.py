@@ -22,6 +22,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
     await create_tables()
     logger.info("数据库初始化完成")
 
+    from app.scripts.init_data import init_admin_user
+    await init_admin_user()
+
     from app.core.redis_crud import redis_connect
     await redis_connect(app, status=True)
     logger.info("Redis 连接完成")
