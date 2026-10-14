@@ -223,19 +223,14 @@ const changeThemeColor = (color) => {
   box-shadow: 0 4px 20px rgb(0 0 0 / 35%);
 }
 
-/* 右上角三个操作按钮：悬浮抬升 + 浅底 + 图标随主色 */
+/* 右上角三个操作按钮 */
 .auth-top-bar__action {
   border-radius: 10px;
-  transition:
-    background-color 0.22s ease,
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
+  transition: background-color 0.22s ease;
 }
 
 .auth-top-bar__action:hover {
   background-color: var(--el-fill-color-light);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
-  transform: translateY(-2px);
 }
 
 .auth-top-bar__action:hover :deep(.qa-svg-icon) {
