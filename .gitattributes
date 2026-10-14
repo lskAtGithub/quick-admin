@@ -1,0 +1,4 @@
+# 默认按文本处理并跟随 core.autocrlf；以下为显式例外
+
+# Shell 脚本强制 LF 检出：Windows 工作副本若是 CRLF，bash 会因 \r 解析失败
+*.sh text eol=lf
