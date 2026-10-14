@@ -8,6 +8,8 @@
         :style="{ background: color }" @click="colorHandlers.selectColor(color)">
         <QaSvgIcon v-if="color.toLowerCase() === settingStore.themeColor.toLowerCase()" icon="ri:check-fill" class="text-base text-white!" />
       </button>
+      <ElColorPicker class="!size-5.75 !align-middle mr-4 mb-2.5" :show-alpha="false" :predefine="configOptions.mainColors"
+        v-model="customColor" :aria-label="$t('setting.color.custom')" @change="onCustomColorChange" />
     </div>
   </div>
 </template>
@@ -21,4 +23,17 @@ defineOptions({ name: "QaColorSettings" });
 const settingStore = useSettingStore();
 const { configOptions } = useSettingsConfig();
 const { colorHandlers } = useSettingsHandlers();
+
+const customColor = ref(settingStore.themeColor);
+watch(() => settingStore.themeColor, (color) => { customColor.value = color; });
+
+// 非法/越界色被 handler 拒时 store 不变，回退选择器显示为当前生效色
+function onCustomColorChange(val) {
+  if (typeof val !== "string") {
+    customColor.value = settingStore.themeColor;
+    return;
+  }
+  colorHandlers.selectColor(val);
+  if (settingStore.themeColor !== val) customColor.value = settingStore.themeColor;
+}
 </script>

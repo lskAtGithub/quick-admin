@@ -104,6 +104,14 @@ export function setElementThemeColor(color) {
   }
 }
 
+// 自定义主题色的亮度安全区间（HSL L 30% ~ 70%），避免过浅/过深导致白字控件不可读
+export function isColorInRange(color, min = 0.3, max = 0.7) {
+  if (!isValidHexColor(color)) return false;
+  const [r, g, b] = hexToRgb(color).map((v) => v / 255);
+  const lightness = (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
+  return lightness >= min && lightness <= max;
+}
+
 // -----------------------------
 // Theme utils
 // -----------------------------

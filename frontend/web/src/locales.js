@@ -190,7 +190,7 @@ const messages = {
       theme: { title: "主题风格", list: ["明亮", "暗黑", "跟随系统"] },
       menuType: { title: "菜单布局", list: ["垂直", "水平", "混合", "双列"] },
       menu: { title: "菜单风格", list: ["设计风格", "暗色菜单", "亮色菜单"], unavailable: "当前主题或布局不支持切换菜单风格" },
-      color: { title: "系统主题色" },
+      color: { title: "系统主题色", custom: "自定义主题色", rangeWarn: "主题色过浅或过深，请选择亮度适中的颜色" },
       box: { title: "盒子样式", list: ["边框", "阴影"] },
       container: { title: "容器宽度", list: ["全宽", "定宽"] },
       basics: {
@@ -431,7 +431,7 @@ const messages = {
       theme: { title: "Theme style", list: ["Light", "Dark", "System"] },
       menuType: { title: "Menu layout", list: ["Vertical", "Horizontal", "Mixed", "Dual column"] },
       menu: { title: "Menu style", list: ["Design", "Dark menu", "Light menu"], unavailable: "Menu style cannot be changed in the current theme or layout" },
-      color: { title: "Primary color" },
+      color: { title: "Primary color", custom: "Custom color", rangeWarn: "Color is too light or too dark, please pick a mid-tone color" },
       box: { title: "Box style", list: ["Border", "Shadow"] },
       container: { title: "Container width", list: ["Full", "Fixed"] },
       basics: {

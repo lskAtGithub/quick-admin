@@ -1,9 +1,11 @@
 import { useSettingStore } from "@/store";
 import { ContainerWidthEnum } from "@/enums/appEnum";
 import { isSettingAvailable } from "@/utils/settings";
+import { isColorInRange } from "@/utils/ui";
 
 export function useSettingsHandlers() {
   const settingStore = useSettingStore();
+  const { t } = useI18n();
 
   function handleSettingChange(config, value) {
     if (config.disabled || !isSettingAvailable(config.key) || value === undefined || value === null) return;
@@ -30,6 +32,10 @@ export function useSettingsHandlers() {
   const colorHandlers = {
     selectColor(color) {
       if (typeof color !== "string" || !/^#[\da-f]{6}$/i.test(color)) return;
+      if (!isColorInRange(color)) {
+        ElMessage.warning(t("setting.color.rangeWarn"));
+        return;
+      }
       settingStore.setThemeColor(color);
     },
   };
