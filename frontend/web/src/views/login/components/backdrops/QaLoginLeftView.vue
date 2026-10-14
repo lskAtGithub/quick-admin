@@ -194,21 +194,42 @@ $bg-mix-light-7: color-mix(in srgb, $primary-light-7 80%, $main-bg);
 
   .text-wrap {
     position: absolute;
-    bottom: 80px;
+    bottom: 72px;
     width: 100%;
     text-align: center;
     animation: slideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 
     h1 {
-      font-size: 24px;
-      font-weight: 400;
-      color: var(--qa-gray-900) !important;
+      font-size: clamp(17px, 1.5vw, 21px);
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      background: linear-gradient(
+        100deg,
+        var(--el-color-primary) 0%,
+        var(--el-color-primary-light-4) 40%,
+        var(--el-color-primary) 55%,
+        var(--el-color-primary) 100%
+      );
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: qa-text-shine 7s linear infinite;
     }
 
     p {
-      margin-top: 10px;
-      font-size: 14px;
+      max-width: 30rem;
+      margin: 8px auto 0;
+      font-size: 13px;
+      line-height: 1.6;
       color: var(--qa-gray-600) !important;
+    }
+
+    @keyframes qa-text-shine {
+      to {
+        background-position: 220% center;
+      }
     }
   }
 
@@ -546,6 +567,12 @@ $bg-mix-light-7: color-mix(in srgb, $primary-light-7 80%, $main-bg);
 
     .logo {
       display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-wrap h1 {
+      animation: none;
     }
   }
 }
