@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T10:00:00.000Z",
+  "title": "Design System: QuickAdmin",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "QuickAdmin Blue",
+        "canonical": "#4080FF",
+        "tonalRamp": ["#1a3d7a", "#2650a0", "#3366cc", "#4080ff", "#6699ff", "#99bbff", "#ccddff", "#e8f0ff"]
+      },
+      "primary-teal": {
+        "role": "primary-alt",
+        "displayName": "Teal Breeze",
+        "canonical": "#13DEB9",
+        "tonalRamp": ["#0a5e4e", "#0d7d68", "#10a383", "#13deb9", "#4de5cb", "#80eddd", "#b3f5ee", "#e0fcf7"]
+      },
+      "primary-amber": {
+        "role": "primary-alt",
+        "displayName": "Amber Glow",
+        "canonical": "#FFAE1F",
+        "tonalRamp": ["#7a5210", "#a06b15", "#cc8a1b", "#ffae1f", "#ffbe4d", "#ffcf80", "#ffe0b3", "#fff2e0"]
+      },
+      "primary-red": {
+        "role": "primary-alt",
+        "displayName": "Signal Red",
+        "canonical": "#FF4D4F",
+        "tonalRamp": ["#7a1a1c", "#a02528", "#cc3336", "#ff4d4f", "#ff7a7c", "#ffa0a1", "#ffc6c7", "#ffe8e8"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Warm Canvas",
+        "canonical": "#FAFBFC",
+        "tonalRamp": ["#1a1b1e", "#2e3035", "#4a4d54", "#7a7e86", "#a8adb5", "#c8cdd4", "#e4e8ed", "#fafbfc"]
+      },
+      "neutral-surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#161618", "#2a2a2e", "#44444a", "#6e6e76", "#9a9aa2", "#b8b8be", "#d8d8dc", "#ffffff"]
+      },
+      "neutral-border": {
+        "role": "neutral",
+        "displayName": "Soft Edge",
+        "canonical": "#E2E8EE",
+        "tonalRamp": ["#2a2e34", "#3e444c", "#5a6270", "#8490a0", "#a8b4c2", "#c4ced8", "#dce4ec", "#e2e8ee"]
+      }
+    },
+    "typographyMeta": {
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default text for forms, tables, descriptions. 13px at default density."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card headers, section titles within pages."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Module-level headings, dashboard section titles."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "Rare large numbers on dashboard stat cards. Not for page titles."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-shadow-sm",
+        "value": "0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 1px -1px rgba(0,0,0,0.08)",
+        "purpose": "Small cards (qa-card-xs) in shadow mode."
+      },
+      {
+        "name": "card-shadow-md",
+        "value": "0 1px 3px 0 rgba(0,0,0,0.03), 0 1px 2px -1px rgba(0,0,0,0.08)",
+        "purpose": "Standard cards (qa-card, qa-card-sm) in shadow mode."
+      },
+      {
+        "name": "content-shadow",
+        "value": "0 0 4px 0 rgba(0,0,0,0.04)",
+        "purpose": "Page content area and table cards in shadow mode."
+      },
+      {
+        "name": "header-blur",
+        "value": "backdrop-filter: blur(12px)",
+        "purpose": "Sticky header frosted glass effect. Disabled below 1180px."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for hover-lift and state transitions."
+      },
+      {
+        "name": "duration-fast",
+        "value": "200ms",
+        "purpose": "Hover effects, color transitions, theme switching."
+      },
+      {
+        "name": "duration-normal",
+        "value": "300ms",
+        "purpose": "Sidebar collapse, panel open/close."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile-sm", "value": "640px" },
+      { "name": "tablet", "value": "800px" },
+      { "name": "desktop", "value": "1180px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action button. Used for form submissions, confirmations, and primary CTAs.",
+      "html": "<button class=\"ds-btn-primary\">Save Changes</button>",
+      "css": ".ds-btn-primary { background: #4080ff; color: #fff; padding: 8px 20px; font-size: 13px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; } .ds-btn-primary:hover { background: #6699ff; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(64,128,255,0.3); } .ds-btn-primary:active { background: #3370e0; }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Standard page-level container for forms, tables, and content sections.",
+      "html": "<div class=\"ds-card\"><h4 class=\"ds-card-title\">User Management</h4><p class=\"ds-card-desc\">Manage system users and roles</p></div>",
+      "css": ".ds-card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 20px; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; } .ds-card-title { font-size: 18px; font-weight: 500; color: #323251; margin: 0 0 4px; } .ds-card-desc { font-size: 12px; color: #7987a1; margin: 0; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard form text field with focus ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Enter name...\" />",
+      "css": ".ds-input { background: #fff; border: 1px solid #e2e8ee; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #323251; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; transition: border-color 0.2s, box-shadow 0.2s; outline: none; width: 100%; box-sizing: border-box; } .ds-input::placeholder { color: #dbdfe1; } .ds-input:focus { border-color: #4080ff; box-shadow: 0 0 0 2px rgba(64,128,255,0.15); } .ds-input:hover:not(:focus) { border-color: #949eb7; }"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-sidebar",
+      "description": "Left sidebar with collapsible menu. Shows logo, menu items with icons, and active state.",
+      "html": "<nav class=\"ds-sidebar\"><div class=\"ds-sidebar-logo\">QuickAdmin</div><a class=\"ds-nav-item ds-nav-active\" href=\"#\"><span class=\"ds-nav-icon\">&#9679;</span> Dashboard</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-icon\">&#9679;</span> Users</a></nav>",
+      "css": ".ds-sidebar { background: #fff; width: 230px; min-height: 100vh; border-right: 1px solid #e2e8ee; padding: 12px 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; } .ds-sidebar-logo { font-size: 18px; font-weight: 600; color: #383853; padding: 12px 20px 20px; } .ds-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: #4d5875; font-size: 13px; text-decoration: none; transition: background 0.2s, color 0.2s; border-radius: 0; } .ds-nav-item:hover { background: #edeff0; } .ds-nav-active { color: #4080ff; background: rgba(64,128,255,0.08); font-weight: 500; } .ds-nav-icon { font-size: 8px; }"
+    },
+    {
+      "name": "Work Tab",
+      "kind": "custom",
+      "description": "Closable tab for open pages. Gold pin indicator for pinned tabs.",
+      "html": "<div class=\"ds-tabs\"><span class=\"ds-tab ds-tab-active\">Dashboard</span><span class=\"ds-tab ds-tab-pinned\">Users <span class=\"ds-pin\">&#9679;</span></span></div>",
+      "css": ".ds-tabs { display: flex; gap: 2px; padding: 6px 12px; background: #fafbfc; border-bottom: 1px solid #e2e8ee; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; } .ds-tab { padding: 6px 16px; font-size: 12px; color: #7987a1; border-radius: 6px 6px 0 0; cursor: pointer; transition: background 0.2s, color 0.2s; position: relative; } .ds-tab:hover { background: #edeff0; color: #323251; } .ds-tab-active { background: #fff; color: #4080ff; font-weight: 500; border-bottom: 2px solid #4080ff; } .ds-tab-pinned { position: relative; } .ds-pin { color: #ca8a04; font-size: 8px; position: absolute; top: 2px; right: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Warm Workbench",
+    "overview": "QuickAdmin 的设计气质是一张打磨温润的工作台——不冰冷、不炫技、不过分柔软。它是内部管理人员每天打开八小时以上的界面，因此每一处设计决策都服务于一个目标：让长时间使用不疲劳。\n\n视觉上追求现代而均衡的中间路线。按钮不方正到刺眼，也不圆润到幼稚；留白不吝啬也不浪费；颜色有存在感但不喧哗。系统字体栈确保加载零延迟，Element Plus 组件库提供成熟的交互基座，Tailwind CSS 的原子化工具类让每一处间距都落在 4px 基准网格上。",
+    "keyCharacteristics": [
+      "温润中性——颜色含灰、边角含弧、阴影含透，没有任何元素是'硬'的",
+      "单变量圆角——--custom-radius 一个变量控制全局圆角节奏",
+      "密度可调——三档尺寸系统（spacing + font + layout 联动缩放）",
+      "双模深度——边框模式与阴影模式一键切换",
+      "主题色自由——5 种预设主色 + 自定义取色器"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "主色只出现在需要用户注意的交互点上——按钮、链接、活跃导航。大面积背景永远是中性色。主色面积不超过界面可见区域的 10%。", "section": "colors" },
+      { "name": "The Density Rule", "body": "字号不独立变化——跟随三档尺寸系统联动。large 档整体 +1px，small 档整体 -1px，保持视觉节奏与间距同步缩放。", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "深度是用户选择的功能，不是设计的默认表达。边框模式是默认值，阴影模式是增强选项。任何新增的组件都必须在两种模式下都表现良好。", "section": "elevation" }
+    ],
+    "dos": [
+      "Do 所有新增组件的圆角使用 calc(var(--custom-radius) + Npx) 派生",
+      "Do 颜色使用 CSS 变量（var(--qa-*) 或 var(--el-*)），确保主题切换自动适配",
+      "Do 间距落在 4px 网格上（4/8/12/16/20/24px）",
+      "Do 新组件同时在亮色和暗色模式下测试",
+      "Do 使用语义色变量（--qa-success/warning/danger/error）",
+      "Do 边框模式和阴影模式下都验证组件外观"
+    ],
+    "donts": [
+      "Don't 硬编码主题色 #4080FF——必须使用 var(--el-color-primary) 或 var(--qa-primary)",
+      "Don't 使用纯黑 (#000) 或纯灰 (#808080)——灰阶带微蓝倾向",
+      "Don't 在布局外壳的组件上使用固定圆角值",
+      "Don't 添加超过 8px 的 box-shadow",
+      "Don't 在间距中使用非 4px 倍数的值",
+      "Don't 忽略三档尺寸系统的联动",
+      "Don't 在移动端保留毛玻璃效果"
+    ]
+  }
+}
