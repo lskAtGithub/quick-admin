@@ -64,3 +64,35 @@ defineExpose({
   clearValidate: () => formRef.value?.clearValidate?.(),
 });
 </script>
+
+<style scoped>
+@keyframes qa-login-form-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-page-form :deep(.el-form-item) {
+  animation: qa-login-form-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 120ms;
+}
+
+.login-page-form > .mt-6 {
+  animation: qa-login-form-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-page-form :deep(.el-form-item),
+  .login-page-form > .mt-6 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+</style>

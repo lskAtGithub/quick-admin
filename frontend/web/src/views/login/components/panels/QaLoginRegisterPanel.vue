@@ -144,3 +144,40 @@ defineExpose({
   validateField: (prop) => formRef.value?.validateField?.(prop),
 });
 </script>
+
+<style scoped>
+@keyframes qa-login-form-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-page-form :deep(.el-form-item) {
+  animation: qa-login-form-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.login-page-form :deep(.el-form-item:nth-child(1)) { animation-delay: 120ms; }
+.login-page-form :deep(.el-form-item:nth-child(2)) { animation-delay: 180ms; }
+.login-page-form :deep(.el-form-item:nth-child(3)) { animation-delay: 240ms; }
+.login-page-form :deep(.el-form-item:nth-child(4)) { animation-delay: 300ms; }
+.login-page-form :deep(.el-form-item:nth-child(5)) { animation-delay: 360ms; }
+
+.login-page-form > .mt-6 {
+  animation: qa-login-form-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 420ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-page-form :deep(.el-form-item),
+  .login-page-form > .mt-6 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+</style>
