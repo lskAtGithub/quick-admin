@@ -207,7 +207,7 @@ $bg-mix-light-7: color-mix(in srgb, $primary-light-7 80%, $main-bg);
       background: linear-gradient(
         100deg,
         var(--el-color-primary) 0%,
-        var(--el-color-primary-light-4) 40%,
+        color-mix(in srgb, var(--el-color-primary) 55%, #ffffff) 40%,
         var(--el-color-primary) 55%,
         var(--el-color-primary) 100%
       );
