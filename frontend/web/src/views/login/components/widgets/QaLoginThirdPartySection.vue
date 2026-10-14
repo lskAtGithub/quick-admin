@@ -9,15 +9,16 @@
       class="login-third-party-icons flex w-full items-center justify-center gap-x-3 sm:gap-x-4 max-sm:gap-x-2"
     >
       <ElTooltip
-        v-for="item in oauthItems"
+        v-for="(item, idx) in oauthItems"
         :key="item.provider"
         :content="item.tip"
         placement="top"
       >
         <button
           type="button"
-          class="oauth-social-btn flex size-10 max-sm:size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent transition-colors duration-200 outline-none"
+          class="oauth-social-btn flex size-10 max-sm:size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent outline-none"
           :aria-label="item.tip"
+          :style="{ '--oauth-idx': idx }"
           @click="$emit('oauth', item.provider)"
         >
           <QaSvgIcon :icon="item.icon" :class="item.iconClass" />
@@ -61,3 +62,54 @@ const oauthItems = computed(() => [
   },
 ]);
 </script>
+
+<style scoped>
+@keyframes qa-oauth-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.oauth-social-btn {
+  transition: background-color 0.2s ease;
+  animation: qa-oauth-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(400ms + var(--oauth-idx, 0) * 70ms);
+}
+
+.oauth-social-btn:hover {
+  background-color: var(--el-fill-color-light);
+}
+
+.oauth-social-btn:hover :deep(.qa-svg-icon) {
+  animation: qa-oauth-boing 0.4s ease-in-out;
+}
+
+@keyframes qa-oauth-boing {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.85);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oauth-social-btn {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .oauth-social-btn:hover :deep(.qa-svg-icon) {
+    animation: none;
+    transform: none;
+  }
+}
+</style>
