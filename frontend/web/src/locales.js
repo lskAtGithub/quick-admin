@@ -25,7 +25,7 @@ const messages = {
         title: "一款兼具设计美学与高效开发的后台系统",
         subTitle: "提供安全、高效、可扩展的管理解决方案，助力企业数字化转型与业务增长。",
       },
-      title: "欢迎回来 👋",
+      title: "欢迎回来",
       subTitle: "请输入您的账户信息以开始管理您的项目",
       versionLabel: "版本",
       quickSelectAccount: "快速选择账号",
