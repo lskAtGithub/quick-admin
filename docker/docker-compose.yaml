@@ -1,37 +1,172 @@
 services:
+  # ==================== 数据库 ====================
   mysql:
     container_name: quickadmin-mysql
     image: mysql:8.0
     restart: unless-stopped
+    platform: linux/amd64
     environment:
       TZ: "Asia/Shanghai"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?错误: 请设置 MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-quickadmin}"
+      MYSQL_USER: "${MYSQL_USER:?错误: 请设置 MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?错误: 请设置 MYSQL_PASSWORD}"
     ports:
       - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - app_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 256m
 
+  # ==================== 缓存 ====================
   redis:
     container_name: quickadmin-redis
     image: redis:7-alpine
     restart: unless-stopped
+    platform: linux/amd64
     environment:
       TZ: "Asia/Shanghai"
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
       - ./redis/data:/data
-    command: redis-server
+    command: sh -c 'redis-server --requirepass "${REDIS_PASSWORD}"'
+    networks:
+      - app_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD}\" ping | grep PONG"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+        reservations:
+          memory: 128m
+
+  # ==================== 后端 ====================
+  backend:
+    container_name: quickadmin-backend
+    build:
+      context: ../
+      dockerfile: ./docker/backend/Dockerfile
+    image: "quickadmin-backend:${BACKEND_IMAGE_TAG:-0.1.0}"
+    restart: unless-stopped
+    platform: linux/amd64
+    environment:
+      TZ: "Asia/Shanghai"
+      # 运行环境，对应 backend/env/.env.{dev,prod}
+      ENVIRONMENT: "${DEPLOY_ENV:-prod}"
+      # 以下连接配置覆盖 .env.prod（pydantic 中 OS 环境变量优先级高于 env 文件）
+      DATABASE_TYPE: "mysql"
+      DATABASE_HOST: "mysql"
+      DATABASE_PORT: "3306"
+      DATABASE_USER: "${MYSQL_USER}"
+      DATABASE_PASSWORD: "${MYSQL_PASSWORD}"
+      DATABASE_NAME: "${MYSQL_DATABASE:-quickadmin}"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      REDIS_DB_NAME: "1"
+      SECRET_KEY: "${SECRET_KEY:?错误: 请设置 SECRET_KEY（JWT 签名密钥）}"
+      DEBUG: "False"
+      LOGGER_LEVEL: "${LOGGER_LEVEL:-INFO}"
+    ports:
+      - "${BACKEND_PORT:-8001}:8001"
+    volumes:
+      # 上传文件持久化：不挂载则重建容器丢失用户上传文件
+      - ../backend/static/upload:/home/static/upload
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8001/docs\", timeout=5)' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: "1.0"
+        reservations:
+          memory: 256m
+
+  # ==================== 网关 / 静态托管 ====================
+  nginx:
+    container_name: quickadmin-nginx
+    image: nginx:1.25-alpine
+    restart: unless-stopped
+    platform: linux/amd64
+    environment:
+      TZ: "Asia/Shanghai"
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # 前端构建产物（deploy.sh 在宿主机 pnpm build 后产出到 frontend/web/dist）
+      - ../frontend/web/dist:/usr/share/nginx/html/web/dist:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.5"
+        reservations:
+          memory: 64m
+
+networks:
+  app_network:
+    driver: bridge

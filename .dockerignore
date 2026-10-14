@@ -1,0 +1,31 @@
+# Docker 构建上下文（根目录）排除清单
+# 后端镜像在 Dockerfile 里 COPY ./backend/，以下体积大/无需进镜像的内容排除
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+backend/.venv/
+backend/logs/
+backend/**/*.log
+backend/quickadmin.db
+backend/data/
+
+# 前端与依赖（前端在宿主机构建，dist 通过卷挂载给 nginx，不进后端镜像）
+**/node_modules/
+frontend/
+FastApiAdmin/
+
+# 运行时数据与本地环境
+docker/mysql/data/
+docker/redis/data/
+docker/.env
+**/.env.local
+
+# 版本控制与工具
+.git/
+.gitignore
+.qoder/
+.impeccable/
+.vscode/
+.idea/
+*.md
