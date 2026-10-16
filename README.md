@@ -117,6 +117,8 @@ quick-admin/                 # Monorepo 全栈工程
 | 🖥️ **qa-front** | `skills/qa-front/SKILL.md` | 前端开发规范与新增管理模块页面的完整流程（API 模块、列表页三件套、路由菜单接入、i18n 等） |
 | ⚙️ **qa-back** | `skills/qa-back/SKILL.md` | 后端开发规范与新增业务模块的完整流程（Model/Schema/CRUD/Service/Controller 分层、域注册、权限 SQL、校验） |
 
+> impeccable UI 技能的详细用法见其官方入门文档：<https://impeccable.cn/tutorials/getting-started/>
+
 ## 📌 内置功能
 
 ### 后端接口（`/api/v1`）

@@ -117,6 +117,8 @@ The repo ships skills for AI coding agents:
 | 🖥️ **qa-front** | `skills/qa-front/SKILL.md` | Frontend conventions and the full workflow for adding admin pages (API modules, list-page kit, router/menu wiring, i18n, etc.) |
 | ⚙️ **qa-back** | `skills/qa-back/SKILL.md` | Backend conventions and the full workflow for adding business modules (Model/Schema/CRUD/Service/Controller layering, domain registration, permission SQL, verification) |
 
+> For details on the impeccable UI skill, see its official getting-started guide: <https://impeccable.cn/tutorials/getting-started/>
+
 ## 📌 Built-in Features
 
 ### Backend APIs (`/api/v1`)
