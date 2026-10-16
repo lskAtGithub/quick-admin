@@ -2,7 +2,7 @@
      <p align="center">
           <img src="frontend/web/public/favicon.svg" width="120" height="120" alt="logo" />
      </p>
-     <h1>Quick Admin <sup style="background-color: #4080ff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.4em; vertical-align: super; margin-left: 5px;">v0.1.0</sup></h1>
+     <h1>Quick Admin</h1>
      <h3>🚀 基于 FastAPI + Vue3 的全栈中后台脚手架</h3>
      <p>追求干净的代码与舒适的主题体验，一条命令即可跑通前后端，Docker 一键交付</p>
      <p align="center">
