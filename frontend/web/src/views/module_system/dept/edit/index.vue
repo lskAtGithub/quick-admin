@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="编辑部门"
+    :title="$t('common.editTitle', { name: $t('system.dept.entity') })"
     size="450px"
     form-mode="update"
     :confirm-loading="submitLoading"
@@ -41,12 +41,15 @@ const formData = ref({
   description: ''
 });
 
-watch(() => props.modelValue, async (val) => {
-  visible.value = val;
-  if (val && props.deptId) {
-    await loadDeptData();
+watch(
+  () => props.modelValue,
+  async (val) => {
+    visible.value = val;
+    if (val && props.deptId) {
+      await loadDeptData();
+    }
   }
-});
+);
 
 watch(visible, (val) => {
   emit('update:modelValue', val);

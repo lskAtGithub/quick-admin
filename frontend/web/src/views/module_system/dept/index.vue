@@ -4,15 +4,15 @@
     <ElCard class="mb-3" shadow="never">
       <div class="flex items-center justify-between">
         <div class="flex flex-wrap items-center gap-2">
-          <ElInput v-model="searchForm.name" placeholder="部门名称" clearable class="search-input-sm" />
-          <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
-            <ElOption label="启用" :value="0" />
-            <ElOption label="停用" :value="1" />
+          <ElInput v-model="searchForm.name" :placeholder="$t('system.dept.name')" clearable class="search-input-sm" />
+          <ElSelect v-model="searchForm.status" :placeholder="$t('common.status')" clearable class="search-input-xs">
+            <ElOption :label="$t('common.enabled')" :value="0" />
+            <ElOption :label="$t('common.disabled')" :value="1" />
           </ElSelect>
         </div>
         <div class="flex items-center">
-          <ElButton @click="handleReset">重置</ElButton>
-          <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+          <ElButton @click="handleReset">{{ $t('common.reset') }}</ElButton>
+          <ElButton type="primary" @click="handleSearch">{{ $t('common.search') }}</ElButton>
         </div>
       </div>
     </ElCard>
@@ -25,23 +25,16 @@
       </div>
 
       <!-- 树形表格 -->
-      <QaTable
-        :data-source="filteredData"
-        :columns="columns"
-        row-key="id"
-        :tree-props="{ children: 'children' }"
-        :default-expand-all="false"
-        @selection-change="onSelectionChange"
-      >
+      <QaTable :data-source="filteredData" :columns="columns" row-key="id" :tree-props="{ children: 'children' }" :default-expand-all="false" @selection-change="onSelectionChange">
         <template #status="{ row }">
           <ElTag :type="row.status === 0 ? 'success' : 'danger'">
-            {{ row.status === 0 ? '启用' : '停用' }}
+            {{ row.status === 0 ? $t('common.enabled') : $t('common.disabled') }}
           </ElTag>
         </template>
         <template #action="{ row }">
-          <ElButton link type="primary" @click="handleAddChild(row)">新增子部门</ElButton>
-          <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-          <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+          <ElButton link type="primary" @click="handleAddChild(row)">{{ $t('system.dept.addChild') }}</ElButton>
+          <ElButton link type="primary" @click="handleEdit(row)">{{ $t('common.edit') }}</ElButton>
+          <ElButton link type="danger" @click="handleDelete(row)">{{ $t('common.delete') }}</ElButton>
         </template>
       </QaTable>
     </ElCard>
@@ -57,6 +50,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { $t } from '@/locales';
 import { DeptAPI } from '@/api/module_system/dept';
 import QaTable from '@/components/tables/qa-table/index.vue';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
@@ -77,12 +71,12 @@ const searchForm = ref({
 
 const columns = [
   { type: 'selection', width: 50 },
-  { prop: 'name', label: '部门名称', minWidth: 160 },
-  { prop: 'code', label: '部门编码', width: 140 },
-  { prop: 'status', label: '状态', width: 100, slotName: 'status' },
-  { prop: 'order', label: '排序', width: 80 },
-  { prop: 'description', label: '备注', minWidth: 120, showOverflowTooltip: true },
-  { label: '操作', fixed: 'right', width: 240, slotName: 'action' }
+  { prop: 'name', label: $t('system.dept.name'), minWidth: 160 },
+  { prop: 'code', label: $t('system.dept.code'), width: 140 },
+  { prop: 'status', label: $t('common.status'), width: 100, slotName: 'status' },
+  { prop: 'order', label: $t('common.order'), width: 80 },
+  { prop: 'description', label: $t('common.remark'), minWidth: 120, showOverflowTooltip: true },
+  { label: $t('common.operation'), fixed: 'right', width: 240, slotName: 'action' }
 ];
 
 const addDrawerVisible = ref(false);
@@ -159,9 +153,9 @@ const handleAddChild = (row) => {
 
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm(`确定删除部门"${row.name}"吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.deleteConfirm', { kind: $t('system.dept.entity'), name: row.name }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await DeptAPI.delete([row.id]);
@@ -173,13 +167,13 @@ const handleDelete = async (row) => {
 
 const handleBatchDelete = async () => {
   if (selectedIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的部门');
+    ElMessage.warning($t('common.selectToDelete', { kind: $t('system.dept.entity') }));
     return;
   }
   try {
-    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个部门吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.batchDeleteConfirm', { count: selectedIds.value.length, kind: $t('system.dept.entity') }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await DeptAPI.delete(selectedIds.value);

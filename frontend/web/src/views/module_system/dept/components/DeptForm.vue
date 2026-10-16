@@ -1,21 +1,15 @@
 <template>
-  <ElForm
-    ref="formRef"
-    :model="formData"
-    :rules="formRules"
-    label-width="100px"
-    label-position="right"
-  >
-    <ElFormItem label="部门名称" prop="name">
-      <ElInput v-model="formData.name" placeholder="请输入部门名称" maxlength="50" />
+  <ElForm ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="right">
+    <ElFormItem :label="$t('system.dept.name')" prop="name">
+      <ElInput v-model="formData.name" :placeholder="$t('common.input', { name: $t('system.dept.name') })" maxlength="50" />
     </ElFormItem>
-    <ElFormItem label="部门编码" prop="code">
-      <ElInput v-model="formData.code" placeholder="字母开头，2-16位字母/数字/下划线" maxlength="16" show-word-limit />
+    <ElFormItem :label="$t('system.dept.code')" prop="code">
+      <ElInput v-model="formData.code" :placeholder="$t('system.dept.codePattern')" maxlength="16" show-word-limit />
     </ElFormItem>
-    <ElFormItem label="上级部门" prop="parent_id">
+    <ElFormItem :label="$t('system.dept.parent')" prop="parent_id">
       <ElTreeSelect
         v-model="formData.parent_id"
-        placeholder="请选择上级部门"
+        :placeholder="$t('common.select', { name: $t('system.dept.parent') })"
         :data="deptOptions"
         :props="{ children: 'children', label: 'label', value: 'value' }"
         check-strictly
@@ -23,23 +17,24 @@
         clearable
       />
     </ElFormItem>
-    <ElFormItem label="排序" prop="order">
+    <ElFormItem :label="$t('common.order')" prop="order">
       <ElInputNumber v-model="formData.order" :min="0" :max="999" controls-position="right" />
     </ElFormItem>
-    <ElFormItem label="状态" prop="status">
+    <ElFormItem :label="$t('common.status')" prop="status">
       <ElRadioGroup v-model="formData.status">
-        <ElRadio :value="0">启用</ElRadio>
-        <ElRadio :value="1">停用</ElRadio>
+        <ElRadio :value="0">{{ $t('common.enabled') }}</ElRadio>
+        <ElRadio :value="1">{{ $t('common.disabled') }}</ElRadio>
       </ElRadioGroup>
     </ElFormItem>
-    <ElFormItem label="备注" prop="description">
-      <ElInput v-model="formData.description" type="textarea" :rows="4" maxlength="100" show-word-limit placeholder="请输入备注" />
+    <ElFormItem :label="$t('common.remark')" prop="description">
+      <ElInput v-model="formData.description" type="textarea" :rows="4" maxlength="100" show-word-limit :placeholder="$t('common.input', { name: $t('common.remark') })" />
     </ElFormItem>
   </ElForm>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { $t } from '@/locales';
 import { DeptAPI } from '@/api/module_system/dept';
 
 defineOptions({ name: 'DeptForm' });
@@ -54,12 +49,12 @@ const deptOptions = ref([]);
 const CODE_PATTERN = /^[A-Za-z][A-Za-z0-9_]{1,15}$/;
 
 const formRules = {
-  name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
+  name: [{ required: true, message: $t('common.input', { name: $t('system.dept.name') }), trigger: 'blur' }],
   code: [
-    { required: true, message: '请输入部门编码', trigger: 'blur' },
-    { pattern: CODE_PATTERN, message: '字母开头，2-16位字母/数字/下划线', trigger: 'blur' }
+    { required: true, message: $t('common.input', { name: $t('system.dept.code') }), trigger: 'blur' },
+    { pattern: CODE_PATTERN, message: $t('system.dept.codePattern'), trigger: 'blur' }
   ],
-  order: [{ required: true, message: '请输入排序', trigger: 'blur' }]
+  order: [{ required: true, message: $t('common.input', { name: $t('common.order') }), trigger: 'blur' }]
 };
 
 const validate = async () => {

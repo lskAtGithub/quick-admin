@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="新增部门"
+    :title="$t('common.addTitle', { name: $t('system.dept.entity') })"
     size="450px"
     form-mode="create"
     :confirm-loading="submitLoading"
@@ -42,16 +42,19 @@ const createInitial = () => ({
 
 const formData = ref(createInitial());
 
-watch(() => props.modelValue, (val) => {
-  visible.value = val;
-  if (val) {
-    formData.value = createInitial();
-    if (props.parentId != null) {
-      formData.value.parent_id = props.parentId;
+watch(
+  () => props.modelValue,
+  (val) => {
+    visible.value = val;
+    if (val) {
+      formData.value = createInitial();
+      if (props.parentId != null) {
+        formData.value.parent_id = props.parentId;
+      }
+      formRef.value?.resetFields();
     }
-    formRef.value?.resetFields();
   }
-});
+);
 
 watch(visible, (val) => {
   emit('update:modelValue', val);
