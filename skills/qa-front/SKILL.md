@@ -194,8 +194,7 @@ pnpm dev           # 启动确认编译无报错、页面可渲染（或直接 p
 
 ## 红线（违反必返工）
 
-1. **禁止手写请求成功/失败提示**：接口提示由 `utils/request.js` 拦截器统一处理（错误弹窗、非 GET 成功弹窗、401/10401 静默续期 + 队列重放 + 登录跳转），业务再写 ElMessage 会双提示。仅请求发起前的本地校验可自行提示；需静默用配置 `showErrorMessage: false` / `showSuccessMessage: false`。
+1. **如无明确要求，禁止手写请求成功/失败提示**：接口提示由 `utils/request.js` 拦截器统一处理（错误弹窗、非 GET 成功弹窗、401/10401 静默续期 + 队列重放 + 登录跳转），业务再写 ElMessage 会双提示。仅请求发起前的本地校验可自行提示；需静默用配置 `showErrorMessage: false` / `showSuccessMessage: false`。
 2. **主题化**：颜色/圆角/阴影只走 `var(--el-*)`、`var(--custom-radius)`、`var(--qa-*)`（SCSS 侧用 `_qa-tokens.scss` 的 `$qa-*`），禁止硬编码 hex / 固定 px，否则暗色模式失效。
-3. **Element Plus 组件样式与动效保持默认**：不加 hover 位移/阴影/弹性曲线、不覆盖圆角；按钮组不额外加 `gap` 工具类；自定义动效只作用于页面自有装饰元素。
-4. **树形表格首列插槽须用行内元素**（span / ElTag 等），块级元素会让缩进失效。
-5. 所有请求走 `@/utils/request` 实例；token 存取清统一走 `utils/auth.js` 的 `Auth`，业务不直接摸 localStorage；免鉴权请求用头 `Authorization: 'no-auth'` 或 `skipAuth: true`。
+3. 组件和方法在 **components, utils** 下，避免重复造轮子，提高代码可复用性
+4. 所有请求走 `@/utils/request` 实例；token 存取清统一走 `utils/auth.js` 的 `Auth`，业务不直接摸 localStorage；免鉴权请求用头 `Authorization: 'no-auth'` 或 `skipAuth: true`。
