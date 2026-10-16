@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="新增角色"
+    :title="$t('common.addTitle', { name: $t('system.role.entity') })"
     size="500px"
     form-mode="create"
     :confirm-loading="submitLoading"

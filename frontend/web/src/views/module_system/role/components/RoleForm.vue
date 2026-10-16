@@ -6,25 +6,25 @@
     label-width="100px"
     label-position="right"
   >
-    <ElFormItem label="角色名称" prop="name">
-      <ElInput v-model="formData.name" placeholder="请输入角色名称" maxlength="50" />
+    <ElFormItem :label="$t('system.role.name')" prop="name">
+      <ElInput v-model="formData.name" :placeholder="$t('common.input', { name: $t('system.role.name') })" maxlength="50" />
     </ElFormItem>
-    <ElFormItem label="角色编码" prop="code">
-      <ElInput v-model="formData.code" placeholder="字母开头，2-16位字母/数字/下划线" maxlength="64" show-word-limit />
+    <ElFormItem :label="$t('system.role.code')" prop="code">
+      <ElInput v-model="formData.code" :placeholder="$t('system.role.codePattern')" maxlength="64" show-word-limit />
     </ElFormItem>
-    <ElFormItem label="排序" prop="order">
+    <ElFormItem :label="$t('common.order')" prop="order">
       <ElInputNumber v-model="formData.order" :min="0" :max="999" controls-position="right" />
     </ElFormItem>
-    <ElFormItem label="状态" prop="status">
+    <ElFormItem :label="$t('common.status')" prop="status">
       <ElRadioGroup v-model="formData.status">
-        <ElRadio :value="0">启用</ElRadio>
-        <ElRadio :value="1">停用</ElRadio>
+        <ElRadio :value="0">{{ $t('common.enabled') }}</ElRadio>
+        <ElRadio :value="1">{{ $t('common.disabled') }}</ElRadio>
       </ElRadioGroup>
     </ElFormItem>
-    <ElFormItem label="备注" prop="description">
-      <ElInput v-model="formData.description" type="textarea" :rows="3" maxlength="200" show-word-limit placeholder="请输入备注" />
+    <ElFormItem :label="$t('common.remark')" prop="description">
+      <ElInput v-model="formData.description" type="textarea" :rows="3" maxlength="200" show-word-limit :placeholder="$t('common.input', { name: $t('common.remark') })" />
     </ElFormItem>
-    <ElFormItem label="菜单权限">
+    <ElFormItem :label="$t('system.role.menuPerm')">
       <div class="menu-tree-wrapper">
         <ElTree
           ref="menuTreeRef"
@@ -43,6 +43,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { $t } from '@/locales';
 import { MenuAPI } from '@/api/module_system/menu';
 
 defineOptions({ name: 'RoleForm' });
@@ -58,12 +59,12 @@ const menuTreeData = ref([]);
 const CODE_PATTERN = /^[A-Za-z][A-Za-z0-9_]{1,63}$/;
 
 const formRules = {
-  name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+  name: [{ required: true, message: $t('common.input', { name: $t('system.role.name') }), trigger: 'blur' }],
   code: [
-    { required: true, message: '请输入角色编码', trigger: 'blur' },
-    { pattern: CODE_PATTERN, message: '字母开头，2-64位字母/数字/下划线', trigger: 'blur' }
+    { required: true, message: $t('common.input', { name: $t('system.role.code') }), trigger: 'blur' },
+    { pattern: CODE_PATTERN, message: $t('system.role.codePattern'), trigger: 'blur' }
   ],
-  order: [{ required: true, message: '请输入排序', trigger: 'blur' }]
+  order: [{ required: true, message: $t('common.input', { name: $t('common.order') }), trigger: 'blur' }]
 };
 
 const formatMenuTree = (nodes) => {

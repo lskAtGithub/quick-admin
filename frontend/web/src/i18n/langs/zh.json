@@ -238,6 +238,13 @@
       "permissionOptPh": "如 module_system:menu:query（可选）",
       "redirectPh": "目录必填，如 /system/user",
       "redirectRequired": "目录类型必须填写重定向"
+    },
+    "role": {
+      "entity": "角色",
+      "name": "角色名称",
+      "code": "角色编码",
+      "codePattern": "字母开头，2-64位字母/数字/下划线",
+      "menuPerm": "菜单权限"
     }
   },
   "menus": {

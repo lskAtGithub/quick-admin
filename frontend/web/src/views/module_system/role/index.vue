@@ -4,16 +4,16 @@
     <ElCard class="mb-3" shadow="never">
       <div class="flex items-center justify-between">
         <div class="flex flex-wrap items-center gap-2">
-          <ElInput v-model="searchForm.name" placeholder="角色名称" clearable class="search-input-sm" />
-          <ElInput v-model="searchForm.code" placeholder="角色编码" clearable class="search-input-sm" />
-          <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
-            <ElOption label="启用" :value="0" />
-            <ElOption label="停用" :value="1" />
+          <ElInput v-model="searchForm.name" :placeholder="$t('system.role.name')" clearable class="search-input-sm" />
+          <ElInput v-model="searchForm.code" :placeholder="$t('system.role.code')" clearable class="search-input-sm" />
+          <ElSelect v-model="searchForm.status" :placeholder="$t('common.status')" clearable class="search-input-xs">
+            <ElOption :label="$t('common.enabled')" :value="0" />
+            <ElOption :label="$t('common.disabled')" :value="1" />
           </ElSelect>
         </div>
         <div class="flex items-center">
-          <ElButton @click="handleReset">重置</ElButton>
-          <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+          <ElButton @click="handleReset">{{ $t('common.reset') }}</ElButton>
+          <ElButton type="primary" @click="handleSearch">{{ $t('common.search') }}</ElButton>
         </div>
       </div>
     </ElCard>
@@ -35,12 +35,12 @@
       >
         <template #status="{ row }">
           <ElTag :type="row.status === 0 ? 'success' : 'danger'">
-            {{ row.status === 0 ? '启用' : '停用' }}
+            {{ row.status === 0 ? $t('common.enabled') : $t('common.disabled') }}
           </ElTag>
         </template>
         <template #action="{ row }">
-          <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-          <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+          <ElButton link type="primary" @click="handleEdit(row)">{{ $t('common.edit') }}</ElButton>
+          <ElButton link type="danger" @click="handleDelete(row)">{{ $t('common.delete') }}</ElButton>
         </template>
       </QaTable>
     </ElCard>
@@ -56,6 +56,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { $t } from '@/locales';
 import { RoleAPI } from '@/api/module_system/role';
 import QaTable from '@/components/tables/qa-table/index.vue';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
@@ -79,12 +80,12 @@ const searchForm = ref({
 
 const columns = [
   { type: 'selection', width: 50 },
-  { prop: 'name', label: '角色名称', minWidth: 120 },
-  { prop: 'code', label: '角色编码', minWidth: 120 },
-  { prop: 'order', label: '排序', width: 80, align: 'center' },
-  { prop: 'status', label: '状态', width: 80, align: 'center', slotName: 'status' },
-  { prop: 'description', label: '备注', minWidth: 160, showOverflowTooltip: true },
-  { label: '操作', fixed: 'right', width: 150, slotName: 'action' }
+  { prop: 'name', label: $t('system.role.name'), minWidth: 120 },
+  { prop: 'code', label: $t('system.role.code'), minWidth: 120 },
+  { prop: 'order', label: $t('common.order'), width: 80, align: 'center' },
+  { prop: 'status', label: $t('common.status'), width: 80, align: 'center', slotName: 'status' },
+  { prop: 'description', label: $t('common.remark'), minWidth: 160, showOverflowTooltip: true },
+  { label: $t('common.operation'), fixed: 'right', width: 150, slotName: 'action' }
 ];
 
 const addDrawerVisible = ref(false);
@@ -140,9 +141,9 @@ const handleEditSuccess = () => {
 
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm(`确定删除角色"${row.name}"吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.deleteConfirm', { kind: $t('system.role.entity'), name: row.name }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await RoleAPI.delete([row.id]);
@@ -154,13 +155,13 @@ const handleDelete = async (row) => {
 
 const handleBatchDelete = async () => {
   if (selectedIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的角色');
+    ElMessage.warning($t('common.selectToDelete', { kind: $t('system.role.entity') }));
     return;
   }
   try {
-    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个角色吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.batchDeleteConfirm', { count: selectedIds.value.length, kind: $t('system.role.entity') }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await RoleAPI.delete(selectedIds.value);
