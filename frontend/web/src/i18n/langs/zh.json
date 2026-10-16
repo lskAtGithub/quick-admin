@@ -183,6 +183,7 @@
     "enabled": "启用",
     "disabled": "停用",
     "operation": "操作",
+    "description": "描述",
     "input": "请输入{name}",
     "select": "请选择{name}",
     "addTitle": "新增{name}",
@@ -199,6 +200,14 @@
       "parent": "上级部门",
       "addChild": "新增子部门",
       "codePattern": "字母开头，2-16位字母/数字/下划线"
+    },
+    "dict": {
+      "type": "字典类型",
+      "data": "字典数据",
+      "typeName": "字典名称",
+      "label": "字典标签",
+      "value": "字典键值",
+      "dataDrawer": "字典数据 - {name}"
     }
   },
   "menus": {
