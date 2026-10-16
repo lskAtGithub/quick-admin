@@ -176,6 +176,7 @@
     "reset": "重置",
     "add": "新增",
     "edit": "编辑",
+    "save": "保存",
     "delete": "删除",
     "status": "状态",
     "order": "排序",
@@ -276,6 +277,65 @@
     "usernameLength": "用户名长度在 3 到 32 个字符",
     "passwordRequired": "请输入密码",
     "passwordMin": "密码长度不能少于 6 位"
+  },
+  "exception": {
+    "noAccess": "抱歉，你无权访问该页面",
+    "notFound": "抱歉，你访问的页面不存在",
+    "serverError": "抱歉，服务器出错了",
+    "backHome": "返回首页"
+  },
+  "profile": {
+    "registered": "注册",
+    "updated": "更新",
+    "role": "角色",
+    "thirdParty": "第三方账号",
+    "basicSettings": "基本设置",
+    "changePassword": "更改密码",
+    "oldPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认新密码",
+    "imageOnly": "只能上传图片文件",
+    "imageSizeLimit": "上传图片大小不能超过 2MB!",
+    "uploadFailed": "上传失败"
+  },
+  "home": {
+    "welcome": "欢迎使用 Quick Admin 管理系统",
+    "today": "今日日期",
+    "quickLinks": "快捷入口",
+    "systemInfo": "系统信息",
+    "recentLogin": "最近登录",
+    "lastLoginTime": "上次登录时间",
+    "firstLogin": "首次登录",
+    "currentRole": "当前角色",
+    "userDept": "所属部门",
+    "unassigned": "未分配",
+    "dateFmt": "{month}月{day}日 星期{weekday}",
+    "week": {
+      "0": "日",
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五",
+      "6": "六"
+    },
+    "greeting": {
+      "morning": "早上好",
+      "forenoon": "上午好",
+      "noon": "中午好",
+      "afternoon": "下午好",
+      "evening": "晚上好",
+      "night": "夜深了"
+    },
+    "stat": {
+      "user": "用户总数",
+      "role": "角色总数",
+      "dept": "部门总数",
+      "menu": "菜单总数"
+    },
+    "version": "系统版本",
+    "vueVersion": "Vue 版本",
+    "backendFramework": "后端框架"
   },
   "menus": {
     "home": { "title": "首页" },

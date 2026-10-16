@@ -45,7 +45,7 @@
             <div class="mt-2.5 flex items-start">
               <QaSvgIcon icon="ri:checkbox-circle-line" class="text-g-700 shrink-0 mt-0.5" />
               <ElTag :type="infoFormState.status === 0 ? 'success' : 'danger'" size="small">
-                {{ infoFormState.status === 0 ? '启用' : '停用' }}
+                {{ infoFormState.status === 0 ? $t('common.enabled') : $t('common.disabled') }}
               </ElTag>
             </div>
             <div class="mt-2.5 flex items-start">
@@ -65,20 +65,20 @@
             <div class="mt-2.5 flex items-start">
               <QaSvgIcon icon="ri:calendar-line" class="text-g-700 shrink-0 mt-0.5" />
               <span class="ml-2 text-sm">
-                注册:
+                {{ $t('profile.registered') }}:
                 {{ infoFormState.created_time ? formatDate(infoFormState.created_time) : '—' }}
               </span>
             </div>
             <div class="mt-2.5 flex items-start">
               <QaSvgIcon icon="ri:time-line" class="text-g-700 shrink-0 mt-0.5" />
               <span class="ml-2 text-sm">
-                更新:
+                {{ $t('profile.updated') }}:
                 {{ infoFormState.updated_time ? formatDate(infoFormState.updated_time) : '—' }}
               </span>
             </div>
           </div>
           <div v-if="roleTagList.length" class="relative z-10 mt-10">
-            <h3 class="text-sm font-medium">角色</h3>
+            <h3 class="text-sm font-medium">{{ $t('profile.role') }}</h3>
             <div class="flex flex-wrap justify-center mt-3.5">
               <div v-for="item in roleTagList" :key="item" class="py-1 px-1.5 mr-2.5 mb-2.5 text-xs border border-g-300 rounded">
                 {{ item }}
@@ -87,7 +87,7 @@
           </div>
 
           <div v-if="hasThirdPartyBindings" class="relative z-10 mt-10">
-            <h3 class="text-sm font-medium">第三方账号</h3>
+            <h3 class="text-sm font-medium">{{ $t('profile.thirdParty') }}</h3>
             <div class="flex flex-wrap justify-center mt-3.5 gap-3">
               <div v-if="infoFormState.github_login" class="flex items-center text-xs text-g-600">
                 <QaSvgIcon icon="ri:github-fill" class="mr-1" />
@@ -113,7 +113,7 @@
       <!-- 右侧表单 -->
       <div class="flex-1 overflow-hidden max-md:w-full max-md:mt-3.5">
         <div class="qa-card-sm">
-          <h1 class="p-4 text-xl font-normal border-b border-g-300">基本设置</h1>
+          <h1 class="p-4 text-xl font-normal border-b border-g-300">{{ $t('profile.basicSettings') }}</h1>
 
           <ElForm
             ref="infoFormRef"
@@ -124,11 +124,11 @@
             label-position="top"
           >
             <ElRow>
-              <ElFormItem label="姓名" prop="name">
-                <ElInput v-model="infoFormState.name" :disabled="!isEdit" placeholder="请输入姓名" />
+              <ElFormItem :label="$t('system.user.name')" prop="name">
+                <ElInput v-model="infoFormState.name" :disabled="!isEdit" :placeholder="$t('common.input', { name: $t('system.user.name') })" />
               </ElFormItem>
-              <ElFormItem label="性别" prop="gender" class="ml-5">
-                <ElSelect v-model="infoFormState.gender" placeholder="请选择" :disabled="!isEdit" class="w-full">
+              <ElFormItem :label="$t('system.user.gender')" prop="gender" class="ml-5">
+                <ElSelect v-model="infoFormState.gender" :placeholder="$t('common.select', { name: $t('system.user.gender') })" :disabled="!isEdit" class="w-full">
                   <ElOption
                     v-for="item in dictDataStore['sys_user_sex'] || []"
                     :key="String(item.dict_value)"
@@ -140,47 +140,47 @@
             </ElRow>
 
             <ElRow>
-              <ElFormItem label="邮箱" prop="email">
-                <ElInput v-model="infoFormState.email" :disabled="!isEdit" placeholder="请输入邮箱" />
+              <ElFormItem :label="$t('system.user.email')" prop="email">
+                <ElInput v-model="infoFormState.email" :disabled="!isEdit" :placeholder="$t('common.input', { name: $t('system.user.email') })" />
               </ElFormItem>
-              <ElFormItem label="手机" prop="mobile" class="ml-5">
-                <ElInput v-model="infoFormState.mobile" :disabled="!isEdit" placeholder="请输入手机号码" />
+              <ElFormItem :label="$t('system.user.mobile')" prop="mobile" class="ml-5">
+                <ElInput v-model="infoFormState.mobile" :disabled="!isEdit" :placeholder="$t('common.input', { name: $t('system.user.mobile') })" />
               </ElFormItem>
             </ElRow>
 
             <ElRow class="mb-4">
-              <ElFormItem label="描述" prop="description" class="w-full!">
-                <ElInput v-model="infoFormState.description" :disabled="!isEdit" type="textarea" :rows="4" placeholder="请输入描述" />
+              <ElFormItem :label="$t('common.description')" prop="description" class="w-full!">
+                <ElInput v-model="infoFormState.description" :disabled="!isEdit" type="textarea" :rows="4" :placeholder="$t('common.input', { name: $t('common.description') })" />
               </ElFormItem>
             </ElRow>
 
             <div class="flex items-center justify-end [&_.el-button]:w-27.5!">
               <ElButton type="primary" class="w-22.5" :loading="infoSubmitting" v-ripple @click="onBasicToggleSave">
-                {{ isEdit ? '保存' : '编辑' }}
+                {{ isEdit ? $t('common.save') : $t('common.edit') }}
               </ElButton>
             </div>
           </ElForm>
         </div>
 
         <div class="qa-card-sm my-5">
-          <h1 class="p-4 text-xl font-normal border-b border-g-300">更改密码</h1>
+          <h1 class="p-4 text-xl font-normal border-b border-g-300">{{ $t('profile.changePassword') }}</h1>
 
           <ElForm ref="passwordFormRef" :model="passwordFormState" class="box-border p-5" :rules="resetPasswordRules" label-width="86px" label-position="top">
-            <ElFormItem label="当前密码" prop="old_password">
+            <ElFormItem :label="$t('profile.oldPassword')" prop="old_password">
               <ElInput v-model="passwordFormState.old_password" type="password" :disabled="!isEditPwd" show-password />
             </ElFormItem>
 
-            <ElFormItem label="新密码" prop="new_password">
+            <ElFormItem :label="$t('profile.newPassword')" prop="new_password">
               <ElInput v-model="passwordFormState.new_password" type="password" :disabled="!isEditPwd" show-password />
             </ElFormItem>
 
-            <ElFormItem label="确认新密码" prop="confirm_password">
+            <ElFormItem :label="$t('profile.confirmPassword')" prop="confirm_password">
               <ElInput v-model="passwordFormState.confirm_password" type="password" :disabled="!isEditPwd" show-password />
             </ElFormItem>
 
             <div class="flex items-center justify-end [&_.el-button]:w-27.5!">
               <ElButton type="primary" class="w-22.5" :loading="passwordChanging" v-ripple @click="onPasswordToggleSave">
-                {{ isEditPwd ? '保存' : '编辑' }}
+                {{ isEditPwd ? $t('common.save') : $t('common.edit') }}
               </ElButton>
             </div>
           </ElForm>
@@ -282,14 +282,14 @@ const getOptions = async () => {
 };
 
 const rules = {
-  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+  name: [{ required: true, message: t('common.input', { name: t('system.user.name') }), trigger: 'blur' }],
   mobile: [
     {
       validator: (_, v, cb) => {
         const s = v != null ? String(v).trim() : '';
         if (!s) return cb();
         if (!/^1[3-9]\d{9}$/.test(s)) {
-          cb(new Error('请输入有效的手机号格式'));
+          cb(new Error(t('validator.phoneInvalid')));
           return;
         }
         cb();
@@ -303,7 +303,7 @@ const rules = {
         const s = v != null ? String(v).trim() : '';
         if (!s) return cb();
         if (!/\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/.test(s)) {
-          cb(new Error('请输入有效的邮箱格式'));
+          cb(new Error(t('validator.emailInvalid')));
           return;
         }
         cb();
@@ -332,23 +332,23 @@ const resetPasswordRules = {
 
 function refreshGreeting() {
   const h = new Date().getHours();
-  if (h >= 6 && h < 9) greeting.value = '早上好';
-  else if (h >= 9 && h < 11) greeting.value = '上午好';
-  else if (h >= 11 && h < 13) greeting.value = '中午好';
-  else if (h >= 13 && h < 18) greeting.value = '下午好';
-  else if (h >= 18 && h < 24) greeting.value = '晚上好';
-  else greeting.value = '很晚了，早点休息';
+  if (h >= 6 && h < 9) greeting.value = t('home.greeting.morning');
+  else if (h >= 9 && h < 11) greeting.value = t('home.greeting.forenoon');
+  else if (h >= 11 && h < 13) greeting.value = t('home.greeting.noon');
+  else if (h >= 13 && h < 18) greeting.value = t('home.greeting.afternoon');
+  else if (h >= 18 && h < 24) greeting.value = t('home.greeting.evening');
+  else greeting.value = t('home.greeting.night');
 }
 
 const handleBeforeUpload = (file) => {
   const isImage = file.type.startsWith('image/');
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isImage) {
-    ElMessage.error('只能上传图片文件');
+    ElMessage.error(t('profile.imageOnly'));
     return false;
   }
   if (!isLt2M) {
-    ElMessage.error('上传图片大小不能超过 2MB!');
+    ElMessage.error(t('profile.imageSizeLimit'));
     return false;
   }
   return true;
@@ -377,7 +377,7 @@ const handleUpload = async (options) => {
       uploadRef.value?.clearFiles();
       fileList.value = [];
     } else {
-      options.onError({ ...new Error(res.msg || '上传失败'), status: 500, method: 'POST', url: '/common/file/upload' });
+      options.onError({ ...new Error(res.msg || t('profile.uploadFailed')), status: 500, method: 'POST', url: '/common/file/upload' });
     }
   } catch (error) {
     const errorObj = error instanceof Error ? error : new Error(String(error));

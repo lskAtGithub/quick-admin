@@ -4,11 +4,11 @@
     <div class="welcome-section qa-anim-item" style="--qa-anim-delay: 0ms">
       <div class="welcome-content">
         <h1 class="welcome-title">{{ greeting }}，{{ userStore.userInfo?.name || userStore.userInfo?.username }}</h1>
-        <p class="welcome-subtitle">欢迎使用 Quick Admin 管理系统</p>
+        <p class="welcome-subtitle">{{ $t('home.welcome') }}</p>
       </div>
       <div class="welcome-stats">
         <div class="stat-item">
-          <div class="stat-label">今日日期</div>
+          <div class="stat-label">{{ $t('home.today') }}</div>
           <div class="stat-value">{{ currentDate }}</div>
         </div>
       </div>
@@ -16,8 +16,7 @@
 
     <!-- 统计卡片 -->
     <ElRow :gutter="16" class="stats-row">
-      <ElCol :xs="12" :sm="6" v-for="(stat, index) in statsCards" :key="stat.title"
-        class="qa-anim-item" :style="{ '--qa-anim-delay': `${80 + index * 60}ms` }">
+      <ElCol :xs="12" :sm="6" v-for="(stat, index) in statsCards" :key="stat.title" class="qa-anim-item" :style="{ '--qa-anim-delay': `${80 + index * 60}ms` }">
         <div class="stat-card">
           <div class="stat-icon" :style="{ background: stat.iconBg }">
             <QaSvgIcon :icon="stat.icon" :size="28" />
@@ -34,12 +33,11 @@
     <ElCard class="section-card qa-anim-item" style="--qa-anim-delay: 350ms" shadow="never">
       <template #header>
         <div class="card-header">
-          <span class="card-title">快捷入口</span>
+          <span class="card-title">{{ $t('home.quickLinks') }}</span>
         </div>
       </template>
       <ElRow :gutter="16">
-        <ElCol :xs="8" :sm="4" v-for="(link, index) in quickLinks" :key="link.title"
-          class="qa-anim-item" :style="{ '--qa-anim-delay': `${400 + index * 50}ms` }">
+        <ElCol :xs="8" :sm="4" v-for="(link, index) in quickLinks" :key="link.title" class="qa-anim-item" :style="{ '--qa-anim-delay': `${400 + index * 50}ms` }">
           <div class="quick-link" @click="navigateTo(link.path)">
             <div class="link-icon">
               <QaSvgIcon :icon="link.icon" :size="22" />
@@ -56,7 +54,7 @@
         <ElCard class="section-card" shadow="never">
           <template #header>
             <div class="card-header">
-              <span class="card-title">系统信息</span>
+              <span class="card-title">{{ $t('home.systemInfo') }}</span>
             </div>
           </template>
           <div class="info-list">
@@ -71,16 +69,16 @@
         <ElCard class="section-card" shadow="never">
           <template #header>
             <div class="card-header">
-              <span class="card-title">最近登录</span>
+              <span class="card-title">{{ $t('home.recentLogin') }}</span>
             </div>
           </template>
           <div class="login-info">
             <div class="info-item">
-              <span class="info-label">上次登录时间</span>
-              <span class="info-value">{{ userStore.userInfo?.last_login || '首次登录' }}</span>
+              <span class="info-label">{{ $t('home.lastLoginTime') }}</span>
+              <span class="info-value">{{ userStore.userInfo?.last_login || $t('home.firstLogin') }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">当前角色</span>
+              <span class="info-label">{{ $t('home.currentRole') }}</span>
               <span class="info-value">
                 <ElTag v-for="role in userStore.userInfo?.roles || []" :key="role.id" size="small" class="role-tag">
                   {{ role.name }}
@@ -88,8 +86,8 @@
               </span>
             </div>
             <div class="info-item">
-              <span class="info-label">所属部门</span>
-              <span class="info-value">{{ userStore.userInfo?.dept?.name || '未分配' }}</span>
+              <span class="info-label">{{ $t('home.userDept') }}</span>
+              <span class="info-value">{{ userStore.userInfo?.dept?.name || $t('home.unassigned') }}</span>
             </div>
           </div>
         </ElCard>
@@ -101,6 +99,7 @@
 <script setup>
 import { ref, computed, onMounted, reactive, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
+import { $t } from '@/locales';
 import { useUserStore } from '@/store';
 import { UserAPI } from '@/api/module_system/user';
 import { RoleAPI } from '@/api/module_system/role';
@@ -114,69 +113,68 @@ const userStore = useUserStore();
 
 const greeting = computed(() => {
   const hour = new Date().getHours();
-  if (hour >= 6 && hour < 9) return '早上好';
-  if (hour >= 9 && hour < 11) return '上午好';
-  if (hour >= 11 && hour < 13) return '中午好';
-  if (hour >= 13 && hour < 18) return '下午好';
-  if (hour >= 18 && hour < 22) return '晚上好';
-  return '夜深了';
+  if (hour >= 6 && hour < 9) return $t('home.greeting.morning');
+  if (hour >= 9 && hour < 11) return $t('home.greeting.forenoon');
+  if (hour >= 11 && hour < 13) return $t('home.greeting.noon');
+  if (hour >= 13 && hour < 18) return $t('home.greeting.afternoon');
+  if (hour >= 18 && hour < 22) return $t('home.greeting.evening');
+  return $t('home.greeting.night');
 });
 
 const currentDate = computed(() => {
   const date = new Date();
-  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
-  return `${date.getMonth() + 1}月${date.getDate()}日 星期${weekDays[date.getDay()]}`;
+  return $t('home.dateFmt', { month: date.getMonth() + 1, day: date.getDate(), weekday: $t(`home.week.${date.getDay()}`) });
 });
 
 const stats = ref({
   userCount: 0,
   roleCount: 0,
   deptCount: 0,
-  menuCount: 0,
+  menuCount: 0
 });
 
 const statsCards = computed(() => [
   {
-    title: '用户总数',
+    title: $t('home.stat.user'),
     value: stats.value.userCount,
     icon: 'ri:user-line',
-    iconBg: 'color-mix(in srgb, var(--el-color-primary) 12%, transparent)',
+    iconBg: 'color-mix(in srgb, var(--el-color-primary) 12%, transparent)'
   },
   {
-    title: '角色总数',
+    title: $t('home.stat.role'),
     value: stats.value.roleCount,
     icon: 'ri:team-line',
-    iconBg: 'color-mix(in srgb, var(--qa-success) 12%, transparent)',
+    iconBg: 'color-mix(in srgb, var(--qa-success) 12%, transparent)'
   },
   {
-    title: '部门总数',
+    title: $t('home.stat.dept'),
     value: stats.value.deptCount,
     icon: 'ri:organization-chart',
-    iconBg: 'color-mix(in srgb, var(--el-color-primary) 8%, transparent)',
+    iconBg: 'color-mix(in srgb, var(--el-color-primary) 8%, transparent)'
   },
   {
-    title: '菜单总数',
+    title: $t('home.stat.menu'),
     value: stats.value.menuCount,
     icon: 'ri:menu-line',
-    iconBg: 'color-mix(in srgb, var(--qa-warning) 12%, transparent)',
-  },
+    iconBg: 'color-mix(in srgb, var(--qa-warning) 12%, transparent)'
+  }
 ]);
 
-const quickLinks = [
-  { title: '用户管理', icon: 'ri:user-line', path: '/system/user' },
-  { title: '角色管理', icon: 'ri:team-line', path: '/system/role' },
-  { title: '菜单管理', icon: 'ri:menu-line', path: '/system/menu' },
-  { title: '部门管理', icon: 'ri:organization-chart', path: '/system/dept' },
-  { title: '字典管理', icon: 'ri:book-line', path: '/system/dict' },
-  { title: '个人中心', icon: 'ri:user-settings-line', path: '/fastlink/current/profile' },
-];
+const quickLinks = computed(() => [
+  { title: $t('menus.system.user.title'), icon: 'ri:user-line', path: '/system/user' },
+  { title: $t('menus.system.role.title'), icon: 'ri:team-line', path: '/system/role' },
+  { title: $t('menus.system.menu.title'), icon: 'ri:menu-line', path: '/system/menu' },
+  { title: $t('menus.system.dept.title'), icon: 'ri:organization-chart', path: '/system/dept' },
+  { title: $t('menus.system.dict.title'), icon: 'ri:book-line', path: '/system/dict' },
+  { title: $t('topBar.user.userCenter'), icon: 'ri:user-settings-line', path: '/fastlink/current/profile' }
+]);
 
-const systemInfo = [
-  { label: '系统版本', value: 'v0.1.0' },
-  { label: 'Vue 版本', value: '3.5.x' },
+const systemInfo = computed(() => [
+  { label: $t('home.version'), value: 'v0.1.0' },
+  { label: $t('home.vueVersion'), value: '3.5.x' },
   { label: 'Element Plus', value: '2.9.x' },
-  { label: '后端框架', value: 'FastAPI' },
-];
+  { label: $t('home.backendFramework'), value: 'FastAPI' }
+]);
 
 const navigateTo = (path) => {
   router.push(path);
@@ -214,13 +212,13 @@ const loadStats = async () => {
       UserAPI.listUser({ page_no: 1, page_size: 1 }),
       RoleAPI.list({ page_no: 1, page_size: 1 }),
       DeptAPI.list({ page_no: 1, page_size: 1 }),
-      MenuAPI.tree(),
+      MenuAPI.tree()
     ]);
     stats.value = {
       userCount: userRes.data?.total || 0,
       roleCount: roleRes.data?.total || 0,
       deptCount: deptRes.data?.total || 0,
-      menuCount: countTreeNodes(menuTree.data),
+      menuCount: countTreeNodes(menuTree.data)
     };
     await nextTick();
     const targets = [stats.value.userCount, stats.value.roleCount, stats.value.deptCount, stats.value.menuCount];
@@ -324,7 +322,9 @@ onMounted(() => {
     cursor: pointer;
 
     &:hover {
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
+      box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.03),
+        0 1px 2px -1px rgba(0, 0, 0, 0.08);
 
       .stat-icon {
         transform: scale(1.08);
@@ -419,7 +419,10 @@ onMounted(() => {
     margin-bottom: var(--qa-size-spacing-md);
     color: var(--qa-gray-600);
     background: var(--qa-gray-100);
-    transition: color 0.2s, background 0.2s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+      color 0.2s,
+      background 0.2s,
+      transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .link-title {

@@ -1,19 +1,19 @@
 <template>
   <div class="qa-exception">
-    <el-result icon="info" title="404" sub-title="抱歉，你访问的页面不存在">
+    <el-result icon="info" title="404" :sub-title="$t('exception.notFound')">
       <template #extra>
-        <el-button type="primary" @click="goHome">返回首页</el-button>
+        <el-button type="primary" @click="goHome">{{ $t('exception.backHome') }}</el-button>
       </template>
     </el-result>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router';
 
-defineOptions({ name: "Exception404" });
+defineOptions({ name: 'Exception404' });
 const router = useRouter();
-const goHome = () => router.replace("/home");
+const goHome = () => router.replace('/home');
 </script>
 
 <style scoped>
