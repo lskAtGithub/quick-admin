@@ -1,11 +1,12 @@
-import { ElMessage, ElMessageBox } from "element-plus";
-import { router } from "@/router";
-import { useUserStore } from "@/store";
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { $t } from '@/locales';
+import { router } from '@/router';
+import { useUserStore } from '@/store';
 
 const AUTH_KEYS = {
-  ACCESS_TOKEN: "access_token",
-  REFRESH_TOKEN: "refresh_token",
-  REMEMBER_ME: "remember_me",
+  ACCESS_TOKEN: 'access_token',
+  REFRESH_TOKEN: 'refresh_token',
+  REMEMBER_ME: 'remember_me'
 };
 
 export class Auth {
@@ -15,16 +16,12 @@ export class Auth {
 
   static getAccessToken() {
     const isRememberMe = Auth.getRememberMe();
-    return isRememberMe
-      ? localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN) || ""
-      : sessionStorage.getItem(AUTH_KEYS.ACCESS_TOKEN) || "";
+    return isRememberMe ? localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN) || '' : sessionStorage.getItem(AUTH_KEYS.ACCESS_TOKEN) || '';
   }
 
   static getRefreshToken() {
     const isRememberMe = Auth.getRememberMe();
-    return isRememberMe
-      ? localStorage.getItem(AUTH_KEYS.REFRESH_TOKEN) || ""
-      : sessionStorage.getItem(AUTH_KEYS.REFRESH_TOKEN) || "";
+    return isRememberMe ? localStorage.getItem(AUTH_KEYS.REFRESH_TOKEN) || '' : sessionStorage.getItem(AUTH_KEYS.REFRESH_TOKEN) || '';
   }
 
   static setTokens(accessToken, refreshToken, rememberMe) {
@@ -49,7 +46,7 @@ export class Auth {
   }
 
   static getRememberMe() {
-    return localStorage.getItem(AUTH_KEYS.REMEMBER_ME) === "true";
+    return localStorage.getItem(AUTH_KEYS.REMEMBER_ME) === 'true';
   }
 }
 
@@ -57,14 +54,14 @@ export { AUTH_KEYS };
 
 let redirectToLoginInFlight = null;
 
-export async function redirectToLogin(message = "请重新登录") {
+export async function redirectToLogin(message = $t('login.relogin')) {
   if (redirectToLoginInFlight) return redirectToLoginInFlight;
 
   redirectToLoginInFlight = (async () => {
     try {
-      await ElMessageBox.alert(message, "提示", {
-        confirmButtonText: "确认",
-        type: "warning",
+      await ElMessageBox.alert(message, $t('common.tips'), {
+        confirmButtonText: $t('common.confirm'),
+        type: 'warning'
       });
     } catch {
       // 用户关闭弹窗同样视为已确认
@@ -87,8 +84,8 @@ export async function redirectToLogin(message = "请重新登录") {
 }
 
 export function startOAuthLogin(provider) {
-  const base = (import.meta.env.VITE_APP_BASE_API || "/api/v1").replace(/\/$/, "");
-  const basePath = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  const base = (import.meta.env.VITE_APP_BASE_API || '/api/v1').replace(/\/$/, '');
+  const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
   const redirectUri = `${window.location.origin}${basePath}/login`;
   const url = `${base}/system/auth/oauth/${provider}/login?redirect_uri=${encodeURIComponent(redirectUri)}`;
   window.location.href = url;

@@ -12,41 +12,20 @@
             :lg="getColSpan(item.span, 'lg')"
             :xl="getColSpan(item.span, 'xl')"
           >
-            <ElFormItem
-              :prop="item.key"
-              :label="typeof item.label === 'string' ? item.label : undefined"
-              :label-width="item.label ? item.labelWidth || labelWidth : undefined"
-            >
+            <ElFormItem :prop="item.key" :label="typeof item.label === 'string' ? item.label : undefined" :label-width="item.label ? item.labelWidth || labelWidth : undefined">
               <template v-if="item.label && typeof item.label !== 'string'" #label>
                 <component :is="item.label" />
               </template>
               <slot :name="item.key" :item="item" :modelValue="modelValue">
-                <component
-                  :is="getComponent(item)"
-                  :model-value="getFieldValue(item.key)"
-                  @update:model-value="setFieldValue(item.key, $event)"
-                  v-bind="getProps(item)"
-                >
+                <component :is="getComponent(item)" :model-value="getFieldValue(item.key)" @update:model-value="setFieldValue(item.key, $event)" v-bind="getProps(item)">
                   <template v-if="item.type === 'select' && getProps(item)?.options">
-                    <ElOption
-                      v-for="option in getProps(item).options"
-                      v-bind="option"
-                      :key="option.value"
-                    />
+                    <ElOption v-for="option in getProps(item).options" v-bind="option" :key="option.value" />
                   </template>
                   <template v-if="item.type === 'checkboxgroup' && getProps(item)?.options">
-                    <ElCheckbox
-                      v-for="option in getProps(item).options"
-                      v-bind="option"
-                      :key="option.value"
-                    />
+                    <ElCheckbox v-for="option in getProps(item).options" v-bind="option" :key="option.value" />
                   </template>
                   <template v-if="item.type === 'radiogroup' && getProps(item)?.options">
-                    <ElRadio
-                      v-for="option in getProps(item).options"
-                      v-bind="option"
-                      :key="option.value"
-                    />
+                    <ElRadio v-for="option in getProps(item).options" v-bind="option" :key="option.value" />
                   </template>
                   <!-- eslint-disable-next-line vue/no-v-for-template-key -->
                   <template v-for="(slotFn, slotName) in getSlots(item)" :key="slotName" #[slotName]>
@@ -57,24 +36,13 @@
             </ElFormItem>
           </ElCol>
           <ElCol :xs="24" :sm="24" :md="span" :lg="span" :xl="span" class="max-w-full flex-1">
-            <div
-              class="mb-3 flex items-center flex-wrap justify-end md:flex-row md:items-stretch md:gap-2"
-              :style="actionButtonsStyle"
-            >
+            <div class="mb-3 flex items-center flex-wrap justify-end md:flex-row md:items-stretch md:gap-2" :style="actionButtonsStyle">
               <div class="flex gap-2 md:justify-center">
                 <ElButton v-if="showReset" class="reset-button" @click="handleReset" v-ripple>
-                  {{ t("table.form.reset") }}
+                  {{ t('common.reset') }}
                 </ElButton>
-                <ElButton
-                  v-if="showSubmit"
-                  type="primary"
-                  class="submit-button"
-                  @click="handleSubmit"
-                  v-ripple
-                  :disabled="disabledSubmit"
-                  :loading="loading"
-                >
-                  {{ t("table.form.submit") }}
+                <ElButton v-if="showSubmit" type="primary" class="submit-button" @click="handleSubmit" v-ripple :disabled="disabledSubmit" :loading="loading">
+                  {{ t('common.submit') }}
                 </ElButton>
               </div>
             </div>
@@ -93,41 +61,20 @@
           :lg="getColSpan(item.span, 'lg')"
           :xl="getColSpan(item.span, 'xl')"
         >
-          <ElFormItem
-            :prop="item.key"
-            :label="typeof item.label === 'string' ? item.label : undefined"
-            :label-width="item.label ? item.labelWidth || labelWidth : undefined"
-          >
+          <ElFormItem :prop="item.key" :label="typeof item.label === 'string' ? item.label : undefined" :label-width="item.label ? item.labelWidth || labelWidth : undefined">
             <template v-if="item.label && typeof item.label !== 'string'" #label>
               <component :is="item.label" />
             </template>
             <slot :name="item.key" :item="item" :modelValue="modelValue">
-              <component
-                :is="getComponent(item)"
-                :model-value="getFieldValue(item.key)"
-                @update:model-value="setFieldValue(item.key, $event)"
-                v-bind="getProps(item)"
-              >
+              <component :is="getComponent(item)" :model-value="getFieldValue(item.key)" @update:model-value="setFieldValue(item.key, $event)" v-bind="getProps(item)">
                 <template v-if="item.type === 'select' && getProps(item)?.options">
-                  <ElOption
-                    v-for="option in getProps(item).options"
-                    v-bind="option"
-                    :key="option.value"
-                  />
+                  <ElOption v-for="option in getProps(item).options" v-bind="option" :key="option.value" />
                 </template>
                 <template v-if="item.type === 'checkboxgroup' && getProps(item)?.options">
-                  <ElCheckbox
-                    v-for="option in getProps(item).options"
-                    v-bind="option"
-                    :key="option.value"
-                  />
+                  <ElCheckbox v-for="option in getProps(item).options" v-bind="option" :key="option.value" />
                 </template>
                 <template v-if="item.type === 'radiogroup' && getProps(item)?.options">
-                  <ElRadio
-                    v-for="option in getProps(item).options"
-                    v-bind="option"
-                    :key="option.value"
-                  />
+                  <ElRadio v-for="option in getProps(item).options" v-bind="option" :key="option.value" />
                 </template>
                 <!-- eslint-disable-next-line vue/no-v-for-template-key -->
                 <template v-for="(slotFn, slotName) in getSlots(item)" :key="slotName" #[slotName]>
@@ -138,24 +85,13 @@
           </ElFormItem>
         </ElCol>
         <ElCol :xs="24" :sm="24" :md="span" :lg="span" :xl="span" class="max-w-full flex-1">
-          <div
-            class="mb-3 flex items-center flex-wrap justify-end md:flex-row md:items-stretch md:gap-2"
-            :style="actionButtonsStyle"
-          >
+          <div class="mb-3 flex items-center flex-wrap justify-end md:flex-row md:items-stretch md:gap-2" :style="actionButtonsStyle">
             <div class="flex gap-2 md:justify-center">
               <ElButton v-if="showReset" class="reset-button" @click="handleReset" v-ripple>
-                {{ t("table.form.reset") }}
+                {{ t('common.reset') }}
               </ElButton>
-              <ElButton
-                v-if="showSubmit"
-                type="primary"
-                class="submit-button"
-                @click="handleSubmit"
-                v-ripple
-                :disabled="disabledSubmit"
-                :loading="loading"
-              >
-                {{ t("table.form.submit") }}
+              <ElButton v-if="showSubmit" type="primary" class="submit-button" @click="handleSubmit" v-ripple :disabled="disabledSubmit" :loading="loading">
+                {{ t('common.submit') }}
               </ElButton>
             </div>
           </div>
@@ -166,7 +102,7 @@
 </template>
 
 <script setup>
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 import {
   ElCascader,
   ElCheckbox,
@@ -180,18 +116,11 @@ import {
   ElSwitch,
   ElTimePicker,
   ElTimeSelect,
-  ElTreeSelect,
-} from "element-plus";
-import {
-  cloneModelValue,
-  sanitizeOutputValue,
-  getProps,
-  getSlots,
-  getColSpan,
-  useSanitizeOutputOptions,
-} from "../composables/useFormBase.js";
+  ElTreeSelect
+} from 'element-plus';
+import { cloneModelValue, sanitizeOutputValue, getProps, getSlots, getColSpan, useSanitizeOutputOptions } from '../composables/useFormBase.js';
 
-defineOptions({ name: "QaForm" });
+defineOptions({ name: 'QaForm' });
 
 const componentMap = {
   input: ElInput,
@@ -206,7 +135,7 @@ const componentMap = {
   cascader: ElCascader,
   timepicker: ElTimePicker,
   timeselect: ElTimeSelect,
-  treeselect: ElTreeSelect,
+  treeselect: ElTreeSelect
 };
 
 const { t } = useI18n();
@@ -216,8 +145,8 @@ const props = defineProps({
   items: { type: Array, default: () => [] },
   span: { type: Number, default: 6 },
   gutter: { type: Number, default: 12 },
-  labelPosition: { type: String, default: "right" },
-  labelWidth: { type: [String, Number], default: "70px" },
+  labelPosition: { type: String, default: 'right' },
+  labelWidth: { type: [String, Number], default: '70px' },
   buttonLeftLimit: { type: Number, default: 2 },
   showReset: { type: Boolean, default: false },
   showSubmit: { type: Boolean, default: false },
@@ -225,10 +154,10 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   sanitizeOutput: { type: Object, default: () => ({}) },
   scrollbar: { type: Boolean, default: false },
-  maxHeight: { type: String, default: "75vh" },
+  maxHeight: { type: String, default: '75vh' }
 });
 
-const emit = defineEmits(["reset", "submit"]);
+const emit = defineEmits(['reset', 'submit']);
 
 const modelValue = defineModel({ default: {} });
 const initialModelValue = ref({});
@@ -241,7 +170,10 @@ const getColSpanWrapper = (itemSpan, breakpoint) => getColSpan(itemSpan, props.s
 const PATH_NUMBER_RE = /^\d+$/;
 
 const parsePath = (path) => {
-  return path.split(".").filter(Boolean).map((segment) => (PATH_NUMBER_RE.test(segment) ? Number(segment) : segment));
+  return path
+    .split('.')
+    .filter(Boolean)
+    .map((segment) => (PATH_NUMBER_RE.test(segment) ? Number(segment) : segment));
 };
 
 const getFieldValue = (path) => {
@@ -263,7 +195,7 @@ const deleteFieldValue = (path) => {
 };
 
 const setFieldValue = (path, value) => {
-  const normalizedValue = value === "" ? undefined : value;
+  const normalizedValue = value === '' ? undefined : value;
   const segments = parsePath(path);
   if (!segments.length) return;
   if (normalizedValue === undefined) {
@@ -278,8 +210,8 @@ const setFieldValue = (path, value) => {
       return;
     }
     const nextSegment = segments[index + 1];
-    const nextContainer = typeof nextSegment === "number" ? [] : {};
-    if (currentValue[segment] === null || currentValue[segment] === undefined || typeof currentValue[segment] !== "object") {
+    const nextContainer = typeof nextSegment === 'number' ? [] : {};
+    if (currentValue[segment] === null || currentValue[segment] === undefined || typeof currentValue[segment] !== 'object') {
       currentValue[segment] = nextContainer;
     }
     currentValue = currentValue[segment];
@@ -305,7 +237,7 @@ const visibleFormItems = computed(() => props.items.filter((item) => !item.hidde
 
 const actionButtonsStyle = computed(() => {
   if (visibleFormItems.value.length <= props.buttonLeftLimit) {
-    return { justifyContent: "flex-start" };
+    return { justifyContent: 'flex-start' };
   }
   return undefined;
 });
@@ -314,11 +246,11 @@ const handleReset = () => {
   formRef.value?.resetFields();
   Object.keys(modelValue.value).forEach((key) => delete modelValue.value[key]);
   Object.assign(modelValue.value, cloneModelValue(initialModelValue.value));
-  emit("reset");
+  emit('reset');
 };
 
 const handleSubmit = () => {
-  emit("submit", getSanitizedOutput());
+  emit('submit', getSanitizedOutput());
 };
 
 defineExpose({
@@ -328,7 +260,7 @@ defineExpose({
   clearValidate: (...args) => formRef.value?.clearValidate(...args),
   validateField: (...args) => formRef.value?.validateField(...args),
   reset: handleReset,
-  getOutput: getSanitizedOutput,
+  getOutput: getSanitizedOutput
 });
 
 const { span, gutter, labelPosition, labelWidth } = toRefs(props);

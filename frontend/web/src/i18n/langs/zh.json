@@ -12,12 +12,22 @@
     "requestCancelled": "请求已取消",
     "networkError": "网络连接异常，请检查您的网络连接",
     "requestFailed": "请求失败",
-    "requestConfigError": "请求配置错误"
+    "requestConfigError": "请求配置错误",
+    "backendUnreachable": "服务器连接失败，请检查后端服务是否正常运行",
+    "networkCheck": "网络连接错误，请检查您的网络设置"
   },
   "login": {
     "leftView": {
       "title": "一款兼具设计美学与高效开发的后台系统",
       "subTitle": "提供安全、高效、可扩展的管理解决方案，助力企业数字化转型与业务增长。"
+    },
+    "relogin": "请重新登录",
+    "loggedOut": "已退出登录",
+    "footer": { "help": "帮助", "privacy": "隐私", "clause": "条款" },
+    "star": {
+      "title": "QuickAdmin 完全开源，欢迎 Star 支持 ⭐",
+      "message": "项目持续迭代中，若它对您有所帮助，欢迎点亮一颗 Star 作为鼓励～",
+      "link": "前往 GitHub 仓库"
     },
     "title": "欢迎回来",
     "subTitle": "请输入您的账户信息以开始管理您的项目",
@@ -212,7 +222,9 @@
     "editTitle": "编辑{name}",
     "deleteConfirm": "确定删除{kind}“{name}”吗？",
     "batchDeleteConfirm": "确定删除选中的 {count} 个{kind}吗？",
-    "selectToDelete": "请选择要删除的{kind}"
+    "selectToDelete": "请选择要删除的{kind}",
+    "notice": "通知",
+    "submit": "提交"
   },
   "system": {
     "dept": {
@@ -291,6 +303,10 @@
     "passwordRequired": "请输入密码",
     "passwordMin": "密码长度不能少于 6 位"
   },
+  "ui": {
+    "invalidHexColor": "输入错误的hex颜色值",
+    "invalidRgbColor": "输入错误的RGB颜色值"
+  },
   "layout": {
     "sidebarNav": "主菜单导航",
     "mainContent": "主要内容区域"
@@ -327,6 +343,7 @@
     "userDept": "所属部门",
     "unassigned": "未分配",
     "dateFmt": "{month}月{day}日 星期{weekday}",
+    "weekFull": "星期{weekday}",
     "week": {
       "0": "日",
       "1": "一",
@@ -356,6 +373,8 @@
   },
   "menus": {
     "home": { "title": "首页" },
+    "login": { "title": "登录" },
+    "profile": { "title": "个人中心" },
     "system": {
       "title": "系统管理",
       "user": { "title": "用户管理" },
@@ -405,6 +424,19 @@
     },
     "tabStyle": { "default": "默认", "card": "卡片", "google": "谷歌" },
     "transition": { "list": { "none": "无", "fade": "淡入淡出", "slideLeft": "向左滑动", "slideBottom": "向上滑入", "slideTop": "向下滑入" } },
+    "headerBar": {
+      "menuButton": "控制左侧菜单的展开/收起按钮",
+      "refreshButton": "页面刷新按钮",
+      "fastEnter": "快速入口功能，提供常用应用和链接的快速访问",
+      "breadcrumb": "面包屑导航，显示当前页面路径",
+      "globalSearch": "全局搜索功能，支持快捷键 Ctrl+K 或 Cmd+K",
+      "fullscreen": "全屏切换功能",
+      "notification": "通知中心，显示系统通知和消息",
+      "language": "多语言切换功能",
+      "settings": "系统设置面板",
+      "themeToggle": "主题切换功能（明暗主题）",
+      "sizeSelect": "Element Plus 组件尺寸（默认/大/小）"
+    },
     "layoutSize": {
       "title": "布局大小",
       "default": "默认",

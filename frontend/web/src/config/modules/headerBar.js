@@ -7,52 +7,54 @@
  * @module config/headerBar
  */
 
+import { $t } from '@/locales';
+
 export const headerBarConfig = {
   menuButton: {
     enabled: true,
-    description: "控制左侧菜单的展开/收起按钮",
+    description: $t('setting.headerBar.menuButton')
   },
   refreshButton: {
     enabled: true,
-    description: "页面刷新按钮",
+    description: $t('setting.headerBar.refreshButton')
   },
   fastEnter: {
     enabled: true,
-    description: "快速入口功能，提供常用应用和链接的快速访问",
-    minWidth: 1200,
+    description: $t('setting.headerBar.fastEnter'),
+    minWidth: 1200
   },
   breadcrumb: {
     enabled: true,
-    description: "面包屑导航，显示当前页面路径",
+    description: $t('setting.headerBar.breadcrumb')
   },
   globalSearch: {
     enabled: true,
-    description: "全局搜索功能，支持快捷键 Ctrl+K 或 Cmd+K",
+    description: $t('setting.headerBar.globalSearch')
   },
   fullscreen: {
     enabled: true,
-    description: "全屏切换功能",
+    description: $t('setting.headerBar.fullscreen')
   },
   notification: {
     enabled: true,
-    description: "通知中心，显示系统通知和消息",
+    description: $t('setting.headerBar.notification')
   },
   language: {
     enabled: true,
-    description: "多语言切换功能",
+    description: $t('setting.headerBar.language')
   },
   settings: {
     enabled: true,
-    description: "系统设置面板",
+    description: $t('setting.headerBar.settings')
   },
   themeToggle: {
     enabled: true,
-    description: "主题切换功能（明暗主题）",
+    description: $t('setting.headerBar.themeToggle')
   },
   sizeSelect: {
     enabled: true,
-    description: "Element Plus 组件尺寸（默认/大/小）",
-  },
+    description: $t('setting.headerBar.sizeSelect')
+  }
 };
 
 export default headerBarConfig;

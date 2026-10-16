@@ -1,28 +1,29 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { ElNotification } from "element-plus";
-import { Auth } from "@/utils/auth";
-import { ResultEnum } from "@/utils/request";
-import AuthAPI from "@/api/module_system/auth";
-import UserAPI from "@/api/module_system/user";
-import { useMenuStore } from "./menu.store";
-import { useWorktabStore } from "./worktab.store";
-import { resetRouteInitState } from "@/router/refresh";
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import { ElNotification } from 'element-plus';
+import { $t } from '@/locales';
+import { Auth } from '@/utils/auth';
+import { ResultEnum } from '@/utils/request';
+import AuthAPI from '@/api/module_system/auth';
+import UserAPI from '@/api/module_system/user';
+import { useMenuStore } from './menu.store';
+import { useWorktabStore } from './worktab.store';
+import { resetRouteInitState } from '@/router/refresh';
 
 export const useUserStore = defineStore(
-  "user",
+  'user',
   () => {
     const info = ref({});
-    const accessToken = ref("");
-    const refreshToken = ref("");
+    const accessToken = ref('');
+    const refreshToken = ref('');
     const isLogin = ref(false);
     const prems = ref([]);
     const routeList = ref([]);
     const hasGetRoute = ref(false);
     const rememberMe = ref(Auth.getRememberMe());
-    const language = ref("zh");
+    const language = ref('zh');
     const isLock = ref(false);
-    const lockPassword = ref("");
+    const lockPassword = ref('');
 
     const basicInfo = computed(() => info.value);
 
@@ -55,9 +56,7 @@ export const useUserStore = defineStore(
 
     function setPermissions(menus) {
       prems.value = [];
-      const roleMenus = (info.value.roles || [])
-        .filter((role) => role.menus && role.menus.length > 0)
-        .flatMap((role) => role.menus);
+      const roleMenus = (info.value.roles || []).filter((role) => role.menus && role.menus.length > 0).flatMap((role) => role.menus);
 
       const allMenus = [...(menus || []), ...roleMenus];
       const permissionSet = new Set();
@@ -103,15 +102,15 @@ export const useUserStore = defineStore(
       const data = response.data;
       if (response.data.code === ResultEnum.SUCCESS) {
         ElNotification({
-          title: "通知",
+          title: $t('common.notice'),
           message: response.data.msg,
-          type: "success",
+          type: 'success'
         });
       }
       rememberMe.value = loginForm.remember ?? false;
 
-      const newAccessToken = data?.access_token || "";
-      const newRefreshToken = data?.refresh_token || "";
+      const newAccessToken = data?.access_token || '';
+      const newRefreshToken = data?.refresh_token || '';
       Auth.setTokens(newAccessToken, newRefreshToken, rememberMe.value);
       setToken(newAccessToken, newRefreshToken);
 
@@ -125,19 +124,18 @@ export const useUserStore = defineStore(
       if (token) {
         try {
           await AuthAPI.logout(token);
-        } catch {
-        }
+        } catch {}
       }
       resetAllState();
       if (shouldNavigate) {
         ElNotification({
-          title: "提示",
-          message: "已退出登录",
-          type: "success",
-          duration: 2000,
+          title: $t('common.tips'),
+          message: $t('login.loggedOut'),
+          type: 'success',
+          duration: 2000
         });
-        const { router } = await import("@/router");
-        router.push("/login");
+        const { router } = await import('@/router');
+        router.push('/login');
       }
     }
 
@@ -147,11 +145,11 @@ export const useUserStore = defineStore(
       routeList.value = [];
       hasGetRoute.value = false;
       isLogin.value = false;
-      accessToken.value = "";
-      refreshToken.value = "";
+      accessToken.value = '';
+      refreshToken.value = '';
       prems.value = [];
       isLock.value = false;
-      lockPassword.value = "";
+      lockPassword.value = '';
 
       const menuStore = useMenuStore();
       menuStore.clearMenu();
@@ -171,7 +169,7 @@ export const useUserStore = defineStore(
     async function refreshTokenFn() {
       const currentRefreshToken = Auth.getRefreshToken();
       if (!currentRefreshToken) {
-        throw new Error("没有有效的刷新令牌");
+        throw new Error('没有有效的刷新令牌');
       }
       const response = await AuthAPI.refreshToken(currentRefreshToken);
       const data = response.data;
@@ -207,14 +205,14 @@ export const useUserStore = defineStore(
       logout,
       resetAllState,
       clearUserInfo,
-      refreshTokenFn,
+      refreshTokenFn
     };
   },
   {
     persist: {
-      key: "user",
+      key: 'user',
       storage: localStorage,
-      pick: ["language", "isLogin", "rememberMe"],
-    },
+      pick: ['language', 'isLogin', 'rememberMe']
+    }
   }
 );

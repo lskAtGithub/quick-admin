@@ -7,14 +7,14 @@ const i18n = createI18n({
   globalInjection: true,
   locale: LanguageEnum.ZH,
   fallbackLocale: LanguageEnum.ZH,
-  messages: { zh },
+  messages: { zh }
 });
 
 export const $t = (key) => i18n.global.t(key);
 
 export const languageOptions = [
   { value: LanguageEnum.ZH, label: '简体中文' },
-  { value: LanguageEnum.EN, label: 'English' },
+  { value: LanguageEnum.EN, label: 'English' }
 ];
 
 export function initI18n(app) {

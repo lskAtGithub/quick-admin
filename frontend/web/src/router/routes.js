@@ -8,7 +8,7 @@ export const staticRoutes = [
     path: '/login',
     name: 'Login',
     component: () => import('@views/login/index.vue'),
-    meta: { title: '登录', public: true, isHideTab: true }
+    meta: { title: 'menus.login.title', public: true, isHideTab: true }
   },
   {
     path: '/401',
@@ -51,7 +51,7 @@ export const staticRoutes = [
         path: 'profile',
         name: 'FastlinkProfile',
         component: () => import('@views/fastlink/current/profile.vue'),
-        meta: { title: '个人中心', icon: 'ri:user-line', keepAlive: true, isHide: true }
+        meta: { title: 'menus.profile.title', icon: 'ri:user-line', keepAlive: true, isHide: true }
       }
     ]
   },

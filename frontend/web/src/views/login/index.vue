@@ -94,11 +94,17 @@
             </div>
             <span class="login-page-footer__sep login-footer-sep-center">|</span>
             <div class="login-footer-row">
-              <a :href="configStore.configData?.help_doc?.config_value || '#'" target="_blank" rel="noopener noreferrer" class="login-page-footer__link"> 帮助 </a>
+              <a :href="configStore.configData?.help_doc?.config_value || '#'" target="_blank" rel="noopener noreferrer" class="login-page-footer__link">
+                {{ $t('login.footer.help') }}
+              </a>
               <span class="login-page-footer__sep">|</span>
-              <a :href="configStore.configData?.privacy?.config_value || '#'" target="_blank" rel="noopener noreferrer" class="login-page-footer__link"> 隐私 </a>
+              <a :href="configStore.configData?.privacy?.config_value || '#'" target="_blank" rel="noopener noreferrer" class="login-page-footer__link">
+                {{ $t('login.footer.privacy') }}
+              </a>
               <span class="login-page-footer__sep">|</span>
-              <a :href="configStore.configData?.clause?.config_value || '#'" target="_blank" rel="noopener noreferrer" class="login-page-footer__link"> 条款 </a>
+              <a :href="configStore.configData?.clause?.config_value || '#'" target="_blank" rel="noopener noreferrer" class="login-page-footer__link">
+                {{ $t('login.footer.clause') }}
+              </a>
               <span v-if="configStore.configData?.keep_record?.config_value" class="login-page-footer__sep">|</span>
               <span v-if="configStore.configData?.keep_record?.config_value" class="login-page-footer__record">
                 {{ configStore.configData.keep_record.config_value }}
@@ -268,7 +274,7 @@ const validateRegisterConfirm = (_rule, value, callback) => {
 
 const registerRules = computed(() => ({
   username: [{ required: true, message: t('login.message.username.required'), trigger: 'blur' }],
-  name: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
+  name: [{ required: true, message: t('common.input', { name: t('system.user.nickname') }), trigger: 'blur' }],
   password: [
     { required: true, validator: validateRegisterPassword, trigger: 'blur' },
     { min: 6, message: t('login.message.password.min'), trigger: 'blur' }
@@ -378,13 +384,13 @@ let notificationInstance = null;
 
 const showVoteNotification = () => {
   notificationInstance = ElNotification({
-    title: 'QuickAdmin 完全开源，欢迎 Star 支持 ⭐',
+    title: t('login.star.title'),
     message: `<div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
-        <div style="line-height:1.65;color:var(--el-text-color-regular);">项目持续迭代中，若它对您有所帮助，欢迎点亮一颗 Star 作为鼓励～</div>
+        <div style="line-height:1.65;color:var(--el-text-color-regular);">${t('login.star.message')}</div>
         <a href="https://github.com/lskAtGithub/quick-admin" target="_blank" rel="noopener noreferrer"
            style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:7px 16px;font-size:13px;font-weight:500;color:var(--el-color-white);background:var(--el-color-primary);border-radius:calc(var(--custom-radius) / 2 + 2px);text-decoration:none;">
           <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.68-.01-1.34-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-          前往 GitHub 仓库
+          ${t('login.star.link')}
         </a>
       </div>`,
     position: panelAlign.value === 'right' || panelAlign.value === 'center' ? 'bottom-left' : 'bottom-right',
@@ -452,7 +458,7 @@ const handleSubmit = async () => {
     if (!(error instanceof HttpError)) {
       console.error('[Login] Unexpected error:', error);
       ElNotification({
-        title: '提示',
+        title: t('common.tips'),
         message: error instanceof Error ? error.message : String(error),
         type: 'error'
       });
