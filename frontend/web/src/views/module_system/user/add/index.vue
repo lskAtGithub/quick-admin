@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="新增用户"
+    :title="$t('common.addTitle', { name: $t('system.user.entity') })"
     size="450px"
     form-mode="create"
     :confirm-loading="submitLoading"
@@ -43,12 +43,15 @@ const formData = ref({
   status: 0
 });
 
-watch(() => props.modelValue, (val) => {
-  visible.value = val;
-  if (val) {
-    resetForm();
+watch(
+  () => props.modelValue,
+  (val) => {
+    visible.value = val;
+    if (val) {
+      resetForm();
+    }
   }
-});
+);
 
 watch(visible, (val) => {
   emit('update:modelValue', val);

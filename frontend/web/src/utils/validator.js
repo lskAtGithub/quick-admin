@@ -1,3 +1,5 @@
+import { $t } from '@/locales';
+
 export function isPhone(rule, value, callback) {
   if (!value) {
     callback();
@@ -5,7 +7,7 @@ export function isPhone(rule, value, callback) {
   }
   const phoneReg = /^1[3-9]\d{9}$/;
   if (!phoneReg.test(value)) {
-    callback(new Error('请输入正确的手机号码'));
+    callback(new Error($t('validator.phoneInvalid')));
   } else {
     callback();
   }
@@ -18,7 +20,7 @@ export function isEmail(rule, value, callback) {
   }
   const emailReg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
   if (!emailReg.test(value)) {
-    callback(new Error('请输入正确的邮箱地址'));
+    callback(new Error($t('validator.emailInvalid')));
   } else {
     callback();
   }
@@ -26,11 +28,11 @@ export function isEmail(rule, value, callback) {
 
 export function isUsername(rule, value, callback) {
   if (!value) {
-    callback(new Error('请输入用户名'));
+    callback(new Error($t('validator.usernameRequired')));
     return;
   }
   if (value.length < 3 || value.length > 32) {
-    callback(new Error('用户名长度在 3 到 32 个字符'));
+    callback(new Error($t('validator.usernameLength')));
   } else {
     callback();
   }
@@ -38,11 +40,11 @@ export function isUsername(rule, value, callback) {
 
 export function isPassword(rule, value, callback) {
   if (!value) {
-    callback(new Error('请输入密码'));
+    callback(new Error($t('validator.passwordRequired')));
     return;
   }
   if (value.length < 6) {
-    callback(new Error('密码长度不能少于 6 位'));
+    callback(new Error($t('validator.passwordMin')));
   } else {
     callback();
   }

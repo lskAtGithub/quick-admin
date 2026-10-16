@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="编辑用户"
+    :title="$t('common.editTitle', { name: $t('system.user.entity') })"
     size="450px"
     form-mode="update"
     :confirm-loading="submitLoading"
@@ -44,12 +44,15 @@ const formData = ref({
   status: 0
 });
 
-watch(() => props.modelValue, async (val) => {
-  visible.value = val;
-  if (val && props.userId) {
-    await loadUserData();
+watch(
+  () => props.modelValue,
+  async (val) => {
+    visible.value = val;
+    if (val && props.userId) {
+      await loadUserData();
+    }
   }
-});
+);
 
 watch(visible, (val) => {
   emit('update:modelValue', val);

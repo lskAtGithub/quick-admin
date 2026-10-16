@@ -4,7 +4,7 @@
     <div class="w-65 flex-shrink-0 pr-2">
       <ElCard class="h-full" shadow="hover">
         <template #header>
-          <b>部门</b>
+          <b>{{ $t('system.user.dept') }}</b>
         </template>
         <ElScrollbar class="h-full">
           <QaDeptTree v-model="deptFilterId" @node-click="handleDeptNodeClick" />
@@ -18,17 +18,17 @@
       <ElCard class="mb-3" shadow="never">
         <div class="flex items-center justify-between">
           <div class="flex flex-wrap items-center gap-2">
-            <ElInput v-model="searchForm.username" placeholder="用户名" clearable class="search-input-sm" />
-            <ElInput v-model="searchForm.name" placeholder="姓名" clearable class="search-input-sm" />
-            <ElInput v-model="searchForm.mobile" placeholder="手机号" clearable class="search-input-sm" />
-            <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
-              <ElOption label="启用" :value="0" />
-              <ElOption label="禁用" :value="1" />
+            <ElInput v-model="searchForm.username" :placeholder="$t('system.user.username')" clearable class="search-input-sm" />
+            <ElInput v-model="searchForm.name" :placeholder="$t('system.user.name')" clearable class="search-input-sm" />
+            <ElInput v-model="searchForm.mobile" :placeholder="$t('system.user.mobile')" clearable class="search-input-sm" />
+            <ElSelect v-model="searchForm.status" :placeholder="$t('common.status')" clearable class="search-input-xs">
+              <ElOption :label="$t('common.enabled')" :value="0" />
+              <ElOption :label="$t('system.user.banned')" :value="1" />
             </ElSelect>
           </div>
           <div class="flex items-center">
-            <ElButton @click="handleReset">重置</ElButton>
-            <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+            <ElButton @click="handleReset">{{ $t('common.reset') }}</ElButton>
+            <ElButton type="primary" @click="handleSearch">{{ $t('common.search') }}</ElButton>
           </div>
         </div>
       </ElCard>
@@ -49,22 +49,22 @@
           @page-change="handlePageChange"
         >
           <template #gender="{ row }">
-            <ElTag v-if="row.gender === '0'" type="success">男</ElTag>
-            <ElTag v-else-if="row.gender === '1'" type="warning">女</ElTag>
-            <ElTag v-else type="info">未知</ElTag>
+            <ElTag v-if="row.gender === '0'" type="success">{{ $t('system.user.male') }}</ElTag>
+            <ElTag v-else-if="row.gender === '1'" type="warning">{{ $t('system.user.female') }}</ElTag>
+            <ElTag v-else type="info">{{ $t('system.user.unknown') }}</ElTag>
           </template>
           <template #status="{ row }">
             <ElTag :type="row.status === 0 ? 'success' : 'danger'">
-              {{ row.status === 0 ? '启用' : '禁用' }}
+              {{ row.status === 0 ? $t('common.enabled') : $t('system.user.banned') }}
             </ElTag>
           </template>
           <template #is_superuser="{ row }">
-            <ElTag v-if="row.is_superuser" type="danger">是</ElTag>
-            <ElTag v-else type="info">否</ElTag>
+            <ElTag v-if="row.is_superuser" type="danger">{{ $t('common.yes') }}</ElTag>
+            <ElTag v-else type="info">{{ $t('common.no') }}</ElTag>
           </template>
           <template #action="{ row }">
-            <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-            <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+            <ElButton link type="primary" @click="handleEdit(row)">{{ $t('common.edit') }}</ElButton>
+            <ElButton link type="danger" @click="handleDelete(row)">{{ $t('common.delete') }}</ElButton>
           </template>
         </QaTable>
       </ElCard>
@@ -81,6 +81,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { $t } from '@/locales';
 import { UserAPI } from '@/api/module_system/user';
 import QaTable from '@/components/tables/qa-table/index.vue';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
@@ -101,17 +102,17 @@ const deptFilterId = ref();
 const columns = [
   { type: 'selection', width: 50 },
   { prop: 'id', label: 'ID', width: 80 },
-  { prop: 'username', label: '用户名', width: 120 },
-  { prop: 'name', label: '姓名', width: 120 },
-  { prop: 'mobile', label: '手机号', width: 130 },
-  { prop: 'email', label: '邮箱', width: 180 },
-  { prop: 'gender', label: '性别', width: 80, slotName: 'gender' },
-  { prop: 'dept_name', label: '部门', width: 150 },
-  { prop: 'status', label: '状态', width: 100, slotName: 'status' },
-  { prop: 'is_superuser', label: '超管', width: 80, slotName: 'is_superuser' },
-  { prop: 'last_login', label: '最后登录', width: 180 },
-  { prop: 'description', label: '备注', showOverflowTooltip: true },
-  { label: '操作', fixed: 'right', width: 200, slotName: 'action' }
+  { prop: 'username', label: $t('system.user.username'), width: 120 },
+  { prop: 'name', label: $t('system.user.name'), width: 120 },
+  { prop: 'mobile', label: $t('system.user.mobile'), width: 130 },
+  { prop: 'email', label: $t('system.user.email'), width: 180 },
+  { prop: 'gender', label: $t('system.user.gender'), width: 80, slotName: 'gender' },
+  { prop: 'dept_name', label: $t('system.user.dept'), width: 150 },
+  { prop: 'status', label: $t('common.status'), width: 100, slotName: 'status' },
+  { prop: 'is_superuser', label: $t('system.user.superuser'), width: 80, slotName: 'is_superuser' },
+  { prop: 'last_login', label: $t('system.user.lastLogin'), width: 180 },
+  { prop: 'description', label: $t('common.remark'), showOverflowTooltip: true },
+  { label: $t('common.operation'), fixed: 'right', width: 200, slotName: 'action' }
 ];
 
 const searchForm = ref({
@@ -172,9 +173,9 @@ const handleEditSuccess = () => {
 };
 
 const handleDelete = async (row) => {
-  await ElMessageBox.confirm(`确定删除用户"${row.username}"吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  await ElMessageBox.confirm($t('common.deleteConfirm', { kind: $t('system.user.entity'), name: row.username }), $t('common.tips'), {
+    confirmButtonText: $t('common.confirm'),
+    cancelButtonText: $t('common.cancel'),
     type: 'warning'
   });
   await UserAPI.deleteUser({ ids: [row.id] });
@@ -183,13 +184,13 @@ const handleDelete = async (row) => {
 
 const handleBatchDelete = async () => {
   if (selectedIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的用户');
+    ElMessage.warning($t('common.selectToDelete', { kind: $t('system.user.entity') }));
     return;
   }
   try {
-    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个用户吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.batchDeleteConfirm', { count: selectedIds.value.length, kind: $t('system.user.entity') }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await UserAPI.deleteUser({ ids: selectedIds.value });

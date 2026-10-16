@@ -1,27 +1,15 @@
 <template>
   <div class="box-border px-1.5 pt-4 pb-3 pl-2.5">
     <div class="flex items-stretch">
-      <ElInput
-        v-model="deptName"
-        class="flex-1 min-w-0"
-        placeholder="部门名称"
-        size="small"
-        clearable
-      >
+      <ElInput v-model="deptName" class="flex-1 min-w-0" :placeholder="$t('system.dept.name')" size="small" clearable>
         <template #prefix>
           <ElIcon class="text-(--el-text-color-placeholder)">
             <Search />
           </ElIcon>
         </template>
         <template #suffix>
-          <ElTooltip :content="treeExpanded ? '收起全部' : '展开全部'" placement="top">
-            <span
-              class="dept-tree-expand-trigger"
-              role="button"
-              tabindex="0"
-              @click.stop="toggleTreeExpandAll"
-              @keydown.enter.prevent="toggleTreeExpandAll"
-            >
+          <ElTooltip :content="treeExpanded ? $t('common.collapseAll') : $t('common.expandAll')" placement="top">
+            <span class="dept-tree-expand-trigger" role="button" tabindex="0" @click.stop="toggleTreeExpandAll" @keydown.enter.prevent="toggleTreeExpandAll">
               <ElIcon :size="15">
                 <Switch />
               </ElIcon>
@@ -43,7 +31,7 @@
       @node-click="handleNodeClick"
     >
       <template #empty>
-        <ElEmpty :image-size="80" description="暂无数据" />
+        <ElEmpty :image-size="80" :description="$t('common.noData')" />
       </template>
     </ElTree>
   </div>
@@ -57,7 +45,7 @@ import { DeptAPI } from '@/api/module_system/dept';
 defineOptions({ name: 'QaDeptTree' });
 
 const props = defineProps({
-  modelValue: { type: [String, Number], default: undefined },
+  modelValue: { type: [String, Number], default: undefined }
 });
 
 const emit = defineEmits(['update:modelValue', 'node-click']);
@@ -130,7 +118,7 @@ function formatTree(data, parentId = 0) {
       const node = {
         value: item.id,
         label: item.name,
-        children: children.length > 0 ? children : undefined,
+        children: children.length > 0 ? children : undefined
       };
       result.push(node);
     }

@@ -189,6 +189,9 @@
     "no": "否",
     "on": "开启",
     "off": "关闭",
+    "expandAll": "展开全部",
+    "collapseAll": "收起全部",
+    "noData": "暂无数据",
     "input": "请输入{name}",
     "select": "请选择{name}",
     "addTitle": "新增{name}",
@@ -245,7 +248,34 @@
       "code": "角色编码",
       "codePattern": "字母开头，2-64位字母/数字/下划线",
       "menuPerm": "菜单权限"
+    },
+    "user": {
+      "entity": "用户",
+      "username": "用户名",
+      "name": "姓名",
+      "nickname": "昵称",
+      "password": "密码",
+      "mobile": "手机号",
+      "email": "邮箱",
+      "gender": "性别",
+      "male": "男",
+      "female": "女",
+      "unknown": "未知",
+      "dept": "部门",
+      "role": "角色",
+      "superuser": "超管",
+      "superAdmin": "超级管理员",
+      "lastLogin": "最后登录",
+      "banned": "禁用"
     }
+  },
+  "validator": {
+    "phoneInvalid": "请输入正确的手机号码",
+    "emailInvalid": "请输入正确的邮箱地址",
+    "usernameRequired": "请输入用户名",
+    "usernameLength": "用户名长度在 3 到 32 个字符",
+    "passwordRequired": "请输入密码",
+    "passwordMin": "密码长度不能少于 6 位"
   },
   "menus": {
     "home": { "title": "首页" },

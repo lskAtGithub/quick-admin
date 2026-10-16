@@ -1,51 +1,45 @@
 <template>
-  <ElForm
-    ref="formRef"
-    :model="formData"
-    :rules="formRules"
-    label-width="100px"
-    label-position="right"
-  >
-    <ElFormItem label="用户名" prop="username">
-      <ElInput v-model="formData.username" placeholder="请输入用户名" :disabled="isEdit" />
+  <ElForm ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="right">
+    <ElFormItem :label="$t('system.user.username')" prop="username">
+      <ElInput v-model="formData.username" :placeholder="$t('common.input', { name: $t('system.user.username') })" :disabled="isEdit" />
     </ElFormItem>
-    <ElFormItem v-if="!isEdit" label="密码" prop="password">
-      <ElInput v-model="formData.password" type="password" placeholder="请输入密码" show-password />
+    <ElFormItem v-if="!isEdit" :label="$t('system.user.password')" prop="password">
+      <ElInput v-model="formData.password" type="password" :placeholder="$t('common.input', { name: $t('system.user.password') })" show-password />
     </ElFormItem>
-    <ElFormItem label="昵称" prop="name">
-      <ElInput v-model="formData.name" placeholder="请输入昵称" />
+    <ElFormItem :label="$t('system.user.nickname')" prop="name">
+      <ElInput v-model="formData.name" :placeholder="$t('common.input', { name: $t('system.user.nickname') })" />
     </ElFormItem>
-    <ElFormItem label="手机号" prop="mobile">
-      <ElInput v-model="formData.mobile" placeholder="请输入手机号" />
+    <ElFormItem :label="$t('system.user.mobile')" prop="mobile">
+      <ElInput v-model="formData.mobile" :placeholder="$t('common.input', { name: $t('system.user.mobile') })" />
     </ElFormItem>
-    <ElFormItem label="邮箱" prop="email">
-      <ElInput v-model="formData.email" placeholder="请输入邮箱" />
+    <ElFormItem :label="$t('system.user.email')" prop="email">
+      <ElInput v-model="formData.email" :placeholder="$t('common.input', { name: $t('system.user.email') })" />
     </ElFormItem>
-    <ElFormItem label="部门" prop="dept_id">
+    <ElFormItem :label="$t('system.user.dept')" prop="dept_id">
       <ElTreeSelect
         v-model="formData.dept_id"
-        placeholder="请选择部门"
+        :placeholder="$t('common.select', { name: $t('system.user.dept') })"
         :data="deptOptions"
         :props="{ children: 'children', label: 'label', value: 'value' }"
         check-strictly
         filterable
       />
     </ElFormItem>
-    <ElFormItem label="角色" prop="role_ids">
-      <ElSelect v-model="formData.role_ids" multiple filterable placeholder="请选择角色" style="width: 100%">
+    <ElFormItem :label="$t('system.user.role')" prop="role_ids">
+      <ElSelect v-model="formData.role_ids" multiple filterable :placeholder="$t('common.select', { name: $t('system.user.role') })" style="width: 100%">
         <ElOption v-for="role in roleOptions" :key="role.id" :label="role.name" :value="role.id" />
       </ElSelect>
     </ElFormItem>
-    <ElFormItem v-if="isSuperUser" label="超级管理员" prop="is_superuser">
+    <ElFormItem v-if="isSuperUser" :label="$t('system.user.superAdmin')" prop="is_superuser">
       <ElRadioGroup v-model="formData.is_superuser">
-        <ElRadio :value="false">否</ElRadio>
-        <ElRadio :value="true">是</ElRadio>
+        <ElRadio :value="false">{{ $t('common.no') }}</ElRadio>
+        <ElRadio :value="true">{{ $t('common.yes') }}</ElRadio>
       </ElRadioGroup>
     </ElFormItem>
-    <ElFormItem label="状态" prop="status">
+    <ElFormItem :label="$t('common.status')" prop="status">
       <ElRadioGroup v-model="formData.status">
-        <ElRadio :value="0">启用</ElRadio>
-        <ElRadio :value="1">禁用</ElRadio>
+        <ElRadio :value="0">{{ $t('common.enabled') }}</ElRadio>
+        <ElRadio :value="1">{{ $t('system.user.banned') }}</ElRadio>
       </ElRadioGroup>
     </ElFormItem>
   </ElForm>
@@ -99,7 +93,7 @@ const loadDeptOptions = async () => {
 const loadRoleOptions = async () => {
   try {
     const res = await RoleAPI.list({ page_no: 1, page_size: 1000 });
-    roleOptions.value = (res.data?.items || []);
+    roleOptions.value = res.data?.items || [];
   } catch (error) {
     console.error('加载角色列表失败', error);
   }
