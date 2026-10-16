@@ -27,6 +27,7 @@ Quick Admin：FastAPI + Vue3 的前后端分离管理后台。
 - 从参考项目移植时，所有 **`fa` 前缀一律改为 `qa` 前缀**（组件、类名、资源名）；参考项目的 `xxx/index.ts` 结构移植时**扁平为 `xxx.js`**。
 - 组件目录：`src/components`、`src/layouts`、各视图 `components/` 由 unplugin 自动注册，模板中直接用 `<QaXxx />`，无需手动 import。
 - **枚举归 `src/enums/`、常量归 `src/constants/`**，业务代码不内联魔法值。
+- **zh.json 以外语种的语言文件一律由 `pnpm run i18n` 脚本（`frontend/web/scripts/create-i18n/`，百度翻译）增量生成，不手工翻译或新建**；百度凭据配置在脚本目录 config.js。
 - **代码风格以 `frontend/web/.prettierrc.json` 为准**（单引号 / 2 空格 / 行宽 180 / 分号 / 无尾逗号）；ESLint 配置见 `frontend/web/eslint.config.js`，只查代码质量、排版交 Prettier。生成或改动代码须符合该风格，勿引入冲突写法。
 - **Element Plus 组件的样式与动效保持默认，不得改造**：不给 `ElButton` 等控件加 hover 位移/阴影/弹性曲线，不覆盖组件库圆角。自定义动效只作用于页面自有装饰元素。
 - 按钮组**不要额外加 `gap` 工具类**，依赖组件库自带间距。

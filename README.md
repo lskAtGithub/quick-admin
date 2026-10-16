@@ -88,6 +88,20 @@ cp docker/.env.example docker/.env    # 填写 MySQL / Redis 密码与 SECRET_KE
 
 `docker-compose.yaml` 包含 **MySQL、Redis、Backend、Nginx** 四个服务；Nginx 托管前端产物并反代 `/api/v1` 到后端，SSL（443）配置已内置但默认注释，按需提供证书后开启。
 
+### 🌍 多语言文件生成脚本
+
+文案统一维护在 `frontend/web/src/i18n/langs/zh.json`，其他语种无需手写——在仓库根目录执行：
+
+```bash
+pnpm run i18n    # 选择目标语言 → 与 zh.json 比对 → 调百度翻译 API 自动补齐缺失词条 → 写入 langs/<code>.json
+```
+
+首次使用需先在 [百度翻译开放平台 · 管理控制台](https://fanyi-api.baidu.com/manage/developer) 注册并创建「百度翻译API」应用，获取 **APP_ID** 和 **密钥 SECRET** 填入 `frontend/web/scripts/create-i18n/config.js` 的 `BAIDU_FANYI`——**标准套餐免费额度即可覆盖本项目全部词条**。
+
+- **增量补缺**：只翻译 zh.json 里有而目标语言缺失的 key，已有译文不覆盖；目标文件多余的 key 仅控制台提示、不删除。
+- 内置 17 个语种（英/日/韩/法/德/西/俄/葡/意/荷/波/越/泰/印尼/马来/阿/印地），标 ※ 的需在百度控制台开通对应翻译权限，未开通时脚本会明确报错中止。
+- 占位符模板句（如 `请输入{name}`）自动保护，个别语种机翻语序建议人工润色；翻译失败不落脏数据，重跑脚本自动补翻。
+
 ## 📦 工程结构
 
 ```

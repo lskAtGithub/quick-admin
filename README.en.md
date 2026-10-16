@@ -88,6 +88,20 @@ cp docker/.env.example docker/.env    # fill in MySQL / Redis passwords and SECR
 
 `docker-compose.yaml` defines four services: **MySQL, Redis, Backend, Nginx**. Nginx serves the frontend build and reverse-proxies `/api/v1` to the backend; the SSL (443) config is included but commented out by default — enable it after providing your certificates.
 
+### 🌍 Multi-language Generation Script
+
+All copy is maintained in `frontend/web/src/i18n/langs/zh.json`; other locales need no hand-writing — run this from the repo root:
+
+```bash
+pnpm run i18n    # pick a target language → diff against zh.json → auto-translate missing entries via Baidu API → write langs/<code>.json
+```
+
+Before the first run, register and create a "Baidu Translate API" app in the [Baidu Translate Open Platform console](https://fanyi-api.baidu.com/manage/developer), then put the **APP_ID** and **SECRET** into `BAIDU_FANYI` in `frontend/web/scripts/create-i18n/config.js` — **the free standard tier already covers every entry of this project**.
+
+- **Incremental only**: just translates keys missing in the target file; existing translations are never overwritten, and extra keys are reported in the console without deletion.
+- 17 built-in locales (en/ja/ko/fr/de/es/ru/pt/it/nl/pl/vi/th/id/ms/ar/hi); those marked ※ require enabling the matching translation permission in the Baidu console — the script fails fast with a clear message if not enabled.
+- Placeholder templates (e.g. `请输入{name}`) are protected automatically; machine-translated word order in some locales may deserve manual polish; failed entries are never written as dirty data — rerun the script to top them up.
+
 ## 📦 Project Structure
 
 ```
