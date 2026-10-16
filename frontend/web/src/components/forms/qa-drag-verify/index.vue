@@ -17,48 +17,41 @@
       <slot name="textAfter" v-if="$slots.textAfter"></slot>
     </div>
 
-    <div
-      class="dv_handler dv_handler_bg"
-      @mousedown="dragStart"
-      @touchstart="dragStart"
-      ref="handler"
-      :style="handlerStyle"
-    >
+    <div class="dv_handler dv_handler_bg" @mousedown="dragStart" @touchstart="dragStart" ref="handler" :style="handlerStyle">
       <QaSvgIcon :icon="modelValue ? successIcon : handlerIcon" class="text-g-600"></QaSvgIcon>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useWindowSize } from "@vueuse/core";
+import { useWindowSize } from '@vueuse/core';
+import { $t } from '@/locales';
 
-defineOptions({ name: "QaDragVerify" });
+defineOptions({ name: 'QaDragVerify' });
 
-const emit = defineEmits(["handlerMove", "passCallback"]);
+const emit = defineEmits(['handlerMove', 'passCallback']);
 
 const props = defineProps({
-  width: { type: [Number, String], default: "100%" },
+  width: { type: [Number, String], default: '100%' },
   height: { type: Number, default: 40 },
-  text: { type: String, default: "按住滑块拖动" },
-  successText: { type: String, default: "success" },
-  background: { type: String, default: "#eee" },
-  progressBarBg: { type: String, default: "#1385FF" },
-  completedBg: { type: String, default: "#57D187" },
+  text: { type: String, default: $t('common.dragVerify') },
+  successText: { type: String, default: 'success' },
+  background: { type: String, default: '#eee' },
+  progressBarBg: { type: String, default: '#1385FF' },
+  completedBg: { type: String, default: '#57D187' },
   circle: { type: Boolean, default: false },
-  radius: { type: String, default: "calc(var(--custom-radius) / 3 + 2px)" },
-  handlerIcon: { type: String, default: "solar:double-alt-arrow-right-linear" },
-  successIcon: { type: String, default: "ri:check-fill" },
-  handlerBg: { type: String, default: "#fff" },
-  textSize: { type: String, default: "13px" },
-  textColor: { type: String, default: "#333" },
+  radius: { type: String, default: 'calc(var(--custom-radius) / 3 + 2px)' },
+  handlerIcon: { type: String, default: 'solar:double-alt-arrow-right-linear' },
+  successIcon: { type: String, default: 'ri:check-fill' },
+  handlerBg: { type: String, default: '#fff' },
+  textSize: { type: String, default: '13px' },
+  textColor: { type: String, default: '#333' }
 });
 
 const { width: winWidth } = useWindowSize();
-const effectiveHeight = computed(() =>
-  props.height === 40 && winWidth.value < 768 ? 24 : props.height
-);
+const effectiveHeight = computed(() => (props.height === 40 && winWidth.value < 768 ? 24 : props.height));
 
-const modelValue = defineModel("value", { type: Boolean, default: false });
+const modelValue = defineModel('value', { type: Boolean, default: false });
 const sliderPosition = ref(0);
 const isDragging = ref(false);
 const startX = ref(0);
@@ -90,63 +83,61 @@ const onTouchMove = (e) => {
 };
 
 const getNumericWidth = () => {
-  if (typeof props.width === "string") {
+  if (typeof props.width === 'string') {
     return dragVerify.value?.offsetWidth || 260;
   }
   return props.width;
 };
 
 const getStyleWidth = () => {
-  if (typeof props.width === "string") {
+  if (typeof props.width === 'string') {
     return props.width;
   }
-  return props.width + "px";
+  return props.width + 'px';
 };
 
 onMounted(() => {
-  dragVerify.value?.style.setProperty("--textColor", props.textColor);
+  dragVerify.value?.style.setProperty('--textColor', props.textColor);
   nextTick(() => {
     const numericWidth = getNumericWidth();
-    dragVerify.value?.style.setProperty("--width", Math.floor(numericWidth / 2) + "px");
-    dragVerify.value?.style.setProperty("--pwidth", -Math.floor(numericWidth / 2) + "px");
+    dragVerify.value?.style.setProperty('--width', Math.floor(numericWidth / 2) + 'px');
+    dragVerify.value?.style.setProperty('--pwidth', -Math.floor(numericWidth / 2) + 'px');
   });
-  document.addEventListener("touchstart", onTouchStart);
-  document.addEventListener("touchmove", onTouchMove, { passive: false });
+  document.addEventListener('touchstart', onTouchStart);
+  document.addEventListener('touchmove', onTouchMove, { passive: false });
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("touchstart", onTouchStart);
-  document.removeEventListener("touchmove", onTouchMove);
+  document.removeEventListener('touchstart', onTouchStart);
+  document.removeEventListener('touchmove', onTouchMove);
 });
 
 const handlerStyle = computed(() => ({
-  left: sliderPosition.value + "px",
-  width: effectiveHeight.value + "px",
-  height: effectiveHeight.value + "px",
+  left: sliderPosition.value + 'px',
+  width: effectiveHeight.value + 'px',
+  height: effectiveHeight.value + 'px',
   background: props.handlerBg,
-  transition: isDragging.value ? "none" : "left 0.3s",
+  transition: isDragging.value ? 'none' : 'left 0.3s'
 }));
 
 const dragVerifyStyle = computed(() => ({
   width: getStyleWidth(),
-  height: effectiveHeight.value + "px",
-  lineHeight: effectiveHeight.value + "px",
+  height: effectiveHeight.value + 'px',
+  lineHeight: effectiveHeight.value + 'px',
   background: props.background,
-  borderRadius: props.circle ? effectiveHeight.value / 2 + "px" : props.radius,
+  borderRadius: props.circle ? effectiveHeight.value / 2 + 'px' : props.radius
 }));
 
 const progressBarStyle = computed(() => ({
-  width: sliderPosition.value + effectiveHeight.value / 2 + "px",
+  width: sliderPosition.value + effectiveHeight.value / 2 + 'px',
   background: modelValue.value ? props.completedBg : props.progressBarBg,
-  height: effectiveHeight.value + "px",
-  borderRadius: props.circle
-    ? effectiveHeight.value / 2 + "px 0 0 " + effectiveHeight.value / 2 + "px"
-    : props.radius,
-  transition: isDragging.value ? "none" : "width 0.3s",
+  height: effectiveHeight.value + 'px',
+  borderRadius: props.circle ? effectiveHeight.value / 2 + 'px 0 0 ' + effectiveHeight.value / 2 + 'px' : props.radius,
+  transition: isDragging.value ? 'none' : 'width 0.3s'
 }));
 
 const textStyle = computed(() => ({
-  fontSize: props.textSize,
+  fontSize: props.textSize
 }));
 
 const message = computed(() => {
@@ -157,18 +148,18 @@ const dragStart = (e) => {
   if (modelValue.value) return;
   isDragging.value = true;
 
-  const pageX = "touches" in e ? (e.touches[0]?.pageX ?? 0) : e.pageX;
-  if (typeof pageX !== "number") return;
+  const pageX = 'touches' in e ? (e.touches[0]?.pageX ?? 0) : e.pageX;
+  if (typeof pageX !== 'number') return;
   startX.value = pageX;
   currentX.value = sliderPosition.value;
 
-  emit("handlerMove");
+  emit('handlerMove');
 };
 
 const dragMoving = (e) => {
   if (!isDragging.value || modelValue.value) return;
 
-  const pageX = "touches" in e ? (e.touches[0]?.pageX ?? 0) : e.pageX;
+  const pageX = 'touches' in e ? (e.touches[0]?.pageX ?? 0) : e.pageX;
   const numericWidth = getNumericWidth();
   const maxPosition = numericWidth - effectiveHeight.value;
 
@@ -178,7 +169,7 @@ const dragMoving = (e) => {
     sliderPosition.value = maxPosition;
     modelValue.value = true;
     isDragging.value = false;
-    emit("passCallback");
+    emit('passCallback');
   } else {
     sliderPosition.value = newPosition;
   }
@@ -196,7 +187,7 @@ const dragFinish = () => {
   } else {
     sliderPosition.value = maxPosition;
     modelValue.value = true;
-    emit("passCallback");
+    emit('passCallback');
   }
 };
 
@@ -212,7 +203,7 @@ watch(modelValue, (val) => {
 });
 
 defineExpose({
-  reset,
+  reset
 });
 </script>
 
@@ -259,14 +250,7 @@ defineExpose({
     justify-content: center;
     color: transparent;
     user-select: none;
-    background: linear-gradient(
-      to right,
-      var(--textColor) 0%,
-      var(--textColor) 40%,
-      #fff 50%,
-      var(--textColor) 60%,
-      var(--textColor) 100%
-    );
+    background: linear-gradient(to right, var(--textColor) 0%, var(--textColor) 40%, #fff 50%, var(--textColor) 60%, var(--textColor) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     animation: slidetounlock 2s cubic-bezier(0, 0.2, 1, 1) infinite;

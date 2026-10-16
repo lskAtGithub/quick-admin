@@ -14,7 +14,7 @@
       <div class="qa-drawer-header">
         <span class="qa-drawer-title">{{ title }}</span>
         <div class="qa-drawer-actions">
-          <ElTooltip content="关闭" placement="top">
+          <ElTooltip :content="$t('common.close')" placement="top">
             <QaIconButton icon="ri:close-line" @click="visible = false" />
           </ElTooltip>
         </div>
@@ -27,7 +27,7 @@
     <template v-else-if="formMode" #footer>
       <div class="qa-drawer-footer">
         <ElButton v-if="formMode === 'detail'" type="primary" @click="emit('confirm')">
-          {{ confirmText || '关闭' }}
+          {{ confirmText || $t('common.close') }}
         </ElButton>
         <template v-else>
           <ElButton @click="emit('cancel')">{{ cancelText }}</ElButton>
@@ -42,6 +42,7 @@
 
 <script setup>
 import { computed, watch } from 'vue';
+import { $t } from '@/locales';
 import QaIconButton from '@/components/actions/qa-icon-button/index.vue';
 
 defineOptions({ name: 'QaDrawer', inheritAttrs: false });
@@ -54,8 +55,8 @@ const props = defineProps({
   drawerClass: { type: String, default: '' },
   formMode: { type: String, default: undefined },
   confirmLoading: { type: Boolean, default: false },
-  confirmText: { type: String, default: '确定' },
-  cancelText: { type: String, default: '取消' }
+  confirmText: { type: String, default: $t('common.confirm') },
+  cancelText: { type: String, default: $t('common.cancel') }
 });
 
 const emit = defineEmits(['update:modelValue', 'close', 'opened', 'cancel', 'confirm', 'submitAndContinue']);

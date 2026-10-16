@@ -7,33 +7,20 @@
     >
       <div class="p-5 text-center select-none">
         <div class="mb-7.5 text-5xl">🔒</div>
-        <h1 class="m-0 mb-5 text-3xl font-semibold text-danger">系统已锁定</h1>
+        <h1 class="m-0 mb-5 text-3xl font-semibold text-danger">{{ t('lock.lockedTitle') }}</h1>
         <p class="max-w-125 m-0 text-lg leading-relaxed text-white">
-          检测到开发者工具已打开
+          {{ t('lock.devToolsDetected') }}
           <br />
-          为了系统安全，请关闭开发者工具后继续使用
+          {{ t('lock.devToolsHint') }}
         </p>
         <div class="mt-7.5 text-sm text-gray-400">Security Lock Activated</div>
       </div>
     </div>
 
     <div v-if="!isLock">
-      <QaDialog
-        v-model="visible"
-        width="500px"
-        max-height="170px"
-        :title="t('lock.lockScreen')"
-        class="v-lock-dialog"
-        @opened="handleDialogOpen"
-      >
+      <QaDialog v-model="visible" width="500px" max-height="170px" :title="t('lock.lockScreen')" class="v-lock-dialog" @opened="handleDialogOpen">
         <div class="lock-dialog-content">
-          <img
-            v-if="userAvatar"
-            :src="userAvatar"
-            alt=""
-            class="lock-dialog-avatar object-cover"
-            loading="eager"
-          />
+          <img v-if="userAvatar" :src="userAvatar" alt="" class="lock-dialog-avatar object-cover" loading="eager" />
           <img v-else class="lock-dialog-avatar" src="@/assets/images/user/avatar.webp" alt="" />
           <span class="lock-dialog-name">{{ displayName }}</span>
         </div>
@@ -52,7 +39,7 @@
           </ElFormItem>
         </ElForm>
         <template #footer>
-          <ElButton type="primary" @click="handleLock">{{ t("navbar.lock") }}</ElButton>
+          <ElButton type="primary" @click="handleLock">{{ t('navbar.lock') }}</ElButton>
         </template>
       </QaDialog>
     </div>
@@ -60,7 +47,7 @@
     <div v-else class="lockpage" :style="lockPageBgStyle">
       <div v-show="showClock" class="unlock-container" @click="showUnlockForm">
         <ElIcon><Lock /></ElIcon>
-        <span>{{ t("lock.unlock") }}</span>
+        <span>{{ t('lock.unlock') }}</span>
       </div>
 
       <div class="time-container flex-cc w-screen h-screen">
@@ -83,48 +70,19 @@
               <img v-else class="avatar" src="@/assets/images/user/avatar.webp" alt="" />
               <span class="username">{{ displayName }}</span>
             </div>
-            <ElInput
-              ref="passwordInputRef"
-              v-model="unlockPwd"
-              :placeholder="t('lock.placeholder')"
-              class="password-input"
-              show-password
-              clearable
-              @keydown.enter="submitUnlock"
-            />
+            <ElInput ref="passwordInputRef" v-model="unlockPwd" :placeholder="t('lock.placeholder')" class="password-input" show-password clearable @keydown.enter="submitUnlock" />
             <span v-if="unlockErrMsg" class="error-message">
-              {{ t("lock.message") }}
+              {{ t('lock.message') }}
             </span>
             <div class="button-group">
-              <ElButton
-                type="primary"
-                size="small"
-                class="back-button"
-                link
-                :disabled="unlockLoading"
-                @click="showClockView"
-              >
-                {{ t("common.back") }}
+              <ElButton type="primary" size="small" class="back-button" link :disabled="unlockLoading" @click="showClockView">
+                {{ t('common.back') }}
               </ElButton>
-              <ElButton
-                type="primary"
-                size="small"
-                class="login-button"
-                link
-                :disabled="unlockLoading"
-                @click="goLogin"
-              >
-                {{ t("lock.backToLogin") }}
+              <ElButton type="primary" size="small" class="login-button" link :disabled="unlockLoading" @click="goLogin">
+                {{ t('lock.backToLogin') }}
               </ElButton>
-              <ElButton
-                type="primary"
-                class="entry-button"
-                size="small"
-                link
-                :disabled="unlockLoading"
-                @click="submitUnlock"
-              >
-                {{ t("lock.entrySystem") }}
+              <ElButton type="primary" class="entry-button" size="small" link :disabled="unlockLoading" @click="submitUnlock">
+                {{ t('lock.entrySystem') }}
               </ElButton>
             </div>
           </div>
@@ -143,19 +101,19 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { Lock } from "@element-plus/icons-vue";
-import { ElMessage, ElInput } from "element-plus";
-import { useI18n } from "vue-i18n";
-import CryptoJS from "crypto-js";
-import { useUserStore, useSettingStore } from "@/store";
-import { mittBus } from "@/utils";
-import { useNow } from "@/hooks/core/useNow";
-import bgDark from "@/assets/images/lock/bg_dark.webp";
-import bgLight from "@/assets/images/lock/bg_light.webp";
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { Lock } from '@element-plus/icons-vue';
+import { ElMessage, ElInput } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+import CryptoJS from 'crypto-js';
+import { useUserStore, useSettingStore } from '@/store';
+import { mittBus } from '@/utils';
+import { useNow } from '@/hooks/core/useNow';
+import bgDark from '@/assets/images/lock/bg_dark.webp';
+import bgLight from '@/assets/images/lock/bg_light.webp';
 
-defineOptions({ name: "QaScreenLock" });
+defineOptions({ name: 'QaScreenLock' });
 
 const { t } = useI18n();
 const route = useRoute();
@@ -174,16 +132,16 @@ const lockPageBgStyle = computed(() => {
   const url = isDark ? bgDark : bgLight;
   return {
     backgroundImage: `linear-gradient(rgb(0 0 0 / 46%), rgb(0 0 0 / 46%)), url(${url})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
   };
 });
 
 const { hour, month, minute, meridiem, year, day, week } = useNow(true);
 
-const displayName = computed(() => userInfo?.name || userInfo?.username || "—");
-const userAvatar = computed(() => userInfo?.avatar?.trim?.() || "");
+const displayName = computed(() => userInfo?.name || userInfo?.username || '—');
+const userAvatar = computed(() => userInfo?.avatar?.trim?.() || '');
 
 const visible = ref(false);
 const lockInputRef = ref(null);
@@ -191,19 +149,18 @@ const passwordInputRef = ref(null);
 const showDevToolsWarning = ref(false);
 
 const showClock = ref(true);
-const unlockPwd = ref("");
+const unlockPwd = ref('');
 const unlockErrMsg = ref(false);
 const unlockLoading = ref(false);
 
 const formRef = ref(null);
-const formData = ref({ password: "" });
+const formData = ref({ password: '' });
 
 const rules = computed(() => ({
-  password: [{ required: true, message: t("lock.required"), trigger: "blur" }],
+  password: [{ required: true, message: t('lock.required'), trigger: 'blur' }]
 }));
 
-const isMobile = () =>
-  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isMobile = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 const disableDevTools = () => {
   const handleContextMenu = (e) => {
@@ -213,40 +170,40 @@ const disableDevTools = () => {
       return false;
     }
   };
-  document.addEventListener("contextmenu", handleContextMenu, true);
+  document.addEventListener('contextmenu', handleContextMenu, true);
 
   const handleKeyDown = (e) => {
     if (!isLock.value) return;
-    if (e.key === "F12") {
+    if (e.key === 'F12') {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
     if (e.ctrlKey && e.shiftKey) {
       const key = e.key.toLowerCase();
-      if (["i", "j", "c", "k"].includes(key)) {
+      if (['i', 'j', 'c', 'k'].includes(key)) {
         e.preventDefault();
         e.stopPropagation();
         return false;
       }
     }
-    if (e.ctrlKey && ["u", "s", "a", "p", "f", "r", "w"].includes(e.key.toLowerCase())) {
+    if (e.ctrlKey && ['u', 's', 'a', 'p', 'f', 'r', 'w'].includes(e.key.toLowerCase())) {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
-    if (e.altKey && e.key === "Tab") {
+    if (e.altKey && e.key === 'Tab') {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
-    if (e.key === "F5") {
+    if (e.key === 'F5') {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
   };
-  document.addEventListener("keydown", handleKeyDown, true);
+  document.addEventListener('keydown', handleKeyDown, true);
 
   const handleSelectStart = (e) => {
     if (isLock.value) {
@@ -254,7 +211,7 @@ const disableDevTools = () => {
       return false;
     }
   };
-  document.addEventListener("selectstart", handleSelectStart, true);
+  document.addEventListener('selectstart', handleSelectStart, true);
 
   const handleDragStart = (e) => {
     if (isLock.value) {
@@ -262,7 +219,7 @@ const disableDevTools = () => {
       return false;
     }
   };
-  document.addEventListener("dragstart", handleDragStart, true);
+  document.addEventListener('dragstart', handleDragStart, true);
 
   const devtools = { open: false };
   const threshold = 160;
@@ -270,9 +227,7 @@ const disableDevTools = () => {
 
   const checkDevTools = () => {
     if (!isLock.value || isMobile()) return;
-    const isDevToolsOpen =
-      window.outerHeight - window.innerHeight > threshold ||
-      window.outerWidth - window.innerWidth > threshold;
+    const isDevToolsOpen = window.outerHeight - window.innerHeight > threshold || window.outerWidth - window.innerWidth > threshold;
     if (isDevToolsOpen && !devtools.open) {
       devtools.open = true;
       showDevToolsWarning.value = true;
@@ -287,28 +242,26 @@ const disableDevTools = () => {
   }
 
   return () => {
-    document.removeEventListener("contextmenu", handleContextMenu, true);
-    document.removeEventListener("keydown", handleKeyDown, true);
-    document.removeEventListener("selectstart", handleSelectStart, true);
-    document.removeEventListener("dragstart", handleDragStart, true);
+    document.removeEventListener('contextmenu', handleContextMenu, true);
+    document.removeEventListener('keydown', handleKeyDown, true);
+    document.removeEventListener('selectstart', handleSelectStart, true);
+    document.removeEventListener('dragstart', handleDragStart, true);
     if (devToolsInterval) clearInterval(devToolsInterval);
   };
 };
 
 const verifyPassword = (inputPassword, storedPassword) => {
   try {
-    const decryptedPassword = CryptoJS.AES.decrypt(storedPassword, ENCRYPT_KEY).toString(
-      CryptoJS.enc.Utf8,
-    );
+    const decryptedPassword = CryptoJS.AES.decrypt(storedPassword, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8);
     return inputPassword === decryptedPassword;
   } catch (error) {
-    console.error("密码解密失败:", error);
+    console.error('密码解密失败:', error);
     return false;
   }
 };
 
 const handleKeydown = (event) => {
-  if (event.altKey && event.key.toLowerCase() === "¬") {
+  if (event.altKey && event.key.toLowerCase() === '¬') {
     event.preventDefault();
     if (!isLock.value) {
       visible.value = true;
@@ -326,16 +279,13 @@ const handleLock = async () => {
   if (!formRef.value) return;
   await formRef.value.validate((valid, fields) => {
     if (valid) {
-      const encryptedPassword = CryptoJS.AES.encrypt(
-        formData.value.password,
-        ENCRYPT_KEY,
-      ).toString();
+      const encryptedPassword = CryptoJS.AES.encrypt(formData.value.password, ENCRYPT_KEY).toString();
       userStore.setLockStatus(true);
       userStore.setLockPassword(encryptedPassword);
       visible.value = false;
-      formData.value.password = "";
+      formData.value.password = '';
       showClock.value = true;
-      unlockPwd.value = "";
+      unlockPwd.value = '';
       unlockErrMsg.value = false;
     }
   });
@@ -351,7 +301,7 @@ function showUnlockForm() {
 
 function showClockView() {
   showClock.value = true;
-  unlockPwd.value = "";
+  unlockPwd.value = '';
   unlockErrMsg.value = false;
 }
 
@@ -362,23 +312,23 @@ async function submitUnlock() {
     const isValid = verifyPassword(unlockPwd.value, lockPassword.value);
     if (isValid) {
       userStore.setLockStatus(false);
-      userStore.setLockPassword("");
-      unlockPwd.value = "";
+      userStore.setLockPassword('');
+      unlockPwd.value = '';
       unlockErrMsg.value = false;
       visible.value = false;
       showDevToolsWarning.value = false;
       showClock.value = true;
     } else {
       unlockErrMsg.value = true;
-      ElMessage.error(t("lockScreen.pwdError"));
+      ElMessage.error(t('lockScreen.pwdError'));
       const root = passwordInputRef.value?.$el;
-      const inputWrap = root?.querySelector?.(".el-input__wrapper");
+      const inputWrap = root?.querySelector?.('.el-input__wrapper');
       const shakeTarget = inputWrap ?? root;
       if (shakeTarget) {
-        shakeTarget.classList.add("shake-animation");
-        setTimeout(() => shakeTarget.classList.remove("shake-animation"), 300);
+        shakeTarget.classList.add('shake-animation');
+        setTimeout(() => shakeTarget.classList.remove('shake-animation'), 300);
       }
-      unlockPwd.value = "";
+      unlockPwd.value = '';
     }
   } finally {
     unlockLoading.value = false;
@@ -387,10 +337,10 @@ async function submitUnlock() {
 
 async function goLogin() {
   await userStore.logout({ navigate: false }).catch(() => {});
-  const redirect = route.path !== "/login" && route.name !== "Login" ? route.fullPath : undefined;
+  const redirect = route.path !== '/login' && route.name !== 'Login' ? route.fullPath : undefined;
   await router.replace({
-    name: "Login",
-    ...(redirect ? { query: { redirect } } : {}),
+    name: 'Login',
+    ...(redirect ? { query: { redirect } } : {})
   });
 }
 
@@ -402,12 +352,12 @@ const openLockScreen = () => {
 
 watch(isLock, (newValue) => {
   if (newValue) {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     showClock.value = true;
-    unlockPwd.value = "";
+    unlockPwd.value = '';
     unlockErrMsg.value = false;
   } else {
-    document.body.style.overflow = "auto";
+    document.body.style.overflow = 'auto';
     showDevToolsWarning.value = false;
   }
 });
@@ -415,16 +365,16 @@ watch(isLock, (newValue) => {
 let cleanupDevTools = null;
 
 onMounted(() => {
-  mittBus.on("openLockScreen", openLockScreen);
-  document.addEventListener("keydown", handleKeydown);
-  if (isLock.value) document.body.style.overflow = "hidden";
+  mittBus.on('openLockScreen', openLockScreen);
+  document.addEventListener('keydown', handleKeydown);
+  if (isLock.value) document.body.style.overflow = 'hidden';
   cleanupDevTools = disableDevTools();
 });
 
 onUnmounted(() => {
-  mittBus.off("openLockScreen", openLockScreen);
-  document.removeEventListener("keydown", handleKeydown);
-  document.body.style.overflow = "auto";
+  mittBus.off('openLockScreen', openLockScreen);
+  document.removeEventListener('keydown', handleKeydown);
+  document.body.style.overflow = 'auto';
   if (cleanupDevTools) {
     cleanupDevTools();
     cleanupDevTools = null;

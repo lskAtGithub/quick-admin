@@ -192,6 +192,19 @@
     "off": "关闭",
     "expandAll": "展开全部",
     "collapseAll": "收起全部",
+    "close": "关闭",
+    "fullscreen": "全屏",
+    "restore": "还原",
+    "import": "导入",
+    "export": "导出",
+    "more": "更多",
+    "batchDelete": "批量删除",
+    "batchEnable": "批量启用",
+    "batchDisable": "批量停用",
+    "selectIcon": "点击选择图标",
+    "icon": "图标",
+    "searchIcon": "搜索图标",
+    "dragVerify": "按住滑块拖动",
     "noData": "暂无数据",
     "input": "请输入{name}",
     "select": "请选择{name}",
@@ -277,6 +290,10 @@
     "usernameLength": "用户名长度在 3 到 32 个字符",
     "passwordRequired": "请输入密码",
     "passwordMin": "密码长度不能少于 6 位"
+  },
+  "layout": {
+    "sidebarNav": "主菜单导航",
+    "mainContent": "主要内容区域"
   },
   "exception": {
     "noAccess": "抱歉，你无权访问该页面",
@@ -388,6 +405,13 @@
     },
     "tabStyle": { "default": "默认", "card": "卡片", "google": "谷歌" },
     "transition": { "list": { "none": "无", "fade": "淡入淡出", "slideLeft": "向左滑动", "slideBottom": "向上滑入", "slideTop": "向下滑入" } },
+    "layoutSize": {
+      "title": "布局大小",
+      "default": "默认",
+      "large": "大型",
+      "small": "小型",
+      "switched": "布局大小已切换"
+    },
     "actions": {
       "copyConfig": "复制配置",
       "resetConfig": "重置配置",
@@ -415,13 +439,21 @@
     "required": "请输入锁屏密码",
     "message": "锁屏密码错误，请重试",
     "backToLogin": "返回登录",
-    "entrySystem": "进入系统"
+    "entrySystem": "进入系统",
+    "lockedTitle": "系统已锁定",
+    "devToolsDetected": "检测到开发者工具已打开",
+    "devToolsHint": "为了系统安全，请关闭开发者工具后继续使用"
   },
   "lockScreen": {
     "lockPassword": "锁屏密码",
     "pwdError": "锁屏密码错误"
   },
   "worktab": {
+    "refresh": "刷新",
+    "close": "关闭",
+    "closeOthers": "关闭其他",
+    "closeAll": "关闭全部",
+    "dropdownTodo": "标签下拉菜单（待实现）",
     "refreshCacheDone": "已刷新并重新加载页面",
     "refreshCacheFail": "刷新缓存失败"
   }

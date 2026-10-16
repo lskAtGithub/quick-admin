@@ -2,58 +2,29 @@
 <template>
   <div class="inline-flex flex-wrap items-center gap-2">
     <ElSpace>
-      <ElButton
-        v-if="permCreate"
-        type="primary"
-        :icon="Plus"
-        :loading="createLoading"
-        plain
-        @click="$emit('add')"
-      >
-        新增
+      <ElButton v-if="permCreate" type="primary" :icon="Plus" :loading="createLoading" plain @click="$emit('add')">
+        {{ $t('common.add') }}
       </ElButton>
-      <ElButton
-        v-if="permImport"
-        type="success"
-        :icon="Upload"
-        :loading="importLoading"
-        plain
-        @click="$emit('import')"
-      >
-        导入
+      <ElButton v-if="permImport" type="success" :icon="Upload" :loading="importLoading" plain @click="$emit('import')">
+        {{ $t('common.import') }}
       </ElButton>
-      <ElButton
-        v-if="permExport"
-        type="warning"
-        :icon="Download"
-        :loading="exportLoading"
-        plain
-        @click="$emit('export')"
-      >
-        导出
+      <ElButton v-if="permExport" type="warning" :icon="Download" :loading="exportLoading" plain @click="$emit('export')">
+        {{ $t('common.export') }}
       </ElButton>
-      <ElButton
-        v-if="permDelete"
-        type="danger"
-        :icon="Delete"
-        :loading="deleteLoading"
-        :disabled="removeIds.length === 0"
-        plain
-        @click="$emit('delete')"
-      >
-        {{ removeIds.length > 0 ? `批量删除 (${removeIds.length})` : "批量删除" }}
+      <ElButton v-if="permDelete" type="danger" :icon="Delete" :loading="deleteLoading" :disabled="removeIds.length === 0" plain @click="$emit('delete')">
+        {{ removeIds.length > 0 ? `${$t('common.batchDelete')} (${removeIds.length})` : $t('common.batchDelete') }}
       </ElButton>
       <ElDropdown v-if="permPatch" trigger="click" :disabled="removeIds.length === 0">
         <ElButton type="info" plain :loading="moreLoading">
-          更多
+          {{ $t('common.more') }}
           <ElIcon class="el-icon--right">
             <ArrowDown />
           </ElIcon>
         </ElButton>
         <template #dropdown>
           <ElDropdownMenu>
-            <ElDropdownItem :icon="Check" @click="$emit('more', 'enable')">批量启用</ElDropdownItem>
-            <ElDropdownItem :icon="CircleClose" @click="$emit('more', 'disable')">批量停用</ElDropdownItem>
+            <ElDropdownItem :icon="Check" @click="$emit('more', 'enable')">{{ $t('common.batchEnable') }}</ElDropdownItem>
+            <ElDropdownItem :icon="CircleClose" @click="$emit('more', 'disable')">{{ $t('common.batchDisable') }}</ElDropdownItem>
           </ElDropdownMenu>
         </template>
       </ElDropdown>
@@ -62,9 +33,9 @@
 </template>
 
 <script setup>
-import { ArrowDown, Check, CircleClose, Delete, Download, Plus, Upload } from "@element-plus/icons-vue";
+import { ArrowDown, Check, CircleClose, Delete, Download, Plus, Upload } from '@element-plus/icons-vue';
 
-defineOptions({ name: "QaTableHeaderLeft" });
+defineOptions({ name: 'QaTableHeaderLeft' });
 
 defineProps({
   removeIds: { type: Array, default: () => [] },
@@ -77,8 +48,8 @@ defineProps({
   importLoading: { type: Boolean, default: false },
   exportLoading: { type: Boolean, default: false },
   deleteLoading: { type: Boolean, default: false },
-  moreLoading: { type: Boolean, default: false },
+  moreLoading: { type: Boolean, default: false }
 });
 
-defineEmits(["add", "import", "export", "delete", "more"]);
+defineEmits(['add', 'import', 'export', 'delete', 'more']);
 </script>

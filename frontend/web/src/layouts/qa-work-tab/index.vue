@@ -10,15 +10,13 @@
         'qa-work-tab--dark': isDark,
         'qa-work-tab--fixed': isFixed,
         'qa-work-tab--touch': isTouch,
-        'qa-work-tab--hover': isHover,
-      },
+        'qa-work-tab--hover': isHover
+      }
     ]"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
   >
-    <div
-      class="qa-work-tab__scroll-container relative flex h-full w-full items-center overflow-hidden"
-    >
+    <div class="qa-work-tab__scroll-container relative flex h-full w-full items-center overflow-hidden">
       <div
         ref="tabContentRef"
         class="qa-work-tab__content flex h-full items-center gap-1.5 transition-all duration-300"
@@ -36,41 +34,24 @@
           :class="{
             'qa-work-tab__item--active': currentPath === item.path,
             'qa-work-tab__item--fixed': item.fixedTab,
-            'qa-work-tab__item--hover': isHover,
+            'qa-work-tab__item--hover': isHover
           }"
           :style="tabItemStyle"
           @click="handleTabClick(item)"
           @contextmenu.prevent="handleTabContextmenu($event, item)"
           @auxclick="handleTabMiddleClick($event, item)"
         >
-          <QaSvgIcon
-            v-if="item.icon && item.icon !== 'none'"
-            class="qa-work-tab__icon shrink-0"
-            :icon="item.icon"
-          />
+          <QaSvgIcon v-if="item.icon && item.icon !== 'none'" class="qa-work-tab__icon shrink-0" :icon="item.icon" />
           <span class="qa-work-tab__title flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
             {{ formatMenuTitle(item.title) }}
           </span>
-          <QaSvgIcon
-            v-if="item.fixedTab"
-            class="qa-work-tab__pin shrink-0 text-sm"
-            icon="ri:pushpin-2-line"
-            @click.stop="handleToggleFixed(item)"
-          />
-          <QaSvgIcon
-            v-else
-            class="qa-work-tab__close shrink-0 text-sm"
-            icon="ri:close-line"
-            @click.stop="handleTabClose(item)"
-          />
+          <QaSvgIcon v-if="item.fixedTab" class="qa-work-tab__pin shrink-0 text-sm" icon="ri:pushpin-2-line" @click.stop="handleToggleFixed(item)" />
+          <QaSvgIcon v-else class="qa-work-tab__close shrink-0 text-sm" icon="ri:close-line" @click.stop="handleTabClose(item)" />
         </div>
       </div>
     </div>
 
-    <div
-      v-if="isOverflow"
-      class="qa-work-tab__scroll-btns absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1"
-    >
+    <div v-if="isOverflow" class="qa-work-tab__scroll-btns absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
       <div
         class="qa-work-tab__scroll-btn qa-card-xs flex h-6 w-6 cursor-pointer items-center justify-center rounded transition-colors hover:bg-(--el-color-primary-light-9)"
         @click="handleScrollLeft"
@@ -96,20 +77,21 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
-import { useMenuStore, useSettingStore, useWorktabStore } from "@/store";
-import { formatMenuTitle } from "@/utils";
-import { useCommon } from "@/hooks/core/useCommon";
-import { TAB_STYLE_CARD, TAB_STYLE_DEFAULT, TAB_STYLE_GOOGLE } from "@/constants/app";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { $t } from '@/locales';
+import { useRoute, useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { useMenuStore, useSettingStore, useWorktabStore } from '@/store';
+import { formatMenuTitle } from '@/utils';
+import { useCommon } from '@/hooks/core/useCommon';
+import { TAB_STYLE_CARD, TAB_STYLE_DEFAULT, TAB_STYLE_GOOGLE } from '@/constants/app';
 
-defineOptions({ name: "QaWorkTab" });
+defineOptions({ name: 'QaWorkTab' });
 
 const props = defineProps({
   isFixed: { type: Boolean, default: false },
   isTouch: { type: Boolean, default: false },
-  isHover: { type: Boolean, default: false },
+  isHover: { type: Boolean, default: false }
 });
 
 const route = useRoute();
@@ -121,12 +103,12 @@ const { homePath } = useCommon();
 
 const showWorkTab = computed(() => settingStore.showWorkTab);
 const tabStyle = computed(() => settingStore.tabStyle);
-const isDark = computed(() => settingStore.theme === "dark");
+const isDark = computed(() => settingStore.theme === 'dark');
 
 const tabStyleClass = computed(() => {
-  if (tabStyle.value === TAB_STYLE_CARD) return "qa-work-tab--card";
-  if (tabStyle.value === TAB_STYLE_GOOGLE) return "qa-work-tab--google";
-  return "qa-work-tab--default";
+  if (tabStyle.value === TAB_STYLE_CARD) return 'qa-work-tab--card';
+  if (tabStyle.value === TAB_STYLE_GOOGLE) return 'qa-work-tab--google';
+  return 'qa-work-tab--default';
 });
 
 const openedTabs = computed(() => worktabStore.opened);
@@ -143,12 +125,12 @@ const setTabItemRef = (el) => {
 };
 
 const contentStyle = computed(() => ({
-  transform: `translateX(${scrollLeft.value}px)`,
+  transform: `translateX(${scrollLeft.value}px)`
 }));
 
 const tabItemStyle = computed(() => ({
-  height: tabStyle.value === TAB_STYLE_DEFAULT ? "32px" : "30px",
-  padding: tabStyle.value === TAB_STYLE_DEFAULT ? "0 12px" : "0 10px",
+  height: tabStyle.value === TAB_STYLE_DEFAULT ? '32px' : '30px',
+  padding: tabStyle.value === TAB_STYLE_DEFAULT ? '0 12px' : '0 10px'
 }));
 
 const scrollLeft = ref(0);
@@ -165,10 +147,10 @@ let pollTimer = null;
 
 const contextMenuItems = computed(() => {
   const items = [
-    { key: "refresh", label: "刷新", icon: "ri:refresh-line" },
-    { key: "close", label: "关闭", icon: "ri:close-line" },
-    { key: "closeOthers", label: "关闭其他", icon: "ri:close-circle-line" },
-    { key: "closeAll", label: "关闭全部", icon: "ri:close-circle-fill" },
+    { key: 'refresh', label: $t('worktab.refresh'), icon: 'ri:refresh-line' },
+    { key: 'close', label: $t('worktab.close'), icon: 'ri:close-line' },
+    { key: 'closeOthers', label: $t('worktab.closeOthers'), icon: 'ri:close-circle-line' },
+    { key: 'closeAll', label: $t('worktab.closeAll'), icon: 'ri:close-circle-fill' }
   ];
   return items;
 });
@@ -246,9 +228,9 @@ const handleToggleFixed = (item) => {
 const handleMenuSelect = (menu) => {
   if (!contextMenuTab.value) return;
   const tab = contextMenuTab.value;
-  
+
   switch (menu.key) {
-    case "refresh":
+    case 'refresh':
       if (tab.path === currentPath.value) {
         useCommon().refresh();
       } else {
@@ -256,16 +238,16 @@ const handleMenuSelect = (menu) => {
         nextTick(() => useCommon().refresh());
       }
       break;
-    case "close":
+    case 'close':
       handleTabClose(tab);
       break;
-    case "closeOthers":
+    case 'closeOthers':
       worktabStore.removeOthers(tab.path);
       if (tab.path !== currentPath.value) {
         router.push(tab.path);
       }
       break;
-    case "closeAll":
+    case 'closeAll':
       worktabStore.removeAll();
       if (tab.path !== homePath.value) {
         router.push(homePath.value);
@@ -329,7 +311,7 @@ const handleScrollRight = () => {
 };
 
 const handleDropdownClick = () => {
-  ElMessage.info("标签下拉菜单（待实现）");
+  ElMessage.info($t('worktab.dropdownTodo'));
 };
 
 const handleTouchStart = (e) => {
@@ -355,7 +337,7 @@ watch(
     nextTick(() => {
       scrollToActiveTab();
     });
-  },
+  }
 );
 
 watch(
@@ -365,7 +347,7 @@ watch(
       checkOverflow();
       scrollToActiveTab();
     });
-  },
+  }
 );
 
 onMounted(() => {

@@ -11,12 +11,12 @@
 <template>
   <div class="app-layout">
     <!-- 左侧菜单导航 -->
-    <aside id="app-sidebar" aria-label="主菜单导航">
+    <aside id="app-sidebar" :aria-label="$t('layout.sidebarNav')">
       <QaSidebarMenu />
     </aside>
 
     <!-- 右侧主区域 -->
-    <main id="app-main" aria-label="主要内容区域">
+    <main id="app-main" :aria-label="$t('layout.mainContent')">
       <div id="app-header">
         <QaHeaderBar />
       </div>
@@ -34,5 +34,5 @@
 </template>
 
 <script setup>
-defineOptions({ name: "AppLayout" });
+defineOptions({ name: 'AppLayout' });
 </script>
