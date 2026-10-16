@@ -44,9 +44,10 @@ Quick Admin：FastAPI + Vue3 的前后端分离管理后台。
 
 ## Skills（按需能力）
 
-本项目 / 团队技能以 `SKILL.md` 形式存放，按工具自动发现：
+本项目 / 团队技能以 `SKILL.md` 形式存放，按工具自动发现。现有清单：
 
-- Qoder 项目技能：`.qoder/skills/<name>/SKILL.md`（随仓库共享）。
+- **UI 技能 impeccable**：配置在 `.impeccable/`（config.json / design.json）。负责界面设计、改版、审校、打磨等前端 UI 工程化能力；技能本体由开发者按自己的工具本地安装，不随仓库提交。
+- **前后端技能**：项目根 `skills/` 目录下 `qa-front/SKILL.md`（前端开发规范与新页面流程）与 `qa-back/SKILL.md`（后端开发规范与新模块流程），新增/改造模块页面时按其 Step 流程执行。
 - 新增技能：目录名小写连字符，`SKILL.md` 的 `description` 用第三人称、同时写清「做什么 + 何时触发」。
 
 ## 参考文档

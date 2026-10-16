@@ -102,9 +102,20 @@ quick-admin/                 # Full-stack monorepo
 ├─ frontend/web/             # Vue3 web frontend (Element Plus + Vite + Pinia + Tailwind)
 │   └─ src/                  # views / router / store / layouts / components / i18n ...
 ├─ docker/                   # Docker Compose one-click deploy (MySQL/Redis/Backend/Nginx)
+├─ skills/                   # Frontend/backend dev-convention skills (qa-front / qa-back, SKILL.md)
 ├─ scripts/dev.js            # Root dev launcher (starts frontend + backend together)
 └─ deploy.sh                 # One-click deployment script
 ```
+
+## 🤖 AI Coding-Agent Skills
+
+The repo ships skills for AI coding agents:
+
+| Skill | Location | Purpose |
+|-------|----------|---------|
+| 🎨 **impeccable** (UI) | Configured via `.impeccable/` (config.json / design.json) | Frontend interface design/engineering: redesign, critique, polish, auditing |
+| 🖥️ **qa-front** | `skills/qa-front/SKILL.md` | Frontend conventions and the full workflow for adding admin pages (API modules, list-page kit, router/menu wiring, i18n, etc.) |
+| ⚙️ **qa-back** | `skills/qa-back/SKILL.md` | Backend conventions and the full workflow for adding business modules (Model/Schema/CRUD/Service/Controller layering, domain registration, permission SQL, verification) |
 
 ## 📌 Built-in Features
 

@@ -102,9 +102,20 @@ quick-admin/                 # Monorepo 全栈工程
 ├─ frontend/web/             # Vue3 Web 前端（Element Plus + Vite + Pinia + Tailwind）
 │   └─ src/                  # views / router / store / layouts / components / i18n ...
 ├─ docker/                   # Docker Compose 一键部署（MySQL/Redis/Backend/Nginx）
+├─ skills/                   # 前后端开发规范技能（qa-front / qa-back，SKILL.md）
 ├─ scripts/dev.js            # 根级开发启动器（同时拉起前后端）
 └─ deploy.sh                 # 一键部署脚本
 ```
+
+## 🤖 AI 编码助手技能（Skills）
+
+项目内置面向 AI 编码代理的技能：
+
+| 技能 | 位置 | 作用 |
+|------|------|------|
+| 🎨 **impeccable**（UI） | 配置在 `.impeccable/`（config.json / design.json） | 前端界面设计/改版/审校/打磨等 UI 工程化能力 |
+| 🖥️ **qa-front** | `skills/qa-front/SKILL.md` | 前端开发规范与新增管理模块页面的完整流程（API 模块、列表页三件套、路由菜单接入、i18n 等） |
+| ⚙️ **qa-back** | `skills/qa-back/SKILL.md` | 后端开发规范与新增业务模块的完整流程（Model/Schema/CRUD/Service/Controller 分层、域注册、权限 SQL、校验） |
 
 ## 📌 内置功能
 
