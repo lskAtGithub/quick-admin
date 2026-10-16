@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="新增菜单"
+    :title="$t('common.addTitle', { name: $t('system.menu.entity') })"
     size="500px"
     form-mode="create"
     :confirm-loading="submitLoading"
@@ -56,21 +56,24 @@ const allowedTypes = computed(() => {
   return [1, 2, 3];
 });
 
-watch(() => props.modelValue, (val) => {
-  visible.value = val;
-  if (val) {
-    formData.value = createInitial();
-    if (props.parentId != null) {
-      formData.value.parent_id = props.parentId;
-      if (props.parentType === 1) {
-        formData.value.type = 2;
-      } else if (props.parentType === 2) {
-        formData.value.type = 3;
+watch(
+  () => props.modelValue,
+  (val) => {
+    visible.value = val;
+    if (val) {
+      formData.value = createInitial();
+      if (props.parentId != null) {
+        formData.value.parent_id = props.parentId;
+        if (props.parentType === 1) {
+          formData.value.type = 2;
+        } else if (props.parentType === 2) {
+          formData.value.type = 3;
+        }
       }
+      formRef.value?.resetFields();
     }
-    formRef.value?.resetFields();
   }
-});
+);
 
 watch(visible, (val) => {
   emit('update:modelValue', val);

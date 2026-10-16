@@ -4,15 +4,15 @@
     <ElCard class="mb-3" shadow="never">
       <div class="flex items-center justify-between">
         <div class="flex flex-wrap items-center gap-2">
-          <ElInput v-model="searchForm.name" placeholder="菜单名称" clearable class="search-input-sm" />
-          <ElSelect v-model="searchForm.status" placeholder="状态" clearable class="search-input-xs">
-            <ElOption label="启用" :value="0" />
-            <ElOption label="停用" :value="1" />
+          <ElInput v-model="searchForm.name" :placeholder="$t('system.menu.name')" clearable class="search-input-sm" />
+          <ElSelect v-model="searchForm.status" :placeholder="$t('common.status')" clearable class="search-input-xs">
+            <ElOption :label="$t('common.enabled')" :value="0" />
+            <ElOption :label="$t('common.disabled')" :value="1" />
           </ElSelect>
         </div>
         <div class="flex items-center">
-          <ElButton @click="handleReset">重置</ElButton>
-          <ElButton type="primary" @click="handleSearch">搜索</ElButton>
+          <ElButton @click="handleReset">{{ $t('common.reset') }}</ElButton>
+          <ElButton type="primary" @click="handleSearch">{{ $t('common.search') }}</ElButton>
         </div>
       </div>
     </ElCard>
@@ -25,43 +25,31 @@
       </div>
 
       <!-- 树形表格 -->
-      <QaTable
-        :data-source="filteredData"
-        :columns="columns"
-        row-key="id"
-        :tree-props="{ children: 'children' }"
-        :default-expand-all="true"
-        @selection-change="onSelectionChange"
-      >
+      <QaTable :data-source="filteredData" :columns="columns" row-key="id" :tree-props="{ children: 'children' }" :default-expand-all="true" @selection-change="onSelectionChange">
         <template #name="{ row }">
           <QaSvgIcon v-if="row.icon && row.type !== 3" :icon="row.icon" :size="16" class="mr-1 align-middle" />
           <span class="align-middle">{{ row.name }}</span>
         </template>
         <template #type="{ row }">
-          <ElTag v-if="row.type === 1" type="warning">目录</ElTag>
-          <ElTag v-else-if="row.type === 2" type="success">菜单</ElTag>
-          <ElTag v-else-if="row.type === 3" type="danger">按钮</ElTag>
+          <ElTag v-if="row.type === 1" type="warning">{{ $t('system.menu.catalog') }}</ElTag>
+          <ElTag v-else-if="row.type === 2" type="success">{{ $t('system.menu.menuItem') }}</ElTag>
+          <ElTag v-else-if="row.type === 3" type="danger">{{ $t('system.menu.button') }}</ElTag>
         </template>
         <template #status="{ row }">
           <ElTag :type="row.status === 0 ? 'success' : 'danger'">
-            {{ row.status === 0 ? '启用' : '停用' }}
+            {{ row.status === 0 ? $t('common.enabled') : $t('common.disabled') }}
           </ElTag>
         </template>
         <template #action="{ row }">
-          <ElButton v-if="row.type !== 3" link type="primary" @click="handleAddChild(row)">新增</ElButton>
-          <ElButton link type="primary" @click="handleEdit(row)">编辑</ElButton>
-          <ElButton link type="danger" @click="handleDelete(row)">删除</ElButton>
+          <ElButton v-if="row.type !== 3" link type="primary" @click="handleAddChild(row)">{{ $t('common.add') }}</ElButton>
+          <ElButton link type="primary" @click="handleEdit(row)">{{ $t('common.edit') }}</ElButton>
+          <ElButton link type="danger" @click="handleDelete(row)">{{ $t('common.delete') }}</ElButton>
         </template>
       </QaTable>
     </ElCard>
 
     <!-- 新增菜单抽屉 -->
-    <MenuAdd
-      v-model="addDrawerVisible"
-      :parent-id="addParentId"
-      :parent-type="addParentType"
-      @success="handleAddSuccess"
-    />
+    <MenuAdd v-model="addDrawerVisible" :parent-id="addParentId" :parent-type="addParentType" @success="handleAddSuccess" />
 
     <!-- 编辑菜单抽屉 -->
     <MenuEdit v-model="editDrawerVisible" :menu-id="editMenuId" @success="handleEditSuccess" />
@@ -71,6 +59,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { $t } from '@/locales';
 import { MenuAPI } from '@/api/module_system/menu';
 import QaTable from '@/components/tables/qa-table/index.vue';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
@@ -92,14 +81,14 @@ const searchForm = ref({
 
 const columns = [
   { type: 'selection', width: 50 },
-  { prop: 'name', label: '菜单名称', minWidth: 200, slotName: 'name' },
-  { prop: 'type', label: '类型', width: 80, align: 'center', slotName: 'type' },
-  { prop: 'route_path', label: '路由路径', minWidth: 140, showOverflowTooltip: true },
-  { prop: 'component_path', label: '组件路径', minWidth: 160, showOverflowTooltip: true },
-  { prop: 'permission', label: '权限标识', minWidth: 160, showOverflowTooltip: true },
-  { prop: 'order', label: '排序', width: 80 },
-  { prop: 'status', label: '状态', width: 80, slotName: 'status' },
-  { label: '操作', fixed: 'right', width: 200, slotName: 'action' }
+  { prop: 'name', label: $t('system.menu.name'), minWidth: 200, slotName: 'name' },
+  { prop: 'type', label: $t('common.type'), width: 80, align: 'center', slotName: 'type' },
+  { prop: 'route_path', label: $t('system.menu.routePath'), minWidth: 140, showOverflowTooltip: true },
+  { prop: 'component_path', label: $t('system.menu.componentPath'), minWidth: 160, showOverflowTooltip: true },
+  { prop: 'permission', label: $t('system.menu.permission'), minWidth: 160, showOverflowTooltip: true },
+  { prop: 'order', label: $t('common.order'), width: 80 },
+  { prop: 'status', label: $t('common.status'), width: 80, slotName: 'status' },
+  { label: $t('common.operation'), fixed: 'right', width: 200, slotName: 'action' }
 ];
 
 const addDrawerVisible = ref(false);
@@ -179,9 +168,9 @@ const handleAddChild = (row) => {
 
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm(`确定删除菜单"${row.name}"吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.deleteConfirm', { kind: $t('system.menu.entity'), name: row.name }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await MenuAPI.delete([row.id]);
@@ -193,13 +182,13 @@ const handleDelete = async (row) => {
 
 const handleBatchDelete = async () => {
   if (selectedIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的菜单');
+    ElMessage.warning($t('common.selectToDelete', { kind: $t('system.menu.entity') }));
     return;
   }
   try {
-    await ElMessageBox.confirm(`确定删除选中的 ${selectedIds.value.length} 个菜单吗？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm($t('common.batchDeleteConfirm', { count: selectedIds.value.length, kind: $t('system.menu.entity') }), $t('common.tips'), {
+      confirmButtonText: $t('common.confirm'),
+      cancelButtonText: $t('common.cancel'),
       type: 'warning'
     });
     await MenuAPI.delete(selectedIds.value);

@@ -1,7 +1,7 @@
 <template>
   <QaDrawer
     v-model="visible"
-    title="编辑菜单"
+    :title="$t('common.editTitle', { name: $t('system.menu.entity') })"
     size="500px"
     form-mode="update"
     :confirm-loading="submitLoading"
@@ -48,12 +48,15 @@ const formData = ref({
   status: 0
 });
 
-watch(() => props.modelValue, async (val) => {
-  visible.value = val;
-  if (val && props.menuId) {
-    await loadMenuData();
+watch(
+  () => props.modelValue,
+  async (val) => {
+    visible.value = val;
+    if (val && props.menuId) {
+      await loadMenuData();
+    }
   }
-});
+);
 
 watch(visible, (val) => {
   emit('update:modelValue', val);
