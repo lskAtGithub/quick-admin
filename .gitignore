@@ -7,6 +7,10 @@ __pycache__/
 .venv/
 dist/
 
+# Node.js dependencies and root-level install artifacts
+/node_modules/
+/pnpm-lock.yaml
+
 # Logs
 logs/
 *.log

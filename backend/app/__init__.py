@@ -57,6 +57,7 @@ def create_app() -> FastAPI:
     from app.api.v1.routers import api_v1
     app.include_router(api_v1, prefix="/api/v1")
 
+    STATIC_DIR.mkdir(parents=True, exist_ok=True)
     app.mount(path=settings.STATIC_URL, app=StaticFiles(directory=STATIC_DIR), name="static")
 
     return app
