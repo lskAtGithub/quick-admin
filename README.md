@@ -59,6 +59,7 @@
 
 ```bash
 # 1. 准备 compose 变量文件（首次必做：`docker/.env` 不入库，没有它任何 docker compose 命令都会因必填变量缺失而报错退出）
+#    模板默认值已与后端内置默认对齐（Redis 无密码），直接 cp 即可跑；若你在这里给 REDIS_PASSWORD 设了值，必须同步写到 backend/env/.env.dev，否则后端报 AuthenticationError
 cp docker/.env.example docker/.env
 
 # 2. 启动 Redis（后端强依赖：连不上 localhost:6379 时后端会直接启动失败退出）

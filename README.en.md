@@ -59,6 +59,7 @@ The frontend dev server runs on port `5173`, the backend on port `8001`. All com
 
 ```bash
 # 1. Prepare the compose variable file (required on first use: `docker/.env` is not committed, and without it every docker compose command fails on the required variables)
+#    The template defaults already match the backend's built-in ones (Redis without a password), so a plain cp is enough; if you set REDIS_PASSWORD here, you must mirror it in backend/env/.env.dev or the backend fails with AuthenticationError
 cp docker/.env.example docker/.env
 
 # 2. Start Redis (a hard backend dependency: startup fails outright if localhost:6379 is unreachable)
@@ -97,7 +98,7 @@ pnpm run dev
 ### 🐳 One-click Docker Deploy
 
 ```bash
-cp docker/.env.example docker/.env    # fill in MySQL / Redis passwords and SECRET_KEY
+cp docker/.env.example docker/.env    # fill in MySQL / Redis passwords and SECRET_KEY (for a production deploy; the containerised backend reads the same file, so both sides stay consistent)
 ./deploy.sh                           # build frontend on host → build images → start the full stack
 ```
 
