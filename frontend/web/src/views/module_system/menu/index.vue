@@ -28,7 +28,7 @@
       <QaTable :data-source="filteredData" :columns="columns" row-key="id" :tree-props="{ children: 'children' }" :default-expand-all="true" @selection-change="onSelectionChange">
         <template #name="{ row }">
           <QaSvgIcon v-if="row.icon && row.type !== 3" :icon="row.icon" :size="16" class="mr-1 align-middle" />
-          <span class="align-middle">{{ row.name }}</span>
+          <span class="align-middle">{{ formatMenuTitle(row.name) }}</span>
         </template>
         <template #type="{ row }">
           <ElTag v-if="row.type === 1" type="warning">{{ $t('system.menu.catalog') }}</ElTag>
@@ -61,6 +61,7 @@ import { ref, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { $t } from '@/locales';
 import { MenuAPI } from '@/api/module_system/menu';
+import { formatMenuTitle } from '@/utils/navigation';
 import QaTable from '@/components/tables/qa-table/index.vue';
 import QaTableHeaderLeft from '@/components/tables/qa-table-header-left/index.vue';
 import QaSvgIcon from '@/components/base/qa-svg-icon/index.vue';
@@ -116,7 +117,7 @@ const filterTree = (nodes) => {
 
   const result = [];
   for (const node of nodes) {
-    const nameMatch = !hasName || (node.name && node.name.includes(name.trim()));
+    const nameMatch = !hasName || (node.name && formatMenuTitle(node.name).includes(name.trim()));
     const statusMatch = !hasStatus || node.status === status;
     const filteredChildren = node.children?.length ? filterTree(node.children) : [];
 
@@ -168,7 +169,7 @@ const handleAddChild = (row) => {
 
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm($t('common.deleteConfirm', { kind: $t('system.menu.entity'), name: row.name }), $t('common.tips'), {
+    await ElMessageBox.confirm($t('common.deleteConfirm', { kind: $t('system.menu.entity'), name: formatMenuTitle(row.name) }), $t('common.tips'), {
       confirmButtonText: $t('common.confirm'),
       cancelButtonText: $t('common.cancel'),
       type: 'warning'

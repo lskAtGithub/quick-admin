@@ -85,6 +85,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { $t } from '@/locales';
+import { formatMenuTitle } from '@/utils/navigation';
 import { MenuAPI } from '@/api/module_system/menu';
 import QaIconSelect from '@/components/others/qa-icon-select/index.vue';
 
@@ -128,7 +129,7 @@ const formatTree = (data) => {
     if (item.type === 1 || item.type === 2) {
       const node = {
         value: item.id,
-        label: item.name,
+        label: formatMenuTitle(item.name),
         children: item.children?.length ? formatTree(item.children) : undefined
       };
       result.push(node);

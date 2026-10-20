@@ -44,6 +44,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { $t } from '@/locales';
+import { formatMenuTitle } from '@/utils/navigation';
 import { MenuAPI } from '@/api/module_system/menu';
 
 defineOptions({ name: 'RoleForm' });
@@ -74,7 +75,7 @@ const formatMenuTree = (nodes) => {
     const children = item.children?.length ? formatMenuTree(item.children) : [];
     result.push({
       id: item.id,
-      label: item.name,
+      label: formatMenuTitle(item.name),
       children: children.length ? children : undefined
     });
   }
