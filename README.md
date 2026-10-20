@@ -58,21 +58,26 @@
 前端开发端口 `5173`，后端端口 `8001`。以下命令**均在仓库根目录执行**（`cd` 进入子目录的步骤已单独标出）。后端**不要求存在 env 文件**：`backend/env/.env.dev` 缺失时回落到 `setting.py` 内置默认（SQLite + 本机 Redis `6379` 无密码）；要换数据库或密钥时执行 `cp backend/env/.env.example backend/env/.env.dev` 再按需修改。
 
 ```bash
-# 1. 启动 Redis（后端强依赖：连不上 localhost:6379 时后端会直接启动失败退出）
+# 1. 准备 compose 变量文件（首次必做：`docker/.env` 不入库，没有它任何 docker compose 命令都会因必填变量缺失而报错退出）
+cp docker/.env.example docker/.env
+
+# 2. 启动 Redis（后端强依赖：连不上 localhost:6379 时后端会直接启动失败退出）
 #    在仓库根目录执行，并先确保 Docker Desktop 已运行；也可自行启动任意 Redis 服务监听 6379
 docker compose -f docker/docker-compose.yaml up -d redis
 
-# 2. 安装后端依赖（backend 目录，推荐 uv）
+# 3. 安装后端依赖（backend 目录，推荐 uv）
 cd backend && uv sync && cd ..
 
-# 3. 安装前端依赖（frontend/web 目录）
+# 4. 安装前端依赖（frontend/web 目录）
 cd frontend/web && pnpm install && cd ../..
 
-# 4. 一条命令同时启动前端 + 后端（npm / pnpm 皆可，根目录无依赖）
+# 5. 一条命令同时启动前端 + 后端（npm / pnpm 皆可，根目录无依赖）
 npm run dev
 
 # ✅ 浏览器打开 http://127.0.0.1:5173，用 admin / admin 登录
 ```
+
+按上述步骤跑起来用的是**默认 SQLite**（无需建库）。想改用 MySQL，见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
 
 也可分别启动：
 
@@ -84,7 +89,7 @@ uv run python main.py          # 或 python main.py
 pnpm run dev
 ```
 
-> 首次启动后端会自动建表，并幂等初始化：超级管理员 `admin` / `admin`（请尽快改密）、系统管理菜单与按钮权限位、性别字典、根部门。表内已有数据时不会重复写入，也不覆盖你自行维护的内容。
+> 首次启动后端会自动建表，并幂等初始化：超级管理员 `admin` / `admin`（请尽快改密）、系统管理菜单与按钮权限位、性别字典、根部门。表内已有数据时不会重复写入，也不覆盖你自行维护的内容。**换一个新库（如刚建的 MySQL）等于全新数据，会重新走一次初始化。**
 > 接口文档：启动后访问 http://127.0.0.1:8001/docs 。
 
 ### 🐳 Docker 一键部署

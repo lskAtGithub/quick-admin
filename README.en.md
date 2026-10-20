@@ -58,21 +58,26 @@ A **front-end / back-end separated admin platform** focused on the most essentia
 The frontend dev server runs on port `5173`, the backend on port `8001`. All commands below run **from the repository root** (steps that `cd` into a subdirectory are marked individually). An env file is **not required**: when `backend/env/.env.dev` is missing the backend falls back to the built-in defaults in `setting.py` (SQLite plus a local Redis on `6379` without password); to change the database or secrets, run `cp backend/env/.env.example backend/env/.env.dev` and edit it.
 
 ```bash
-# 1. Start Redis (a hard backend dependency: startup fails outright if localhost:6379 is unreachable)
+# 1. Prepare the compose variable file (required on first use: `docker/.env` is not committed, and without it every docker compose command fails on the required variables)
+cp docker/.env.example docker/.env
+
+# 2. Start Redis (a hard backend dependency: startup fails outright if localhost:6379 is unreachable)
 #    Run this from the repository root with Docker Desktop already running, or start any Redis service listening on 6379 yourself
 docker compose -f docker/docker-compose.yaml up -d redis
 
-# 2. Install backend dependencies (in the backend directory, uv recommended)
+# 3. Install backend dependencies (in the backend directory, uv recommended)
 cd backend && uv sync && cd ..
 
-# 3. Install frontend dependencies (in the frontend/web directory)
+# 4. Install frontend dependencies (in the frontend/web directory)
 cd frontend/web && pnpm install && cd ../..
 
-# 4. Start frontend + backend with a single command (npm or pnpm — the root has no dependencies)
+# 5. Start frontend + backend with a single command (npm or pnpm — the root has no dependencies)
 npm run dev
 
 # ✅ Open http://127.0.0.1:5173 in your browser and log in with admin / admin
 ```
+
+Those steps run on the **default SQLite** (no database to create). To switch to MySQL, see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
 
 You can also start them separately:
 
@@ -84,7 +89,7 @@ uv run python main.py          # or python main.py
 pnpm run dev
 ```
 
-> On first startup the backend creates the tables and idempotently seeds: the super-admin account `admin` / `admin` (change the password promptly), the System Management menus with their button permission codes, the gender dictionary and the root department. Nothing is inserted or overwritten once those tables already contain data.
+> On first startup the backend creates the tables and idempotently seeds: the super-admin account `admin` / `admin` (change the password promptly), the System Management menus with their button permission codes, the gender dictionary and the root department. Nothing is inserted or overwritten once those tables already contain data. **Pointing at a fresh database (e.g. a newly created MySQL schema) means brand-new data, so the seeding runs again.**
 > API docs: after startup visit http://127.0.0.1:8001/docs .
 
 ### 🐳 One-click Docker Deploy
