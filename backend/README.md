@@ -68,7 +68,7 @@ modules/<域>/<模块>/
 
 - **Python**：3.12+
 - **数据库**：MySQL 8.0+ / PostgreSQL / SQLite（**默认 SQLite**，切库见下文「切换到 MySQL / PostgreSQL」）
-- **Redis**：**启动强依赖**，lifespan 阶段 ping 不通目标地址会让后端直接 `Application startup failed` 退出；地址取 `env/.env.dev` 的 `REDIS_HOST` / `REDIS_PORT`（无 env 文件时为本机 `6379` 无密码）。本地推荐用 Docker 拉起：确保 Docker Desktop 已运行，在**仓库根目录（`quick-admin/`，不是 `backend/`）**执行 `docker compose -f docker/docker-compose.yaml up -d redis`；该命令要求 `docker/.env` 存在（首次先 `cp docker/.env.example docker/.env`）；也可自行启动任意监听 6379 的 Redis
+- **Redis**：**启动强依赖**，lifespan 阶段 ping 不通目标地址会让后端直接 `Application startup failed` 退出；地址取 `env/.env.dev` 的 `REDIS_HOST` / `REDIS_PORT`（无 env 文件时为本机 `6379` 无密码）。本地推荐用 Docker 拉起：确保 Docker Desktop 已运行，在**仓库根目录（`quick-admin/`，不是 `backend/`）**执行 `docker compose -f docker/docker-compose.yaml up -d redis`；该命令要求 `docker/.env` 存在（首次先 `cp docker/.env.example docker/.env`）；注意 `docker compose down` 会删除容器，之后必须重新 `up -d redis`（重启机器或 Docker Desktop 也不会自动回来）；也可自行启动任意监听 6379 的 Redis
 
 ### 第一次在本机跑起来
 

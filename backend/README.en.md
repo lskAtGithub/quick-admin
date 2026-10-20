@@ -68,7 +68,7 @@ modules/<domain>/<module>/
 
 - **Python**: 3.12+
 - **Database**: MySQL 8.0+ / PostgreSQL / SQLite (**SQLite by default**; see “Switching to MySQL / PostgreSQL” below)
-- **Redis**: a **hard startup dependency** — if the ping during lifespan fails, the backend exits immediately with `Application startup failed`; the address comes from `REDIS_HOST` / `REDIS_PORT` in `env/.env.dev` (a local Redis on 6379 without password when no env file exists). Locally, bringing it up with Docker is recommended: make sure Docker Desktop is running, then run `docker compose -f docker/docker-compose.yaml up -d redis` **from the repository root (`quick-admin/`, not `backend/`)**; that command requires `docker/.env` to exist (on first use `cp docker/.env.example docker/.env`), or start any Redis listening on 6379 yourself
+- **Redis**: a **hard startup dependency** — if the ping during lifespan fails, the backend exits immediately with `Application startup failed`; the address comes from `REDIS_HOST` / `REDIS_PORT` in `env/.env.dev` (a local Redis on 6379 without password when no env file exists). Locally, bringing it up with Docker is recommended: make sure Docker Desktop is running, then run `docker compose -f docker/docker-compose.yaml up -d redis` **from the repository root (`quick-admin/`, not `backend/`)**; that command requires `docker/.env` to exist (on first use `cp docker/.env.example docker/.env`); note that `docker compose down` deletes the containers, so `up -d redis` must be run again afterwards (a reboot or Docker Desktop restart won't bring them back); or start any Redis listening on 6379 yourself
 
 ### Running Locally for the First Time
 

@@ -79,6 +79,8 @@ npm run dev
 
 按上述步骤跑起来用的是**默认 SQLite**（无需建库）。想改用 MySQL，见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
 
+> **只要 `docker compose -f docker/docker-compose.yaml ps` 里看不到 redis，先重跑第 2 步**。执行过 `down` 会直接删除容器（`restart: unless-stopped` 只对“仅被停止”的容器生效），重启机器或重启 Docker Desktop 也不会自己回来。漏掉这一步，后端会报 `redis.exceptions.ConnectionError ... Connect call failed ('127.0.0.1', 6379)` 并以 `Application startup failed` 退出（前端随之报 `ECONNREFUSED 127.0.0.1:8001`，不是前端问题）。第 1、3、4 步在重跑第 2 步时不必重复。
+
 也可分别启动：
 
 ```bash

@@ -79,6 +79,8 @@ npm run dev
 
 Those steps run on the **default SQLite** (no database to create). To switch to MySQL, see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
 
+> **If `docker compose -f docker/docker-compose.yaml ps` shows no redis service, rerun step 2 first.** `down` deletes the containers outright (`restart: unless-stopped` only applies to containers that were merely stopped), so they don't come back after a reboot or a Docker Desktop restart either. Skipping this makes the backend fail with `redis.exceptions.ConnectionError ... Connect call failed ('127.0.0.1', 6379)` and exit on `Application startup failed` (the frontend then reports `ECONNREFUSED 127.0.0.1:8001`, which is not a frontend problem). Steps 1, 3 and 4 don't need to be repeated.
+
 You can also start them separately:
 
 ```bash
