@@ -3,6 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.config.setting import settings
 from app.core.logger import logger
 
+# connect_timeout 仅 aiomysql 支持，sqlite / asyncpg 传入会直接报错
+connect_args = {"connect_timeout": 10} if settings.DATABASE_TYPE == "mysql" else {}
+
 async_engine = create_async_engine(
     url=settings.ASYNC_DB_URI,
     echo=settings.DEBUG,
@@ -10,7 +13,7 @@ async_engine = create_async_engine(
     max_overflow=20,
     pool_timeout=30,
     pool_recycle=3600,
-    connect_args={"connect_timeout": 10},
+    connect_args=connect_args,
 )
 
 async_db_session = async_sessionmaker(
