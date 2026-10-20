@@ -43,66 +43,71 @@
 
 ## 🚀 快速开始
 
-### 环境要求
+### 环境准备
 
-| 需求 | 版本 / 说明 |
-|------|------|
-| Python | ≥ 3.12（推荐用 [uv](https://github.com/astral-sh/uv) 管理依赖） |
-| Node.js | ≥ 20，包管理使用 pnpm |
-| 数据库 | MySQL 8.0+ / PostgreSQL / SQLite（默认 SQLite，开发环境配 MySQL） |
-| 缓存 | **Redis 7.x（后端启动的强依赖，未运行会直接 startup failed）** |
-| Docker | 推荐用于快速拉起 Redis 及一键部署整个技术栈（安装并启动 Docker Desktop 即可，compose 已内置为 `docker compose` 子命令，无需单独安装；本文统一用该形式，而非旧版独立程序 `docker-compose`） |
+| 类型 | 技术栈 | 版本 |
+| --- | --- | --- |
+| 后端 | Python | ≥ 3.12（推荐 [uv](https://github.com/astral-sh/uv)） |
+| 前端 | Node.js / pnpm | ≥ 20 / ≥ 9 |
+| 数据库 | SQLite / MySQL / PostgreSQL | 默认 SQLite，免建库 |
+| 中间件 | Redis | 7.0+（后端启动强依赖） |
+| 容器 | Docker Desktop | 拉起 Redis 与一键部署用，`docker compose` 已内置 |
 
-### 开发模式
+除注明目录外，以下命令**均在仓库根目录执行**。
 
-前端开发端口 `5173`，后端端口 `8001`。以下命令**均在仓库根目录执行**（`cd` 进入子目录的步骤已单独标出）。后端**不要求存在 env 文件**：`backend/env/.env.dev` 缺失时回落到 `setting.py` 内置默认（SQLite + 本机 Redis `6379` 无密码）；要换数据库或密钥时执行 `cp backend/env/.env.example backend/env/.env.dev` 再按需修改。
+### 启动中间件
 
 ```bash
-# 1. 准备 compose 变量文件（首次必做：`docker/.env` 不入库，没有它任何 docker compose 命令都会因必填变量缺失而报错退出）
-#    模板默认值已与后端内置默认对齐（Redis 无密码），直接 cp 即可跑；若你在这里给 REDIS_PASSWORD 设了值，必须同步写到 backend/env/.env.dev，否则后端报 AuthenticationError
-cp docker/.env.example docker/.env
-
-# 2. 启动 Redis（后端强依赖：连不上 localhost:6379 时后端会直接启动失败退出）
-#    在仓库根目录执行，并先确保 Docker Desktop 已运行；也可自行启动任意 Redis 服务监听 6379
 docker compose -f docker/docker-compose.yaml up -d redis
-
-# 3. 安装后端依赖（backend 目录，推荐 uv）
-cd backend && uv sync && cd ..
-
-# 4. 安装前端依赖（frontend/web 目录）
-cd frontend/web && pnpm install && cd ../..
-
-# 5. 一条命令同时启动前端 + 后端（npm / pnpm 皆可，根目录无依赖）
-npm run dev
-
-# ✅ 浏览器打开 http://127.0.0.1:5173，用 admin / admin 登录
 ```
 
-按上述步骤跑起来用的是**默认 SQLite**（无需建库）。想改用 MySQL，见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
-
-> **只要 `docker compose -f docker/docker-compose.yaml ps` 里看不到 redis，先重跑第 2 步**。执行过 `down` 会直接删除容器（`restart: unless-stopped` 只对“仅被停止”的容器生效），重启机器或重启 Docker Desktop 也不会自己回来。漏掉这一步，后端会报 `redis.exceptions.ConnectionError ... Connect call failed ('127.0.0.1', 6379)` 并以 `Application startup failed` 退出（前端随之报 `ECONNREFUSED 127.0.0.1:8001`，不是前端问题）。第 1、3、4 步在重跑第 2 步时不必重复。
-
-也可分别启动：
+### 后端启动
 
 ```bash
-# 后端（backend 目录）
-uv run python main.py          # 或 python main.py
+cd backend
+uv sync
+uv run python main.py
+```
 
-# 前端（frontend/web 目录）
+首次启动会自动建表并初始化基础数据（管理员、菜单、字典、部门），无需执行迁移。不建 env 文件时直接用内置默认（SQLite + 本机 Redis 无密码）；需要改配置时 `cp env/.env.example env/.env.dev` 再编辑。
+
+### 前端启动
+
+```bash
+cd frontend/web
+pnpm install
 pnpm run dev
 ```
 
-> 首次启动后端会自动建表，并幂等初始化：超级管理员 `admin` / `admin`（请尽快改密）、系统管理菜单与按钮权限位、性别字典、根部门。表内已有数据时不会重复写入，也不覆盖你自行维护的内容。**换一个新库（如刚建的 MySQL）等于全新数据，会重新走一次初始化。**
-> 接口文档：启动后访问 http://127.0.0.1:8001/docs 。
+也可只执行 `npm run dev`，一条命令同时拉起前后端。
+
+### 本地访问地址
+
+| 服务 | 地址 |
+| --- | --- |
+| Web 前端 | http://127.0.0.1:5173 |
+| 后端 API | http://127.0.0.1:8001/api/v1 |
+| 接口文档 | http://127.0.0.1:8001/docs |
+| 默认账号 | `admin` / `admin`（登录后请改密） |
+
+切换到 MySQL / PostgreSQL：见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
 
 ### 🐳 Docker 一键部署
 
 ```bash
-cp docker/.env.example docker/.env    # 填写 MySQL / Redis 密码与 SECRET_KEY
+cp docker/.env.example docker/.env    # 填 MySQL / Redis 密码与 SECRET_KEY
 ./deploy.sh                           # 宿主机构建前端 → 构建镜像 → 启动全栈
 ```
 
-`docker-compose.yaml` 包含 **MySQL、Redis、Backend、Nginx** 四个服务；Nginx 托管前端产物并反代 `/api/v1` 到后端，SSL（443）配置已内置但默认注释，按需提供证书后开启。
+`docker-compose.yaml` 含 MySQL、Redis、Backend、Nginx 四个服务；Nginx 托管前端产物并反代 `/api/v1`，SSL（443）默认注释，提供证书后开启。
+
+### 常见问题
+
+| 问题 | 解答 |
+| --- | --- |
+| 后端报 `redis.exceptions.ConnectionError ... 6379` | Redis 没起，重跑「启动中间件」。`down` 会删除容器，重启机器也不会自动回来 |
+| 后端报 `AuthenticationError: Authentication required.` | `docker/.env` 的 `REDIS_PASSWORD` 与 `backend/env/.env.dev` 不一致；本地开发两边都留空 |
+| 前端报 `ECONNREFUSED 127.0.0.1:8001` | 后端未启动，按上面两条查后端 |
 
 ### 🌍 多语言文件生成脚本
 

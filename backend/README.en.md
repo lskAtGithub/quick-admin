@@ -64,76 +64,56 @@ modules/<domain>/<module>/
 
 ## Quick Start
 
-### Requirements
+### Prerequisites
 
-- **Python**: 3.12+
-- **Database**: MySQL 8.0+ / PostgreSQL / SQLite (**SQLite by default**; see “Switching to MySQL / PostgreSQL” below)
-- **Redis**: a **hard startup dependency** — if the ping during lifespan fails, the backend exits immediately with `Application startup failed`; the address comes from `REDIS_HOST` / `REDIS_PORT` in `env/.env.dev` (a local Redis on 6379 without password when no env file exists). Locally, bringing it up with Docker is recommended: make sure Docker Desktop is running, then run `docker compose -f docker/docker-compose.yaml up -d redis` **from the repository root (`quick-admin/`, not `backend/`)**; that command requires `docker/.env` to exist (on first use `cp docker/.env.example docker/.env`); note that `docker compose down` deletes the containers, so `up -d redis` must be run again afterwards (a reboot or Docker Desktop restart won't bring them back); or start any Redis listening on 6379 yourself
-  - **The password must match on both sides**: the container's `--requirepass` comes from `REDIS_PASSWORD` in `docker/.env`, while the backend reads `REDIS_PASSWORD` from `env/.env.dev`. Leave both empty for local development (the template default); if the container has a password and the backend isn't synced, the error is `redis.exceptions.AuthenticationError: Authentication required.` — note it is not `ConnectionError`, meaning the connection itself succeeded
+| Layer | Stack | Version |
+| --- | --- | --- |
+| Language | Python | ≥ 3.12, dependencies managed by [uv](https://github.com/astral-sh/uv) (frozen in `uv.lock`) |
+| Database | SQLite / MySQL / PostgreSQL | SQLite by default, no schema to create |
+| Middleware | Redis | 7.0+, a hard startup dependency |
 
-### Running Locally for the First Time
+### Running
 
-1. *(Optional)* Copy `env/.env.example` to `env/.env.dev` and adjust it: database, Redis, `SECRET_KEY`, `SERVER_PORT`, etc. (see “Switching to MySQL / PostgreSQL” below for the full MySQL/PG steps). **With no env file at all, the built-in defaults in `app/config/setting.py` apply: SQLite plus a local Redis on 6379 without password.**
-2. Install dependencies **in the `backend/` directory**: **`uv sync`** is recommended (dependencies are frozen in `uv.lock`).
-3. **Start**: `uv run python main.py` (or `python main.py`). **On first startup it creates the tables and idempotently seeds the default super-admin `admin` / `admin`, the System Management menus with their button permission codes, the gender dictionary and the root department**, so you generally don't need to run migrations first. API docs: `http://127.0.0.1:8001/docs` (port from `SERVER_PORT`).
+```bash
+# 1. Bring up Redis from the repository root (or start any Redis listening on 6379)
+docker compose -f docker/docker-compose.yaml up -d redis
 
-> Environment switching: `main.py` decides which config to load via the OS environment variable `ENVIRONMENT`, defaulting to `dev`; set it to `prod` to load `env/.env.prod` (which `deploy.sh` expects to exist).
-> Running `npm run dev` from the repository root uses `scripts/dev.js` to start this backend together with the frontend, so you don't need to launch it separately.
+# 2. Install dependencies and start, in the backend directory
+uv sync
+uv run python main.py
+```
+
+The first run creates the tables and idempotently seeds `admin` / `admin`, the system menus with their button permission codes, the gender dictionary and the root department, so migrations aren't needed. API docs: http://127.0.0.1:8001/docs .
+
+**It runs without an env file**: the built-in defaults in `app/config/setting.py` apply (SQLite plus a local Redis on `6379` without password). To change something, `cp env/.env.example env/.env.dev` and edit it; `main.py` picks the file through the OS variable `ENVIRONMENT` (`dev` by default, `prod` loads `env/.env.prod`). Running `npm run dev` from the repository root starts this backend together with the frontend.
 
 ### Switching to MySQL / PostgreSQL
 
-**SQLite is the default — it runs with no database to create and no configuration.** Switching to MySQL only means editing the database section of `backend/env/.env.dev`; follow the four steps below.
-
-**1) Prepare the env file** (skip if it already exists), from the repository root:
+Three steps, all run from the repository root:
 
 ```bash
+# 1. Prepare the backend config, then set DATABASE_TYPE to mysql inside it
 cp backend/env/.env.example backend/env/.env.dev
-```
 
-**2) Prepare the database** — pick one:
-
-*A. The MySQL shipped with compose* (the schema is created for you, no SQL required)
-
-```bash
-# Make sure docker/.env exists first (on first use: cp docker/.env.example docker/.env); run from the repository root
-# MYSQL_PORT defaults to 33066 in the template so it cannot clash with a locally installed MySQL (the port inside the container is still 3306)
+# 2. Start the database (compose creates the quickadmin schema, no SQL required); wait until STATUS reports (healthy), 10-30s on first run
 docker compose -f docker/docker-compose.yaml up -d mysql
-docker ps --filter name=quickadmin-mysql   # wait until it reports healthy; first-time initialization takes 10-30s
+docker ps --filter name=quickadmin-mysql
+
+# 3. Start the backend
+cd backend && uv run python main.py
 ```
 
-*B. An existing local MySQL*: create the empty schema first; its character set must be utf8mb4. **The statement below is SQL, not a shell command** — enter the client with `mysql -u root -p` and paste it there, or run it in one line with `mysql -u root -p -e "..."`:
+The template values already match compose (port `33066`, account `quickadmin`, schema `quickadmin`), so **only the `DATABASE_TYPE` line needs editing**. Success looks like `数据库表初始化完成` followed by `已初始化默认超级管理员账号` in the logs. **A different database means brand-new data**; nothing is migrated from the previous SQLite file.
 
-```sql
-CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
+**Other cases and failures**
 
-> Route A doesn't need this SQL at all: compose creates the schema from `MYSQL_DATABASE` in `docker/.env`.
-
-**3) Edit the database section of `backend/env/.env.dev`**:
-
-```properties
-DATABASE_TYPE=mysql
-DATABASE_HOST=127.0.0.1
-DATABASE_PORT=33066             # route A: MYSQL_PORT from docker/.env (template default 33066); route B: your local MySQL's port
-DATABASE_USER=quickadmin        # route A: MYSQL_USER from docker/.env
-DATABASE_PASSWORD=change_me_app_password # route A: MYSQL_PASSWORD from docker/.env
-DATABASE_NAME=quickadmin        # route A: MYSQL_DATABASE from docker/.env; no .db suffix
-```
-
-**4) Restart the backend**: `cd backend && uv run python main.py` — success looks like `数据库表初始化完成` followed by `已初始化默认超级管理员账号` in the logs. **A different database means brand-new data**; nothing is migrated from the previous SQLite file.
-
-Switching back to SQLite: set `DATABASE_TYPE` back to `sqlite`, or delete `env/.env.dev`.
-
-Switching to PostgreSQL: same four steps with `DATABASE_TYPE=postgres`, `DATABASE_PORT` set to 5432 (the template default is 33066); create the schema yourself.
-
-Common failures:
-
-| Symptom | Cause and fix |
-|---------|---------------|
-| `error while interpolating services.mysql.environment.XXX: required variable XXX is missing a value` | `docker/.env` doesn't exist (the `cp docker/.env.example docker/.env` step was skipped), or that variable was left blank — compose's required-variable check treats **an empty value as missing**, and the variable named in the error isn't necessarily the real culprit. Even if you only use a local MySQL and never start the container, this file must exist with non-empty values |
-| `RuntimeError` mentioning cryptography / sha2_rsa_encrypt | MySQL 8's `caching_sha2_password` requires `cryptography`, which is already pinned in `pyproject.toml` / `uv.lock` — rerun `uv sync` |
-| `(2003, "Can't connect to MySQL server")` | Wrong host or port: confirm the container is healthy and `DATABASE_PORT` matches `MYSQL_PORT` in `docker/.env` |
-| The container keeps restarting with `--initialize specified but the data directory has files in it` | `docker/mysql/data` is mounted as the MySQL data directory and **must stay free of stray files** (typically a SQL dump dropped in there); move those files out, then `up -d mysql` again |
+| Case / symptom | What to do |
+|------|------|
+| Using a MySQL you already installed locally (no container) | Create the schema **inside a mysql client** (not bash): `CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`, then point `DATABASE_PORT` / `DATABASE_USER` / `DATABASE_PASSWORD` in `.env.dev` at your own values |
+| Back to SQLite / over to PostgreSQL | `DATABASE_TYPE=sqlite` / `DATABASE_TYPE=postgres` with `DATABASE_PORT=5432` (create the schema yourself) |
+| `(2003, "Can't connect to MySQL server")` | The container isn't healthy yet, or `DATABASE_PORT` differs from compose's `MYSQL_PORT` (33066 by default) |
+| The container keeps restarting with `--initialize specified but the data directory has files in it` | `docker/mysql/data` must stay free of stray files; move them out, then `up -d mysql` again |
+| `RuntimeError` mentioning cryptography | Rerun `uv sync` (MySQL 8 authentication needs it; it's already pinned in the lock file) |
 
 ### Database Migration Commands (when models change)
 

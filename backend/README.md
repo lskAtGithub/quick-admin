@@ -64,76 +64,56 @@ modules/<域>/<模块>/
 
 ## 快速开始
 
-### 环境要求
+### 环境准备
 
-- **Python**：3.12+
-- **数据库**：MySQL 8.0+ / PostgreSQL / SQLite（**默认 SQLite**，切库见下文「切换到 MySQL / PostgreSQL」）
-- **Redis**：**启动强依赖**，lifespan 阶段 ping 不通目标地址会让后端直接 `Application startup failed` 退出；地址取 `env/.env.dev` 的 `REDIS_HOST` / `REDIS_PORT`（无 env 文件时为本机 `6379` 无密码）。本地推荐用 Docker 拉起：确保 Docker Desktop 已运行，在**仓库根目录（`quick-admin/`，不是 `backend/`）**执行 `docker compose -f docker/docker-compose.yaml up -d redis`；该命令要求 `docker/.env` 存在（首次先 `cp docker/.env.example docker/.env`）；注意 `docker compose down` 会删除容器，之后必须重新 `up -d redis`（重启机器或 Docker Desktop 也不会自动回来）；也可自行启动任意监听 6379 的 Redis
-  - **密码必须两边一致**：容器侧的 `--requirepass` 取自 `docker/.env` 的 `REDIS_PASSWORD`，后端侧取自 `env/.env.dev` 的 `REDIS_PASSWORD`。本地开发两边都留空（模板默认即此）；若给容器设了密码而后端没同步，报错为 `redis.exceptions.AuthenticationError: Authentication required.`（注意不是 `ConnectionError`，说明已连上）
+| 类型 | 技术栈 | 版本 |
+| --- | --- | --- |
+| 语言 | Python | ≥ 3.12，依赖用 [uv](https://github.com/astral-sh/uv)（`uv.lock` 冻结） |
+| 数据库 | SQLite / MySQL / PostgreSQL | 默认 SQLite，免建库 |
+| 中间件 | Redis | 7.0+，启动强依赖 |
 
-### 第一次在本机跑起来
+### 启动
 
-1. （可选）从 `env/.env.example` 复制为 `env/.env.dev` 并按需修改：数据库、Redis、`SECRET_KEY`、`SERVER_PORT` 等（选 MySQL/PG 的完整步骤见下文「切换到 MySQL / PostgreSQL」）。**两份 env 文件都不存在时，直接沿用 `app/config/setting.py` 的内置默认：SQLite + 本机 Redis 6379 无密码。**
-2. 在 **`backend/` 目录下**安装依赖：推荐 **`uv sync`**（依赖以 `uv.lock` 冻结）。
-3. **启动**：`uv run python main.py`（或 `python main.py`）。**首次启动会自动建表，并幂等初始化默认超级管理员 `admin` / `admin`、系统管理菜单与按钮权限位、性别字典和根部门**，一般无需先执行迁移。接口文档：`http://127.0.0.1:8001/docs`（端口见 `SERVER_PORT`）。
+```bash
+# 1. 仓库根目录拉起 Redis（也可自行启动任意监听 6379 的 Redis）
+docker compose -f docker/docker-compose.yaml up -d redis
 
-> 环境切换：`main.py` 通过操作系统环境变量 `ENVIRONMENT` 决定加载哪份配置，缺省为 `dev`；设为 `prod` 则读取 `env/.env.prod`（`deploy.sh` 会检查该文件是否存在）。
-> 根目录执行 `npm run dev` 会通过 `scripts/dev.js` 同时拉起本后端与前端，无需单独启动。
+# 2. backend 目录安装依赖并启动
+uv sync
+uv run python main.py
+```
+
+首次启动自动建表并幂等初始化：`admin` / `admin`、系统菜单与按钮权限位、性别字典、根部门，一般无需执行迁移。接口文档 http://127.0.0.1:8001/docs 。
+
+**不需要 env 文件也能跑**：缺省时沿用 `app/config/setting.py` 的内置默认（SQLite + 本机 Redis `6379` 无密码）。要改配置就 `cp env/.env.example env/.env.dev` 再编辑；`main.py` 按操作系统变量 `ENVIRONMENT` 选文件（缺省 `dev`，`prod` 读 `env/.env.prod`）。仓库根目录 `npm run dev` 会同时拉起前后端。
 
 ### 切换到 MySQL / PostgreSQL
 
-**默认 SQLite，不建库不配置即可跑**。切到 MySQL 只需改 `backend/env/.env.dev` 的数据库段，按下面四步操作：
-
-**1）准备 env 文件**（已存在则跳过），在仓库根目录执行：
+三步，命令均在仓库根目录执行：
 
 ```bash
+# 1. 准备后端配置，并把里面的 DATABASE_TYPE 改成 mysql
 cp backend/env/.env.example backend/env/.env.dev
-```
 
-**2）准备数据库**，二选一：
-
-*A. 用 compose 自带的 MySQL*（自动建库，不用手写 SQL）
-
-```bash
-# 先确保 docker/.env 存在（首次：cp docker/.env.example docker/.env），命令在仓库根目录执行
-# MYSQL_PORT 模板默认 33066（避开本机已装的 MySQL；容器内端口仍是 3306）
+# 2. 起库（自动建 quickadmin 库，不用手写 SQL），等 STATUS 变 (healthy)，首次初始化需 10~30s
 docker compose -f docker/docker-compose.yaml up -d mysql
-docker ps --filter name=quickadmin-mysql   # 等它变 healthy，首次初始化需 10~30s
+docker ps --filter name=quickadmin-mysql
+
+# 3. 起后端
+cd backend && uv run python main.py
 ```
 
-*B. 用本机已有的 MySQL*：先建空库，字符集必须是 utf8mb4。**下面这条是 SQL，不是 shell 命令**：先 `mysql -u root -p` 进客户端再粘，或用 `mysql -u root -p -e "……"` 一行执行：
+模板值已与 compose 对齐（端口 `33066`、账号 `quickadmin`、库名 `quickadmin`），所以**只需改 `DATABASE_TYPE` 这一行**。日志出现`数据库表初始化完成`与`已初始化默认超级管理员账号`即成功。**切库等于全新数据**，SQLite 里的数据不会搬迁。
 
-```sql
-CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
+**其他场景与报错**
 
-> 路线 A 不需要执行这条 SQL：compose 会按 `docker/.env` 的 `MYSQL_DATABASE` 自动建库。
-
-**3）改 `backend/env/.env.dev` 的数据库段**：
-
-```properties
-DATABASE_TYPE=mysql
-DATABASE_HOST=127.0.0.1
-DATABASE_PORT=33066             # 路线 A 填 docker/.env 的 MYSQL_PORT（模板默认 33066）；路线 B 填本机 MySQL 端口
-DATABASE_USER=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_USER
-DATABASE_PASSWORD=change_me_app_password # 路线 A 填 docker/.env 的 MYSQL_PASSWORD
-DATABASE_NAME=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_DATABASE；不要带 .db 后缀
-```
-
-**4）重启后端**：`cd backend && uv run python main.py`，日志依次出现`数据库表初始化完成`与`已初始化默认超级管理员账号`即成功。**切库等于全新数据**，SQLite 里的数据不会自动搬迁。
-
-切回 SQLite：把 `DATABASE_TYPE` 改回 `sqlite`，或直接删掉 `env/.env.dev`。
-
-切 PostgreSQL：同上四步，`DATABASE_TYPE=postgres`、`DATABASE_PORT` 改填 5432（模板默认为 33066），库需自己建。
-
-常见报错对照：
-
-| 现象 | 原因与处理 |
-|------|-----------|
-| `error while interpolating services.mysql.environment.XXX: required variable XXX is missing a value` | `docker/.env` 不存在（漏了 `cp docker/.env.example docker/.env`），或对应变量被留空——compose 的必填校验把**空值等同于缺失**，报错点名的变量不必然是真凶。哪怕只用本机 MySQL、不起容器，该文件也需存在且各项非空 |
-| `RuntimeError` 指向 cryptography / sha2_rsa_encrypt | MySQL 8 的 `caching_sha2_password` 认证需要 `cryptography`，它已在 `pyproject.toml` / `uv.lock` 里，重跑 `uv sync` 即带上 |
-| `(2003, "Can't connect to MySQL server")` | 主机或端口写错：确认容器已 healthy，且 `DATABASE_PORT` 与 `docker/.env` 的 `MYSQL_PORT` 一致 |
-| 容器反复 Restarting，日志有 `--initialize specified but the data directory has files in it` | `docker/mysql/data` 被挂成 MySQL 数据目录，**里面不能有任何杂项文件**（常见于把备份 sql 倒进去）；把这些文件移出该目录后重新 `up -d mysql` |
+| 场景 / 报错 | 处理 |
+|------|------|
+| 用本机已装的 MySQL（不起容器） | 先在 **mysql 客户端里**（不是 bash）建库：`CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`，再把 `.env.dev` 的 `DATABASE_PORT` / `DATABASE_USER` / `DATABASE_PASSWORD` 换成自己的 |
+| 切回 SQLite / 切 PostgreSQL | `DATABASE_TYPE=sqlite` / `DATABASE_TYPE=postgres` 且 `DATABASE_PORT=5432`（库自己建） |
+| `(2003, "Can't connect to MySQL server")` | 容器还没 healthy，或 `DATABASE_PORT` 与 compose 的 `MYSQL_PORT`（默认 33066）不同值 |
+| 容器反复重启，日志 `--initialize specified but the data directory has files in it` | `docker/mysql/data` 里不能有杂项文件，移出后重新 `up -d mysql` |
+| `RuntimeError` 提到 cryptography | 重跑 `uv sync`（MySQL 8 认证依赖它，已在锁文件里） |
 
 ### 数据库迁移命令（模型变更时使用）
 

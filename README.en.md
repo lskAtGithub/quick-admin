@@ -43,66 +43,71 @@ A **front-end / back-end separated admin platform** focused on the most essentia
 
 ## 🚀 Quick Start
 
-### Requirements
+### Prerequisites
 
-| Requirement | Version / Notes |
-|-------------|---------|
-| Python | ≥ 3.12 (dependency management with [uv](https://github.com/astral-sh/uv) recommended) |
-| Node.js | ≥ 20, package manager: pnpm |
-| Database | MySQL 8.0+ / PostgreSQL / SQLite (defaults to SQLite; dev environment configured for MySQL) |
-| Cache | **Redis 7.x (a hard dependency of backend startup — the app fails to boot without it)** |
-| Docker | Recommended for quickly bringing up Redis and deploying the full stack (installing and running Docker Desktop is enough — compose ships built in as the `docker compose` subcommand, no separate install; this guide always uses that form, not the legacy standalone `docker-compose` binary) |
+| Layer | Stack | Version |
+| --- | --- | --- |
+| Backend | Python | ≥ 3.12 ([uv](https://github.com/astral-sh/uv) recommended) |
+| Frontend | Node.js / pnpm | ≥ 20 / ≥ 9 |
+| Database | SQLite / MySQL / PostgreSQL | SQLite by default, no schema to create |
+| Middleware | Redis | 7.0+ (a hard dependency of backend startup) |
+| Containers | Docker Desktop | Used to bring up Redis and for one-click deployment; `docker compose` ships built in |
 
-### Development
+Unless a directory is stated, all commands below run **from the repository root**.
 
-The frontend dev server runs on port `5173`, the backend on port `8001`. All commands below run **from the repository root** (steps that `cd` into a subdirectory are marked individually). An env file is **not required**: when `backend/env/.env.dev` is missing the backend falls back to the built-in defaults in `setting.py` (SQLite plus a local Redis on `6379` without password); to change the database or secrets, run `cp backend/env/.env.example backend/env/.env.dev` and edit it.
+### Start the Middleware
 
 ```bash
-# 1. Prepare the compose variable file (required on first use: `docker/.env` is not committed, and without it every docker compose command fails on the required variables)
-#    The template defaults already match the backend's built-in ones (Redis without a password), so a plain cp is enough; if you set REDIS_PASSWORD here, you must mirror it in backend/env/.env.dev or the backend fails with AuthenticationError
-cp docker/.env.example docker/.env
-
-# 2. Start Redis (a hard backend dependency: startup fails outright if localhost:6379 is unreachable)
-#    Run this from the repository root with Docker Desktop already running, or start any Redis service listening on 6379 yourself
 docker compose -f docker/docker-compose.yaml up -d redis
-
-# 3. Install backend dependencies (in the backend directory, uv recommended)
-cd backend && uv sync && cd ..
-
-# 4. Install frontend dependencies (in the frontend/web directory)
-cd frontend/web && pnpm install && cd ../..
-
-# 5. Start frontend + backend with a single command (npm or pnpm — the root has no dependencies)
-npm run dev
-
-# ✅ Open http://127.0.0.1:5173 in your browser and log in with admin / admin
 ```
 
-Those steps run on the **default SQLite** (no database to create). To switch to MySQL, see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
-
-> **If `docker compose -f docker/docker-compose.yaml ps` shows no redis service, rerun step 2 first.** `down` deletes the containers outright (`restart: unless-stopped` only applies to containers that were merely stopped), so they don't come back after a reboot or a Docker Desktop restart either. Skipping this makes the backend fail with `redis.exceptions.ConnectionError ... Connect call failed ('127.0.0.1', 6379)` and exit on `Application startup failed` (the frontend then reports `ECONNREFUSED 127.0.0.1:8001`, which is not a frontend problem). Steps 1, 3 and 4 don't need to be repeated.
-
-You can also start them separately:
+### Backend
 
 ```bash
-# Backend (in the backend directory)
-uv run python main.py          # or python main.py
+cd backend
+uv sync
+uv run python main.py
+```
 
-# Frontend (in the frontend/web directory)
+The first run creates the tables and seeds the base data (admin account, menus, dictionary, departments), so migrations aren't needed. No env file is required: without one the backend uses the built-in defaults (SQLite plus a local Redis on `6379` without password). To change something, run `cp env/.env.example env/.env.dev` and edit it.
+
+### Frontend
+
+```bash
+cd frontend/web
+pnpm install
 pnpm run dev
 ```
 
-> On first startup the backend creates the tables and idempotently seeds: the super-admin account `admin` / `admin` (change the password promptly), the System Management menus with their button permission codes, the gender dictionary and the root department. Nothing is inserted or overwritten once those tables already contain data. **Pointing at a fresh database (e.g. a newly created MySQL schema) means brand-new data, so the seeding runs again.**
-> API docs: after startup visit http://127.0.0.1:8001/docs .
+Running `npm run dev` from the repository root starts both sides with one command instead.
+
+### Local URLs
+
+| Service | URL |
+| --- | --- |
+| Web frontend | http://127.0.0.1:5173 |
+| Backend API | http://127.0.0.1:8001/api/v1 |
+| API docs | http://127.0.0.1:8001/docs |
+| Default account | `admin` / `admin` (change the password after logging in) |
+
+To switch to MySQL / PostgreSQL, see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
 
 ### 🐳 One-click Docker Deploy
 
 ```bash
-cp docker/.env.example docker/.env    # fill in MySQL / Redis passwords and SECRET_KEY (for a production deploy; the containerised backend reads the same file, so both sides stay consistent)
+cp docker/.env.example docker/.env    # set the MySQL / Redis passwords and SECRET_KEY
 ./deploy.sh                           # build frontend on host → build images → start the full stack
 ```
 
-`docker-compose.yaml` defines four services: **MySQL, Redis, Backend, Nginx**. Nginx serves the frontend build and reverse-proxies `/api/v1` to the backend; the SSL (443) config is included but commented out by default — enable it after providing your certificates.
+`docker-compose.yaml` defines four services: MySQL, Redis, Backend, Nginx. Nginx serves the frontend build and reverse-proxies `/api/v1` to the backend; the SSL (443) config is included but commented out by default.
+
+### FAQ
+
+| Problem | Answer |
+| --- | --- |
+| Backend fails with `redis.exceptions.ConnectionError ... 6379` | Redis isn't running — rerun the command under “Start the Middleware”. `down` deletes the containers and a reboot won't bring them back |
+| Backend fails with `AuthenticationError: Authentication required.` | `REDIS_PASSWORD` in `docker/.env` differs from `backend/env/.env.dev`; leave both empty for local development |
+| Frontend reports `ECONNREFUSED 127.0.0.1:8001` | The backend isn't up; check the two rows above |
 
 ### 🌍 Multi-language Generation Script
 
