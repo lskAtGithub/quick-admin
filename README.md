@@ -45,19 +45,21 @@
 
 ### 环境要求
 
-| 需求 | 版本 |
+| 需求 | 版本 / 说明 |
 |------|------|
 | Python | ≥ 3.12（推荐用 [uv](https://github.com/astral-sh/uv) 管理依赖） |
 | Node.js | ≥ 20，包管理使用 pnpm |
 | 数据库 | MySQL 8.0+ / PostgreSQL / SQLite（默认 SQLite，开发环境配 MySQL） |
-| 缓存 | Redis 7.x |
+| 缓存 | **Redis 7.x（后端启动的强依赖，未运行会直接 startup failed）** |
+| Docker | 推荐用于快速拉起 Redis 及一键部署整个技术栈（需安装并启动 Docker Desktop，Windows/Linux 另需 `docker compose` v2） |
 
 ### 开发模式
 
 前端开发端口 `5173`，后端端口 `8001`。后端**不要求存在 env 文件**：`backend/env/.env.dev` 缺失时回落到 `setting.py` 内置默认（SQLite + 本机 Redis `6379` 无密码）；要换数据库或密钥时执行 `cp backend/env/.env.example backend/env/.env.dev` 再按需修改。
 
 ```bash
-# 1. 启动 Redis（后端强依赖，未就绪会连不上）
+# 1. 启动 Redis（后端强依赖：连不上 localhost:6379 时后端会直接启动失败退出）
+#    确保 Docker Desktop 已运行；也可自行启动任意 Redis 服务监听 6379
 docker compose -f docker/docker-compose.yaml up -d redis
 
 # 2. 安装后端依赖（backend 目录，推荐 uv）
