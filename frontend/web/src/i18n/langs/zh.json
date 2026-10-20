@@ -372,6 +372,7 @@
     "backendFramework": "后端框架"
   },
   "menus": {
+    "actions": { "query": "查询", "create": "新增", "update": "修改", "delete": "删除" },
     "home": { "title": "首页" },
     "login": { "title": "登录" },
     "profile": { "title": "个人中心" },

@@ -23,6 +23,12 @@ export default {
       meta: { title: 'menus.system.menu.title', icon: 'ri:menu-line', keepAlive: true }
     },
     {
+      path: 'dept',
+      name: 'SystemDept',
+      component: () => import('@/views/module_system/dept/index.vue'),
+      meta: { title: 'menus.system.dept.title', icon: 'ri:node-tree', keepAlive: true }
+    },
+    {
       path: 'dict',
       name: 'SystemDict',
       component: () => import('@/views/module_system/dict/index.vue'),

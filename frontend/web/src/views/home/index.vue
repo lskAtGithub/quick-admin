@@ -166,7 +166,7 @@ const quickLinks = computed(() => [
   { title: $t('menus.system.menu.title'), icon: 'ri:menu-line', path: '/system/menu' },
   { title: $t('menus.system.dept.title'), icon: 'ri:organization-chart', path: '/system/dept' },
   { title: $t('menus.system.dict.title'), icon: 'ri:book-line', path: '/system/dict' },
-  { title: $t('topBar.user.userCenter'), icon: 'ri:user-settings-line', path: '/fastlink/current/profile' }
+  { title: $t('topBar.user.userCenter'), icon: 'ri:user-settings-line', path: '/profile' }
 ]);
 
 const systemInfo = computed(() => [
