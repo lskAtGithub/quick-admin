@@ -100,10 +100,10 @@ export const useUserStore = defineStore(
     async function login(loginForm) {
       const response = await AuthAPI.login(loginForm);
       const data = response.data;
-      if (response.data.code === ResultEnum.SUCCESS) {
+      if (response.code === ResultEnum.SUCCESS) {
         ElNotification({
           title: $t('common.notice'),
-          message: response.data.msg,
+          message: response.msg,
           type: 'success'
         });
       }

@@ -436,7 +436,7 @@ const handlePasswordChange = async () => {
     if (!valid) return false;
     const response = await UserAPI.changeCurrentUserPassword(passwordFormState);
     initPasswordForm();
-    await redirectToLogin(response.data.msg);
+    await redirectToLogin(response.msg);
     return true;
   } catch (error) {
     console.error(error);
