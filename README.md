@@ -51,7 +51,7 @@
 | Node.js | ≥ 20，包管理使用 pnpm |
 | 数据库 | MySQL 8.0+ / PostgreSQL / SQLite（默认 SQLite，开发环境配 MySQL） |
 | 缓存 | **Redis 7.x（后端启动的强依赖，未运行会直接 startup failed）** |
-| Docker | 推荐用于快速拉起 Redis 及一键部署整个技术栈（需安装并启动 Docker Desktop，Windows/Linux 另需 `docker compose` v2） |
+| Docker | 推荐用于快速拉起 Redis 及一键部署整个技术栈（安装并启动 Docker Desktop 即可，compose 已内置为 `docker compose` 子命令，无需单独安装；本文统一用该形式，而非旧版独立程序 `docker-compose`） |
 
 ### 开发模式
 

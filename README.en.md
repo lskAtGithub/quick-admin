@@ -51,7 +51,7 @@ A **front-end / back-end separated admin platform** focused on the most essentia
 | Node.js | ≥ 20, package manager: pnpm |
 | Database | MySQL 8.0+ / PostgreSQL / SQLite (defaults to SQLite; dev environment configured for MySQL) |
 | Cache | **Redis 7.x (a hard dependency of backend startup — the app fails to boot without it)** |
-| Docker | Recommended for quickly bringing up Redis and deploying the full stack (requires Docker Desktop to be installed and running, plus `docker compose` v2 on Windows/Linux) |
+| Docker | Recommended for quickly bringing up Redis and deploying the full stack (installing and running Docker Desktop is enough — compose ships built in as the `docker compose` subcommand, no separate install; this guide always uses that form, not the legacy standalone `docker-compose` binary) |
 
 ### Development
 
