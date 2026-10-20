@@ -23,6 +23,7 @@ logs/
 !**/env/.env.example
 
 # Docker
+docker/.env
 docker/mysql/data/
 docker/redis/data/
 
