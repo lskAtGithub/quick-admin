@@ -54,14 +54,20 @@ A **front-end / back-end separated admin platform** focused on the most essentia
 
 ### Development
 
-The backend reads `backend/env/.env.dev` by default; the frontend dev server runs on port `5173`, the backend on port `8001`.
+The frontend dev server runs on port `5173`, the backend on port `8001`. An env file is **not required**: when `backend/env/.env.dev` is missing the backend falls back to the built-in defaults in `setting.py` (SQLite plus a local Redis on `6379` without password); to change the database or secrets, run `cp backend/env/.env.example backend/env/.env.dev` and edit it.
 
 ```bash
-# 1. Install backend dependencies (in the backend directory, uv recommended)
+# 1. Start Redis (a hard dependency of the backend)
+docker compose -f docker/docker-compose.yaml up -d redis
+
+# 2. Install backend dependencies (in the backend directory, uv recommended)
 cd backend && uv sync && cd ..
 
-# 2. Start frontend + backend with a single command
-pnpm run dev
+# 3. Install frontend dependencies (in the frontend/web directory)
+cd frontend/web && pnpm install && cd ../..
+
+# 4. Start frontend + backend with a single command (npm or pnpm — the root has no dependencies)
+npm run dev
 
 # ✅ Open http://127.0.0.1:5173 in your browser and log in with admin / admin
 ```
@@ -73,10 +79,10 @@ You can also start them separately:
 uv run python main.py          # or python main.py
 
 # Frontend (in the frontend/web directory)
-pnpm install && pnpm run dev
+pnpm run dev
 ```
 
-> On first startup the backend automatically creates tables and seeds a default super-admin account `admin` / `admin` (idempotent — please change the password promptly).
+> On first startup the backend creates the tables and idempotently seeds: the super-admin account `admin` / `admin` (change the password promptly), the System Management menus with their button permission codes, the gender dictionary and the root department. Nothing is inserted or overwritten once those tables already contain data.
 > API docs: after startup visit http://127.0.0.1:8001/docs .
 
 ### 🐳 One-click Docker Deploy
@@ -110,8 +116,8 @@ quick-admin/                 # Full-stack monorepo
 │   ├─ app/api/v1/           # Routes registered by domain group (DOMAIN_CONTROLLERS)
 │   ├─ app/modules/          # Business modules: system (auth/user/role/menu/dept/dict/param), common (file)
 │   ├─ app/core/             # Database, security, middleware, exceptions, logging, Redis, dependency injection
-│   ├─ app/config/           # Configuration (setting.py) and env files (env/.env.*)
-│   ├─ app/scripts/          # Startup initialization (default admin seed)
+│   ├─ app/config/           # Configuration (setting.py) and env files (env/.env.*, template env/.env.example)
+│   ├─ app/scripts/          # Startup initialization (admin + menu/dictionary/department seeds)
 │   └─ alembic/              # Database migrations
 ├─ frontend/web/             # Vue3 web frontend (Element Plus + Vite + Pinia + Tailwind)
 │   └─ src/                  # views / router / store / layouts / components / i18n ...
@@ -164,7 +170,7 @@ The repo ships skills for AI coding agents:
 
 ## 🔧 Configuration
 
-Configuration lives in `backend/app/config/setting.py`; runtime environment variables are in `backend/env/.env.{dev,prod}` (`ENVIRONMENT` selects which one to load). Key items:
+Configuration lives in `backend/app/config/setting.py`; runtime environment variables are in `backend/env/.env.{dev,prod}` (`ENVIRONMENT` selects which one to load, and the built-in defaults apply when neither exists). See `backend/env/.env.example` for a secret-free template. Key items:
 
 ```python
 DATABASE_TYPE = "sqlite"        # one of: sqlite | mysql | postgres
@@ -183,6 +189,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024       # per-file limit
 - **Change the default password**: the initial `admin/admin` is for first login only — change it immediately after going live.
 - **Replace the JWT secret**: in production always set `SECRET_KEY` to a strong random value (`openssl rand -hex 32`).
 - **Database migrations**: in production prefer Alembic to manage schema (`uv run alembic upgrade head`); the `create_all` at startup is only a first-time fallback initializer.
+- **Production config file**: `deploy.sh` checks that `backend/env/.env.prod` exists, so create it before a Docker deploy (copy `backend/env/.env.example` and point `DATABASE_TYPE` at the MySQL service from the compose file).
 - **Upload persistence**: the Docker deployment mounts `backend/static/upload` so user files survive container rebuilds.
 - **HTTPS**: to enable SSL, drop your certificates into `docker/nginx/ssl` and uncomment the 443 block in `nginx.conf`.
 

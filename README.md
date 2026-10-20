@@ -54,14 +54,20 @@
 
 ### 开发模式
 
-后端默认读取 `backend/env/.env.dev`，前端开发端口 `5173`，后端端口 `8001`。
+前端开发端口 `5173`，后端端口 `8001`。后端**不要求存在 env 文件**：`backend/env/.env.dev` 缺失时回落到 `setting.py` 内置默认（SQLite + 本机 Redis `6379` 无密码）；要换数据库或密钥时执行 `cp backend/env/.env.example backend/env/.env.dev` 再按需修改。
 
 ```bash
-# 1. 安装后端依赖（backend 目录，推荐 uv）
+# 1. 启动 Redis（后端强依赖，未就绪会连不上）
+docker compose -f docker/docker-compose.yaml up -d redis
+
+# 2. 安装后端依赖（backend 目录，推荐 uv）
 cd backend && uv sync && cd ..
 
-# 2. 一条命令同时启动前端 + 后端
-pnpm run dev
+# 3. 安装前端依赖（frontend/web 目录）
+cd frontend/web && pnpm install && cd ../..
+
+# 4. 一条命令同时启动前端 + 后端（npm / pnpm 皆可，根目录无依赖）
+npm run dev
 
 # ✅ 浏览器打开 http://127.0.0.1:5173，用 admin / admin 登录
 ```
@@ -73,10 +79,10 @@ pnpm run dev
 uv run python main.py          # 或 python main.py
 
 # 前端（frontend/web 目录）
-pnpm install && pnpm run dev
+pnpm run dev
 ```
 
-> 首次启动后端会自动建表并初始化默认超级管理员账号 `admin` / `admin`（幂等，请尽快改密）。
+> 首次启动后端会自动建表，并幂等初始化：超级管理员 `admin` / `admin`（请尽快改密）、系统管理菜单与按钮权限位、性别字典、根部门。表内已有数据时不会重复写入，也不覆盖你自行维护的内容。
 > 接口文档：启动后访问 http://127.0.0.1:8001/docs 。
 
 ### 🐳 Docker 一键部署
@@ -110,8 +116,8 @@ quick-admin/                 # Monorepo 全栈工程
 │   ├─ app/api/v1/           # 路由按域分组注册（DOMAIN_CONTROLLERS）
 │   ├─ app/modules/          # 业务模块：system（auth/user/role/menu/dept/dict/param）、common（file）
 │   ├─ app/core/             # 数据库、安全、中间件、异常、日志、Redis、依赖注入
-│   ├─ app/config/           # 配置（setting.py）与环境变量（env/.env.*）
-│   ├─ app/scripts/          # 启动初始化（默认管理员种子）
+│   ├─ app/config/           # 配置（setting.py）与环境变量（env/.env.*，模板 env/.env.example）
+│   ├─ app/scripts/          # 启动初始化（管理员 + 菜单/字典/部门种子）
 │   └─ alembic/              # 数据库迁移
 ├─ frontend/web/             # Vue3 Web 前端（Element Plus + Vite + Pinia + Tailwind）
 │   └─ src/                  # views / router / store / layouts / components / i18n ...
@@ -164,7 +170,7 @@ quick-admin/                 # Monorepo 全栈工程
 
 ## 🔧 配置说明
 
-配置集中在 `backend/app/config/setting.py`，运行环境变量位于 `backend/env/.env.{dev,prod}`（`ENVIRONMENT` 决定加载哪一份）。关键项：
+配置集中在 `backend/app/config/setting.py`，运行环境变量位于 `backend/env/.env.{dev,prod}`（`ENVIRONMENT` 决定加载哪一份，两份都不存在时使用内置默认值）。无密钥模板见 `backend/env/.env.example`。关键项：
 
 ```python
 DATABASE_TYPE = "sqlite"        # sqlite | mysql | postgres 三选一
@@ -183,6 +189,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024       # 单文件上限
 - **改默认密码**：初始 `admin/admin` 仅供首次登录，上线后立即修改。
 - **换 JWT 密钥**：生产环境务必将 `SECRET_KEY` 改为强随机值（`openssl rand -hex 32`）。
 - **数据库迁移**：正式环境建议用 Alembic 管理表结构（`uv run alembic upgrade head`），启动时的 `create_all` 仅作首次兜底初始化。
+- **生产配置文件**：`deploy.sh` 会检查 `backend/env/.env.prod` 是否存在，Docker 部署前需自行创建该文件（可从 `backend/env/.env.example` 复制，并将 `DATABASE_TYPE` 指向 compose 内的 MySQL）。
 - **上传持久化**：Docker 部署已挂载 `backend/static/upload`，避免重建容器丢失用户文件。
 - **HTTPS**：如需 SSL，向 `docker/nginx/ssl` 放入证书并取消 `nginx.conf` 中 443 段注释。
 

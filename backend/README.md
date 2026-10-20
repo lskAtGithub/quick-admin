@@ -36,9 +36,9 @@ backend/
 │   ├── config/              # 配置（setting.py 配置项、path_conf.py 路径）
 │   ├── core/                # 核心模块（database / security / middlewares / dependencies /
 │   │                        #   exceptions / logger / redis_crud / base_model / base_schema）
-│   ├── scripts/             # 初始化脚本（默认管理员种子）
+│   ├── scripts/             # 初始化脚本（管理员 + 菜单/字典/部门种子）
 │   └── utils/               # 工具类（password_util / upload_util）
-├── env/                     # 环境配置（.env.dev / .env.prod）
+├── env/                     # 环境配置（.env.dev / .env.prod；.env.example 为无密钥模板）
 ├── logs/                    # 日志输出目录
 ├── static/upload/           # 上传文件存储目录
 ├── main.py                  # 启动入口（uvicorn factory 启动 app:create_app）
@@ -67,16 +67,16 @@ modules/<域>/<模块>/
 ### 环境要求
 
 - **Python**：3.12+
-- **数据库**：MySQL 8.0+ / PostgreSQL / SQLite（连接配置见 `env/.env.dev`）
-- **Redis**：与 `env/.env.dev` 中配置一致
+- **数据库**：MySQL 8.0+ / PostgreSQL / SQLite（默认 SQLite，连接配置见 `env/.env.dev`）
+- **Redis**：必选依赖，与 `env/.env.dev` 中配置一致（本地可直接 `docker compose -f ../docker/docker-compose.yaml up -d redis`）
 
 ### 第一次在本机跑起来
 
-1. 按需修改 `env/.env.dev`：填写数据库、Redis、`SECRET_KEY`、`SERVER_PORT` 等（数据库类型由 `DATABASE_TYPE` 切换，先在 DB 中建好空库）。
+1. （可选）从 `env/.env.example` 复制为 `env/.env.dev` 并按需修改：数据库、Redis、`SECRET_KEY`、`SERVER_PORT` 等（数据库类型由 `DATABASE_TYPE` 切换，选 MySQL/PG 需先在 DB 中建好空库）。**两份 env 文件都不存在时，直接沿用 `app/config/setting.py` 的内置默认：SQLite + 本机 Redis 6379 无密码。**
 2. 在 **`backend/` 目录下**安装依赖：推荐 **`uv sync`**（依赖以 `uv.lock` 冻结）。
-3. **启动**：`uv run python main.py`（或 `python main.py`）。**首次启动会自动建表并初始化默认超级管理员 `admin` / `admin`**，一般无需先执行迁移。接口文档：`http://127.0.0.1:8001/docs`（端口见 `.env.dev` 中 `SERVER_PORT`）。
+3. **启动**：`uv run python main.py`（或 `python main.py`）。**首次启动会自动建表，并幂等初始化默认超级管理员 `admin` / `admin`、系统管理菜单与按钮权限位、性别字典和根部门**，一般无需先执行迁移。接口文档：`http://127.0.0.1:8001/docs`（端口见 `SERVER_PORT`）。
 
-> 环境切换：`main.py` 通过操作系统环境变量 `ENVIRONMENT` 决定加载哪份配置，缺省为 `dev`；设为 `prod` 则读取 `env/.env.prod`。
+> 环境切换：`main.py` 通过操作系统环境变量 `ENVIRONMENT` 决定加载哪份配置，缺省为 `dev`；设为 `prod` 则读取 `env/.env.prod`（`deploy.sh` 会检查该文件是否存在）。
 > 根目录执行 `npm run dev` 会通过 `scripts/dev.js` 同时拉起本后端与前端，无需单独启动。
 
 ### 数据库迁移命令（模型变更时使用）
@@ -103,6 +103,7 @@ uv run alembic downgrade -1
 - **鉴权模型**：登录后由全局 `PermissionMiddleware` 按请求路径推导并校验权限，登录、验证码、当前用户信息等自描述端点在中间件中放行。
 - **软删除与时间戳**：ORM 模型混入 `ModelMixin`，统一提供 `id` / `is_deleted` / `created_time` / `updated_time`，时间默认取 `Asia/Shanghai` 时区。
 - **密码存储**：使用 bcrypt 加盐哈希（`app/utils/password_util.py`），数据库中不保存明文。
+- **启动种子**：`app/scripts/init_data.py` 在应用 lifespan 内幂等写入默认管理员、系统管理菜单与按钮权限、性别字典和根部门；目标表只要存在任意行（含软删）就跳过，不覆盖用户自行维护的数据。
 - **多数据库方言**：`DATABASE_TYPE` 切换 `sqlite` / `mysql` / `postgres`，`ASYNC_DB_URI` 据此自动拼接对应异步连接串，业务代码无需感知方言差异。
 - **静态文件**：上传文件落 `static/upload`，经 `STATIC_URL`（默认 `/static`）挂载对外访问。
 
