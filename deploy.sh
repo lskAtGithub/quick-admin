@@ -36,6 +36,11 @@ compose() {
 load_env() {
     if [ -f "${ENV_FILE}" ]; then
         set -a; source "${ENV_FILE}"; set +a
+        # compose 侧对口令只做默认值兜底（便于本地零配置），上生产不得沿用模板占位值
+        if [ "${MYSQL_ROOT_PASSWORD:-}" = "change_me_root_password" ] || [ "${MYSQL_PASSWORD:-}" = "change_me_app_password" ] || [ "${SECRET_KEY:-}" = "change_this_to_a_long_random_string" ]; then
+            log "仍在沿用 .env.example 的占位密码/密钥，请在 ${ENV_FILE} 中改为随机值后重试" "ERROR"
+            exit 1
+        fi
         log "✅ 环境变量已加载" "SUCCESS"
     elif [ -f "${DOCKER_DIR}/.env.example" ]; then
         cp "${DOCKER_DIR}/.env.example" "${ENV_FILE}"

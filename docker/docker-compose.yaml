@@ -7,10 +7,11 @@ services:
     platform: linux/amd64
     environment:
       TZ: "Asia/Shanghai"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?错误: 请设置 MYSQL_ROOT_PASSWORD}"
+      # 以下四项均有默认值，本地不建 docker/.env 也能直接起；部署时 deploy.sh 会拦住沿用占位口令的 .env
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-change_me_root_password}"
       MYSQL_DATABASE: "${MYSQL_DATABASE:-quickadmin}"
-      MYSQL_USER: "${MYSQL_USER:?错误: 请设置 MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?错误: 请设置 MYSQL_PASSWORD}"
+      MYSQL_USER: "${MYSQL_USER:-quickadmin}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-change_me_app_password}"
     ports:
       - "${MYSQL_PORT:-33066}:3306"
     volumes:
@@ -22,7 +23,7 @@ services:
     healthcheck:
       # 用 TCP（127.0.0.1）而非 socket（localhost）探测：全新卷初始化期间的临时实例是 --skip-networking 的，
       # socket 能 ping 通但 3306 未开放，会导致依赖方抢跑连不上库
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-change_me_root_password}"]
       interval: 10s
       timeout: 10s
       retries: 10
@@ -51,11 +52,11 @@ services:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
       - ./redis/data:/data
-    command: sh -c 'redis-server --requirepass "${REDIS_PASSWORD}"'
+    command: sh -c 'redis-server --requirepass "${REDIS_PASSWORD:-}"'
     networks:
       - app_network
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD}\" ping | grep PONG"]
+      test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD:-}\" ping | grep PONG"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -85,18 +86,18 @@ services:
       TZ: "Asia/Shanghai"
       # 运行环境，对应 backend/env/.env.{dev,prod}
       ENVIRONMENT: "${DEPLOY_ENV:-prod}"
-      # 以下连接配置覆盖 .env.prod（pydantic 中 OS 环境变量优先级高于 env 文件）
+      # 以下连接配置为容器内网值；若存在 backend/env/.env.prod，文件里的值优先级高于这里
       DATABASE_TYPE: "mysql"
       DATABASE_HOST: "mysql"
       DATABASE_PORT: "3306"
-      DATABASE_USER: "${MYSQL_USER}"
-      DATABASE_PASSWORD: "${MYSQL_PASSWORD}"
+      DATABASE_USER: "${MYSQL_USER:-quickadmin}"
+      DATABASE_PASSWORD: "${MYSQL_PASSWORD:-change_me_app_password}"
       DATABASE_NAME: "${MYSQL_DATABASE:-quickadmin}"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
-      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
       REDIS_DB_NAME: "1"
-      SECRET_KEY: "${SECRET_KEY:?错误: 请设置 SECRET_KEY（JWT 签名密钥）}"
+      SECRET_KEY: "${SECRET_KEY:-change_this_to_a_long_random_string}"
       DEBUG: "False"
       LOGGER_LEVEL: "${LOGGER_LEVEL:-INFO}"
     ports:
