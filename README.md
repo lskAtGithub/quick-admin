@@ -55,11 +55,11 @@
 
 ### 开发模式
 
-前端开发端口 `5173`，后端端口 `8001`。后端**不要求存在 env 文件**：`backend/env/.env.dev` 缺失时回落到 `setting.py` 内置默认（SQLite + 本机 Redis `6379` 无密码）；要换数据库或密钥时执行 `cp backend/env/.env.example backend/env/.env.dev` 再按需修改。
+前端开发端口 `5173`，后端端口 `8001`。以下命令**均在仓库根目录执行**（`cd` 进入子目录的步骤已单独标出）。后端**不要求存在 env 文件**：`backend/env/.env.dev` 缺失时回落到 `setting.py` 内置默认（SQLite + 本机 Redis `6379` 无密码）；要换数据库或密钥时执行 `cp backend/env/.env.example backend/env/.env.dev` 再按需修改。
 
 ```bash
 # 1. 启动 Redis（后端强依赖：连不上 localhost:6379 时后端会直接启动失败退出）
-#    确保 Docker Desktop 已运行；也可自行启动任意 Redis 服务监听 6379
+#    在仓库根目录执行，并先确保 Docker Desktop 已运行；也可自行启动任意 Redis 服务监听 6379
 docker compose -f docker/docker-compose.yaml up -d redis
 
 # 2. 安装后端依赖（backend 目录，推荐 uv）

@@ -68,7 +68,7 @@ modules/<domain>/<module>/
 
 - **Python**: 3.12+
 - **Database**: MySQL 8.0+ / PostgreSQL / SQLite (SQLite by default; connection settings in `env/.env.dev`)
-- **Redis**: a **hard startup dependency** — if the ping during lifespan fails, the backend exits immediately with `Application startup failed`; the address must match `env/.env.dev` (locally, bring it up with Docker: make sure Docker Desktop is running, then `docker compose -f ../docker/docker-compose.yaml up -d redis`, or start any Redis listening on 6379 yourself)
+- **Redis**: a **hard startup dependency** — if the ping during lifespan fails, the backend exits immediately with `Application startup failed`; the address must match `env/.env.dev`. Locally, bringing it up with Docker is recommended: make sure Docker Desktop is running, then run `docker compose -f docker/docker-compose.yaml up -d redis` **from the repository root (`quick-admin/`, not `backend/`)**; or start any Redis listening on 6379 yourself
 
 ### Running Locally for the First Time
 

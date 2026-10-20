@@ -68,7 +68,7 @@ modules/<域>/<模块>/
 
 - **Python**：3.12+
 - **数据库**：MySQL 8.0+ / PostgreSQL / SQLite（默认 SQLite，连接配置见 `env/.env.dev`）
-- **Redis**：**启动强依赖**，lifespan 阶段 ping 不通目标地址会让后端直接 `Application startup failed` 退出；地址与 `env/.env.dev` 配置一致（本地推荐用 Docker 拉起：确保 Docker Desktop 已运行后执行 `docker compose -f ../docker/docker-compose.yaml up -d redis`，或自行启动任意监听 6379 的 Redis）
+- **Redis**：**启动强依赖**，lifespan 阶段 ping 不通目标地址会让后端直接 `Application startup failed` 退出；地址与 `env/.env.dev` 配置一致。本地推荐用 Docker 拉起：确保 Docker Desktop 已运行，在**仓库根目录（`quick-admin/`，不是 `backend/`）**执行 `docker compose -f docker/docker-compose.yaml up -d redis`；也可自行启动任意监听 6379 的 Redis
 
 ### 第一次在本机跑起来
 

@@ -55,11 +55,11 @@ A **front-end / back-end separated admin platform** focused on the most essentia
 
 ### Development
 
-The frontend dev server runs on port `5173`, the backend on port `8001`. An env file is **not required**: when `backend/env/.env.dev` is missing the backend falls back to the built-in defaults in `setting.py` (SQLite plus a local Redis on `6379` without password); to change the database or secrets, run `cp backend/env/.env.example backend/env/.env.dev` and edit it.
+The frontend dev server runs on port `5173`, the backend on port `8001`. All commands below run **from the repository root** (steps that `cd` into a subdirectory are marked individually). An env file is **not required**: when `backend/env/.env.dev` is missing the backend falls back to the built-in defaults in `setting.py` (SQLite plus a local Redis on `6379` without password); to change the database or secrets, run `cp backend/env/.env.example backend/env/.env.dev` and edit it.
 
 ```bash
 # 1. Start Redis (a hard backend dependency: startup fails outright if localhost:6379 is unreachable)
-#    Make sure Docker Desktop is running, or start any Redis service listening on 6379 yourself
+#    Run this from the repository root with Docker Desktop already running, or start any Redis service listening on 6379 yourself
 docker compose -f docker/docker-compose.yaml up -d redis
 
 # 2. Install backend dependencies (in the backend directory, uv recommended)
