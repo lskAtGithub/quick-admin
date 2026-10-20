@@ -12,7 +12,7 @@ services:
       MYSQL_USER: "${MYSQL_USER:?错误: 请设置 MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD:?错误: 请设置 MYSQL_PASSWORD}"
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_PORT:-33066}:3306"
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d:ro
