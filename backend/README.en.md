@@ -115,10 +115,10 @@ CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE u
 ```properties
 DATABASE_TYPE=mysql
 DATABASE_HOST=127.0.0.1
-DATABASE_PORT=3307            # route A: the MYSQL_PORT from docker/.env; route B: usually 3306
-DATABASE_USER=quickadmin
-DATABASE_PASSWORD=quickadmin123
-DATABASE_NAME=quickadmin
+DATABASE_PORT=3306            # the port your MySQL actually listens on at the host level — not a fixed value: route A takes `MYSQL_PORT` from `docker/.env` (3306 by default, only moved to a free port when a local MySQL already owns 3306); route B uses your local MySQL's own port
+DATABASE_USER=quickadmin       # route A: `MYSQL_USER` from docker/.env; route B: your own account
+DATABASE_PASSWORD=quickadmin123 # route A: same value as `MYSQL_PASSWORD` in docker/.env (template placeholder is change_me_app_password)
+DATABASE_NAME=quickadmin       # route A: `MYSQL_DATABASE` from docker/.env (compose creates it); route B: the database you created in step 2
 ```
 
 > `DATABASE_NAME` must **not** carry a `.db` suffix (that suffix is only appended on the sqlite branch).

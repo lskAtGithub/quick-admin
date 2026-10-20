@@ -115,10 +115,10 @@ CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE u
 ```properties
 DATABASE_TYPE=mysql
 DATABASE_HOST=127.0.0.1
-DATABASE_PORT=3307            # 路线 A 取 docker/.env 的 MYSQL_PORT；路线 B 通常为 3306
-DATABASE_USER=quickadmin
-DATABASE_PASSWORD=quickadmin123
-DATABASE_NAME=quickadmin
+DATABASE_PORT=3306            # 填你要连的 MySQL 在宿主机上实际监听的端口，不是固定值：路线 A 取 `docker/.env` 的 `MYSQL_PORT`（默认 3306，只有被本机 MySQL 占了才改成空闲端口）；路线 B 用本机 MySQL 自己的端口
+DATABASE_USER=quickadmin       # 路线 A 即 `docker/.env` 的 `MYSQL_USER`；路线 B 用你自己的账号
+DATABASE_PASSWORD=quickadmin123 # 路线 A 与 `docker/.env` 的 `MYSQL_PASSWORD` 同值（模板占位为 change_me_app_password）
+DATABASE_NAME=quickadmin       # 路线 A 即 `docker/.env` 的 `MYSQL_DATABASE`（compose 会自动建库）；路线 B 是你第 2 步手建的库名
 ```
 
 > `DATABASE_NAME` **不要带 `.db` 后缀**（该后缀只在 sqlite 分支拼接）。
