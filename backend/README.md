@@ -101,11 +101,13 @@ docker compose -f docker/docker-compose.yaml up -d mysql
 docker ps --filter name=quickadmin-mysql   # 等它变 healthy，首次初始化需 10~30s
 ```
 
-*B. 用本机已有的 MySQL*：先建空库，字符集必须是 utf8mb4：
+*B. 用本机已有的 MySQL*：先建空库，字符集必须是 utf8mb4。**下面这条是 SQL，不是 shell 命令**：先 `mysql -u root -p` 进客户端再粘，或用 `mysql -u root -p -e "……"` 一行执行：
 
 ```sql
 CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
+
+> 路线 A 不需要执行这条 SQL：compose 会按 `docker/.env` 的 `MYSQL_DATABASE` 自动建库。
 
 **3）改 `backend/env/.env.dev` 的数据库段**：
 

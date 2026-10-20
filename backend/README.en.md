@@ -101,11 +101,13 @@ docker compose -f docker/docker-compose.yaml up -d mysql
 docker ps --filter name=quickadmin-mysql   # wait until it reports healthy; first-time initialization takes 10-30s
 ```
 
-*B. An existing local MySQL*: create the empty schema first; its character set must be utf8mb4:
+*B. An existing local MySQL*: create the empty schema first; its character set must be utf8mb4. **The statement below is SQL, not a shell command** — enter the client with `mysql -u root -p` and paste it there, or run it in one line with `mysql -u root -p -e "..."`:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
+
+> Route A doesn't need this SQL at all: compose creates the schema from `MYSQL_DATABASE` in `docker/.env`.
 
 **3) Edit the database section of `backend/env/.env.dev`**:
 
