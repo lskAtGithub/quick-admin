@@ -82,7 +82,7 @@ modules/<域>/<模块>/
 
 ### 切换到 MySQL / PostgreSQL
 
-**默认 SQLite，不建库不配置即可跑**。需要换成 MySQL 时只改 `backend/env/.env.dev`（该文件不入库，见 `.gitignore` 的 `**/env/.env.*`），**无需修改代码**：`ASYNC_DB_URI` 会按 `DATABASE_TYPE` 自动拼接方言连接串。
+**默认 SQLite，不建库不配置即可跑**。切到 MySQL 只需改 `backend/env/.env.dev` 的数据库段，按下面四步操作：
 
 **1）准备 env 文件**（已存在则跳过），在仓库根目录执行：
 
@@ -92,40 +92,37 @@ cp backend/env/.env.example backend/env/.env.dev
 
 **2）准备数据库**，二选一：
 
-*A. 用 compose 自带的 MySQL*（库会自动创建，不用手写 SQL）
+*A. 用 compose 自带的 MySQL*（自动建库，不用手写 SQL）
 
 ```bash
-# 先确保 docker/.env 存在（首次：cp docker/.env.example docker/.env），在仓库根目录执行
+# 先确保 docker/.env 存在（首次：cp docker/.env.example docker/.env），命令在仓库根目录执行
+# 本机 3306 已被占用时，先把 docker/.env 的 MYSQL_PORT 改成空闲端口
 docker compose -f docker/docker-compose.yaml up -d mysql
-
-# 等它变 healthy（全新数据目录首次初始化需 10~30s，期间显示 starting 属正常）
-docker ps --filter name=quickadmin-mysql
+docker ps --filter name=quickadmin-mysql   # 等它变 healthy，首次初始化需 10~30s
 ```
 
-账号密码就是 `docker/.env` 里的 `MYSQL_USER` / `MYSQL_PASSWORD` / `MYSQL_DATABASE`；宿主端口由 `MYSQL_PORT` 决定（模板默认 3306，**本机已装 MySQL 时需改成空闲端口如 3307**，否则端口撞车容器起不来）。
-
-*B. 用本机已有的 MySQL*：先建空库，**字符集必须是 utf8mb4**（连接串写死了 `charset=utf8mb4`）：
+*B. 用本机已有的 MySQL*：先建空库，字符集必须是 utf8mb4：
 
 ```sql
 CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-**3）改写 `backend/env/.env.dev` 的数据库段**：
+**3）改 `backend/env/.env.dev` 的数据库段**：
 
 ```properties
 DATABASE_TYPE=mysql
 DATABASE_HOST=127.0.0.1
-DATABASE_PORT=3306            # 填你要连的 MySQL 在宿主机上实际监听的端口，不是固定值：路线 A 取 `docker/.env` 的 `MYSQL_PORT`（默认 3306，只有被本机 MySQL 占了才改成空闲端口）；路线 B 用本机 MySQL 自己的端口
-DATABASE_USER=quickadmin       # 路线 A 即 `docker/.env` 的 `MYSQL_USER`；路线 B 用你自己的账号
-DATABASE_PASSWORD=quickadmin123 # 路线 A 与 `docker/.env` 的 `MYSQL_PASSWORD` 同值（模板占位为 change_me_app_password）
-DATABASE_NAME=quickadmin       # 路线 A 即 `docker/.env` 的 `MYSQL_DATABASE`（compose 会自动建库）；路线 B 是你第 2 步手建的库名
+DATABASE_PORT=3306              # 路线 A 填 docker/.env 的 MYSQL_PORT；路线 B 填本机 MySQL 端口
+DATABASE_USER=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_USER
+DATABASE_PASSWORD=quickadmin123 # 路线 A 填 docker/.env 的 MYSQL_PASSWORD
+DATABASE_NAME=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_DATABASE；不要带 .db 后缀
 ```
 
-> `DATABASE_NAME` **不要带 `.db` 后缀**（该后缀只在 sqlite 分支拼接）。
+**4）重启后端**：`cd backend && uv run python main.py`，日志依次出现`数据库表初始化完成`与`已初始化默认超级管理员账号`即成功。**切库等于全新数据**，SQLite 里的数据不会自动搬迁。
 
-**4）重启后端**：`cd backend && uv run python main.py`。首启会在这份 MySQL 里建表并幂等写入种子，日志依次出现`数据库表初始化完成`与`已初始化默认超级管理员账号`即成功。**切库等于全新数据**，原有 SQLite 文件里的数据不会自动搬迁；如需保留旧数据自行导入备份。
+切回 SQLite：把 `DATABASE_TYPE` 改回 `sqlite`，或直接删掉 `env/.env.dev`。
 
-**5）切回 SQLite**：把 `DATABASE_TYPE` 改回 `sqlite`，或直接删掉 `env/.env.dev` 回落内置默认。
+切 PostgreSQL：同上四步，`DATABASE_TYPE=postgres`、`DATABASE_PORT` 改填 5432（模板默认为 3306），库需自己建。
 
 常见报错对照：
 

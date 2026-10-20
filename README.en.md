@@ -191,7 +191,7 @@ ALLOWED_EXTENSIONS = [...]      # allowed upload extensions
 MAX_FILE_SIZE = 10 * 1024 * 1024       # per-file limit
 ```
 
-> Switch the database type via `DATABASE_TYPE` — no code changes needed; `ASYNC_DB_URI` builds the correct dialect connection string automatically.
+> For the switch procedure see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
 > Keep all secrets (`SECRET_KEY`, database / Redis passwords) in `backend/env/.env.*` or `docker/.env` — never commit them to the repository.
 
 ## 🚦 Deployment & Security Notes

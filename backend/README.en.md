@@ -82,7 +82,7 @@ modules/<domain>/<module>/
 
 ### Switching to MySQL / PostgreSQL
 
-**SQLite is the default — it runs with no database to create and no configuration.** Switching to MySQL only means editing `backend/env/.env.dev` (not committed; see `**/env/.env.*` in `.gitignore`); **no code change is needed**: `ASYNC_DB_URI` builds the dialect-specific connection string from `DATABASE_TYPE`.
+**SQLite is the default — it runs with no database to create and no configuration.** Switching to MySQL only means editing the database section of `backend/env/.env.dev`; follow the four steps below.
 
 **1) Prepare the env file** (skip if it already exists), from the repository root:
 
@@ -96,36 +96,33 @@ cp backend/env/.env.example backend/env/.env.dev
 
 ```bash
 # Make sure docker/.env exists first (on first use: cp docker/.env.example docker/.env); run from the repository root
+# If a local MySQL already owns 3306, change MYSQL_PORT in docker/.env to a free port first
 docker compose -f docker/docker-compose.yaml up -d mysql
-
-# Wait until it reports healthy (initializing a brand-new data directory takes 10-30s; "starting" during that window is normal)
-docker ps --filter name=quickadmin-mysql
+docker ps --filter name=quickadmin-mysql   # wait until it reports healthy; first-time initialization takes 10-30s
 ```
 
-The credentials are the `MYSQL_USER` / `MYSQL_PASSWORD` / `MYSQL_DATABASE` values in `docker/.env`; the host port comes from `MYSQL_PORT` (the template defaults to 3306 — **if you already run a local MySQL, change it to a free port such as 3307**, otherwise the port clash prevents the container from starting).
-
-*B. An existing local MySQL*: create the empty schema first, and **its character set must be utf8mb4** (the connection string hardcodes `charset=utf8mb4`):
+*B. An existing local MySQL*: create the empty schema first; its character set must be utf8mb4:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-**3) Update the database section of `backend/env/.env.dev`**:
+**3) Edit the database section of `backend/env/.env.dev`**:
 
 ```properties
 DATABASE_TYPE=mysql
 DATABASE_HOST=127.0.0.1
-DATABASE_PORT=3306            # the port your MySQL actually listens on at the host level — not a fixed value: route A takes `MYSQL_PORT` from `docker/.env` (3306 by default, only moved to a free port when a local MySQL already owns 3306); route B uses your local MySQL's own port
-DATABASE_USER=quickadmin       # route A: `MYSQL_USER` from docker/.env; route B: your own account
-DATABASE_PASSWORD=quickadmin123 # route A: same value as `MYSQL_PASSWORD` in docker/.env (template placeholder is change_me_app_password)
-DATABASE_NAME=quickadmin       # route A: `MYSQL_DATABASE` from docker/.env (compose creates it); route B: the database you created in step 2
+DATABASE_PORT=3306              # route A: MYSQL_PORT from docker/.env; route B: your local MySQL's port
+DATABASE_USER=quickadmin        # route A: MYSQL_USER from docker/.env
+DATABASE_PASSWORD=quickadmin123 # route A: MYSQL_PASSWORD from docker/.env
+DATABASE_NAME=quickadmin        # route A: MYSQL_DATABASE from docker/.env; no .db suffix
 ```
 
-> `DATABASE_NAME` must **not** carry a `.db` suffix (that suffix is only appended on the sqlite branch).
+**4) Restart the backend**: `cd backend && uv run python main.py` — success looks like `数据库表初始化完成` followed by `已初始化默认超级管理员账号` in the logs. **A different database means brand-new data**; nothing is migrated from the previous SQLite file.
 
-**4) Restart the backend**: `cd backend && uv run python main.py`. On the first run it creates the tables in that MySQL instance and seeds idempotently; success looks like `数据库表初始化完成` followed by `已初始化默认超级管理员账号` in the logs. **A different database means brand-new data** — nothing is migrated automatically from the previous SQLite file; import a dump yourself if you need the old rows.
+Switching back to SQLite: set `DATABASE_TYPE` back to `sqlite`, or delete `env/.env.dev`.
 
-**5) Switching back to SQLite**: set `DATABASE_TYPE` back to `sqlite`, or delete `env/.env.dev` to fall back to the built-in defaults.
+Switching to PostgreSQL: same four steps with `DATABASE_TYPE=postgres`, `DATABASE_PORT` set to 5432 (the template default is 3306); create the schema yourself.
 
 Common failures:
 

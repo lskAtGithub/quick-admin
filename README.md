@@ -191,7 +191,7 @@ ALLOWED_EXTENSIONS = [...]      # 允许上传的文件后缀
 MAX_FILE_SIZE = 10 * 1024 * 1024       # 单文件上限
 ```
 
-> 数据库类型通过 `DATABASE_TYPE` 切换，无需改代码；`ASYNC_DB_URI` 会据此自动拼接对应方言的连接串。
+> 切库步骤见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
 > 所有密钥（`SECRET_KEY`、数据库 / Redis 密码）请放在 `backend/env/.env.*` 或 `docker/.env` 中，切勿提交到仓库。
 
 ## 🚦 部署与安全提示
