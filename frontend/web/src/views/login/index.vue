@@ -277,11 +277,11 @@ const registerRules = computed(() => ({
   name: [{ required: true, message: t('common.input', { name: t('system.user.nickname') }), trigger: 'blur' }],
   password: [
     { required: true, validator: validateRegisterPassword, trigger: 'blur' },
-    { min: 6, message: t('login.message.password.min'), trigger: 'blur' }
+    { min: 5, message: t('login.message.password.min'), trigger: 'blur' }
   ],
   confirmPassword: [
     { required: true, message: t('login.message.password.required'), trigger: 'blur' },
-    { min: 6, message: t('login.message.password.min'), trigger: 'blur' },
+    { min: 5, message: t('login.message.password.min'), trigger: 'blur' },
     { validator: validateRegisterConfirm, trigger: 'blur' }
   ]
 }));
@@ -325,7 +325,7 @@ const rules = computed(() => ({
       message: t('login.message.password.required')
     },
     {
-      min: 6,
+      min: 5,
       message: t('login.message.password.min'),
       trigger: 'blur'
     }
@@ -435,15 +435,13 @@ watch(
 const handleSubmit = async () => {
   if (!accountFormRef.value) return;
 
+  const valid = await accountFormRef.value.validate?.();
+  if (!valid) return;
+  if (!isPassing.value) {
+    isClickPass.value = true;
+    return;
+  }
   try {
-    const valid = await accountFormRef.value.validate?.();
-    if (!valid) return;
-
-    if (!isPassing.value) {
-      isClickPass.value = true;
-      return;
-    }
-
     loading.value = true;
 
     await userStore.login(loginForm);
