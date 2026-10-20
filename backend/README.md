@@ -96,7 +96,7 @@ cp backend/env/.env.example backend/env/.env.dev
 
 ```bash
 # 先确保 docker/.env 存在（首次：cp docker/.env.example docker/.env），命令在仓库根目录执行
-# 本机 3306 已被占用时，先把 docker/.env 的 MYSQL_PORT 改成空闲端口
+# MYSQL_PORT 模板默认 33066（避开本机已装的 MySQL；容器内端口仍是 3306）
 docker compose -f docker/docker-compose.yaml up -d mysql
 docker ps --filter name=quickadmin-mysql   # 等它变 healthy，首次初始化需 10~30s
 ```
@@ -112,9 +112,9 @@ CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE u
 ```properties
 DATABASE_TYPE=mysql
 DATABASE_HOST=127.0.0.1
-DATABASE_PORT=3306              # 路线 A 填 docker/.env 的 MYSQL_PORT；路线 B 填本机 MySQL 端口
+DATABASE_PORT=33066             # 路线 A 填 docker/.env 的 MYSQL_PORT（模板默认 33066）；路线 B 填本机 MySQL 端口
 DATABASE_USER=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_USER
-DATABASE_PASSWORD=quickadmin123 # 路线 A 填 docker/.env 的 MYSQL_PASSWORD
+DATABASE_PASSWORD=change_me_app_password # 路线 A 填 docker/.env 的 MYSQL_PASSWORD
 DATABASE_NAME=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_DATABASE；不要带 .db 后缀
 ```
 
@@ -122,7 +122,7 @@ DATABASE_NAME=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_DATABASE；
 
 切回 SQLite：把 `DATABASE_TYPE` 改回 `sqlite`，或直接删掉 `env/.env.dev`。
 
-切 PostgreSQL：同上四步，`DATABASE_TYPE=postgres`、`DATABASE_PORT` 改填 5432（模板默认为 3306），库需自己建。
+切 PostgreSQL：同上四步，`DATABASE_TYPE=postgres`、`DATABASE_PORT` 改填 5432（模板默认为 33066），库需自己建。
 
 常见报错对照：
 

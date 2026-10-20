@@ -96,7 +96,7 @@ cp backend/env/.env.example backend/env/.env.dev
 
 ```bash
 # Make sure docker/.env exists first (on first use: cp docker/.env.example docker/.env); run from the repository root
-# If a local MySQL already owns 3306, change MYSQL_PORT in docker/.env to a free port first
+# MYSQL_PORT defaults to 33066 in the template so it cannot clash with a locally installed MySQL (the port inside the container is still 3306)
 docker compose -f docker/docker-compose.yaml up -d mysql
 docker ps --filter name=quickadmin-mysql   # wait until it reports healthy; first-time initialization takes 10-30s
 ```
@@ -112,9 +112,9 @@ CREATE DATABASE IF NOT EXISTS quickadmin DEFAULT CHARACTER SET utf8mb4 COLLATE u
 ```properties
 DATABASE_TYPE=mysql
 DATABASE_HOST=127.0.0.1
-DATABASE_PORT=3306              # route A: MYSQL_PORT from docker/.env; route B: your local MySQL's port
+DATABASE_PORT=33066             # route A: MYSQL_PORT from docker/.env (template default 33066); route B: your local MySQL's port
 DATABASE_USER=quickadmin        # route A: MYSQL_USER from docker/.env
-DATABASE_PASSWORD=quickadmin123 # route A: MYSQL_PASSWORD from docker/.env
+DATABASE_PASSWORD=change_me_app_password # route A: MYSQL_PASSWORD from docker/.env
 DATABASE_NAME=quickadmin        # route A: MYSQL_DATABASE from docker/.env; no .db suffix
 ```
 
@@ -122,7 +122,7 @@ DATABASE_NAME=quickadmin        # route A: MYSQL_DATABASE from docker/.env; no .
 
 Switching back to SQLite: set `DATABASE_TYPE` back to `sqlite`, or delete `env/.env.dev`.
 
-Switching to PostgreSQL: same four steps with `DATABASE_TYPE=postgres`, `DATABASE_PORT` set to 5432 (the template default is 3306); create the schema yourself.
+Switching to PostgreSQL: same four steps with `DATABASE_TYPE=postgres`, `DATABASE_PORT` set to 5432 (the template default is 33066); create the schema yourself.
 
 Common failures:
 
