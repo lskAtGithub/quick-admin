@@ -128,6 +128,7 @@ DATABASE_NAME=quickadmin        # 路线 A 填 docker/.env 的 MYSQL_DATABASE；
 
 | 现象 | 原因与处理 |
 |------|-----------|
+| `error while interpolating services.mysql.environment.XXX: required variable XXX is missing a value` | `docker/.env` 不存在（漏了 `cp docker/.env.example docker/.env`），或对应变量被留空——compose 的必填校验把**空值等同于缺失**，报错点名的变量不必然是真凶。哪怕只用本机 MySQL、不起容器，该文件也需存在且各项非空 |
 | `RuntimeError` 指向 cryptography / sha2_rsa_encrypt | MySQL 8 的 `caching_sha2_password` 认证需要 `cryptography`，它已在 `pyproject.toml` / `uv.lock` 里，重跑 `uv sync` 即带上 |
 | `(2003, "Can't connect to MySQL server")` | 主机或端口写错：确认容器已 healthy，且 `DATABASE_PORT` 与 `docker/.env` 的 `MYSQL_PORT` 一致 |
 | 容器反复 Restarting，日志有 `--initialize specified but the data directory has files in it` | `docker/mysql/data` 被挂成 MySQL 数据目录，**里面不能有任何杂项文件**（常见于把备份 sql 倒进去）；把这些文件移出该目录后重新 `up -d mysql` |

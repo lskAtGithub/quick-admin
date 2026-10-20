@@ -128,6 +128,7 @@ Common failures:
 
 | Symptom | Cause and fix |
 |---------|---------------|
+| `error while interpolating services.mysql.environment.XXX: required variable XXX is missing a value` | `docker/.env` doesn't exist (the `cp docker/.env.example docker/.env` step was skipped), or that variable was left blank — compose's required-variable check treats **an empty value as missing**, and the variable named in the error isn't necessarily the real culprit. Even if you only use a local MySQL and never start the container, this file must exist with non-empty values |
 | `RuntimeError` mentioning cryptography / sha2_rsa_encrypt | MySQL 8's `caching_sha2_password` requires `cryptography`, which is already pinned in `pyproject.toml` / `uv.lock` — rerun `uv sync` |
 | `(2003, "Can't connect to MySQL server")` | Wrong host or port: confirm the container is healthy and `DATABASE_PORT` matches `MYSQL_PORT` in `docker/.env` |
 | The container keeps restarting with `--initialize specified but the data directory has files in it` | `docker/mysql/data` is mounted as the MySQL data directory and **must stay free of stray files** (typically a SQL dump dropped in there); move those files out, then `up -d mysql` again |
