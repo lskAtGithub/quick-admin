@@ -90,7 +90,7 @@ pnpm run dev
 | 接口文档 | http://127.0.0.1:8001/docs |
 | 默认账号 | `admin` / `admin`（登录后请改密） |
 
-切换到 MySQL / PostgreSQL：见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
+切换到 MySQL：见 [backend/README.md](./backend/README.md) 的「切换到 MySQL」（PostgreSQL 需先补上驱动，该文「常见问题」里有说明）。
 
 ### 🐳 Docker 一键部署
 
@@ -196,7 +196,7 @@ ALLOWED_EXTENSIONS = [...]      # 允许上传的文件后缀
 MAX_FILE_SIZE = 10 * 1024 * 1024       # 单文件上限
 ```
 
-> 切库步骤见 [backend/README.md](./backend/README.md) 的「切换到 MySQL / PostgreSQL」。
+> 切库步骤见 [backend/README.md](./backend/README.md) 的「切换到 MySQL」。
 > 所有密钥（`SECRET_KEY`、数据库 / Redis 密码）请放在 `backend/env/.env.*` 或 `docker/.env` 中，切勿提交到仓库。
 
 ## 🚦 部署与安全提示

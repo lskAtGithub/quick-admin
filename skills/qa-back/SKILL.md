@@ -44,7 +44,7 @@ description: quick-admin 后端（backend，FastAPI + SQLAlchemy async + MySQL +
 
 - Python ≥ 3.12，依赖用 **uv** 管理（`pyproject.toml` + `uv.lock`，无 requirements.txt），命令在 `backend/` 目录执行。
 - 启动：`uv run python main.py`（工厂模式 `app:create_app`）；环境由 OS 变量 `ENVIRONMENT` 选择 `env/.env.{dev,prod}`；接口文档 `/docs`。
-- **运行时数据库以实际生效配置为准**：`env/.env.dev` 不入库，先看它是否存在——存在则按其中 `DATABASE_TYPE`，不存在则回落 `setting.py` 内置默认 **sqlite**；不要凭代码默认值或历史会话断定当前库类型。切换到 MySQL 的步骤见 `backend/README.md` 的「切换到 MySQL / PostgreSQL」。
+- **运行时数据库以实际生效配置为准**：`env/.env.dev` 不入库，先看它是否存在——存在则按其中 `DATABASE_TYPE`，不存在则回落 `setting.py` 内置默认 **sqlite**；不要凭代码默认值或历史会话断定当前库类型。切换到 MySQL 的步骤见 `backend/README.md` 的「切换到 MySQL」。
 - 首次启动自动 `create_tables` 建表并幂等种子超管 `admin`/`admin`（`app/scripts/init_data.py`）。
 - 代码风格沿用现有习惯：PEP8 基础、4 空格、`Mapped[]` 类型标注、不强制引入 linter/formatter；注释只在不自解释处写。
 

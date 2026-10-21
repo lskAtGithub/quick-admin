@@ -90,7 +90,7 @@ Running `npm run dev` from the repository root starts both sides with one comman
 | API docs | http://127.0.0.1:8001/docs |
 | Default account | `admin` / `admin` (change the password after logging in) |
 
-To switch to MySQL / PostgreSQL, see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
+To switch to MySQL, see “Switching to MySQL” in [backend/README.md](./backend/README.en.md) (PostgreSQL first needs its driver, as noted in that file's FAQ).
 
 ### 🐳 One-click Docker Deploy
 
@@ -196,7 +196,7 @@ ALLOWED_EXTENSIONS = [...]      # allowed upload extensions
 MAX_FILE_SIZE = 10 * 1024 * 1024       # per-file limit
 ```
 
-> For the switch procedure see “Switching to MySQL / PostgreSQL” in [backend/README.md](./backend/README.en.md).
+> For the switch procedure see “Switching to MySQL” in [backend/README.md](./backend/README.en.md).
 > Keep all secrets (`SECRET_KEY`, database / Redis passwords) in `backend/env/.env.*` or `docker/.env` — never commit them to the repository.
 
 ## 🚦 Deployment & Security Notes
